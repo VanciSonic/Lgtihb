@@ -3073,7 +3073,7 @@ G2L_MODULES[G2L["111"]] = {
 			end
 
 
-			function TAB:CreateToggle(name, desc, tbl, callback)
+			function TAB:CreateToggle(name, tbl, callback)
 				local newToggle = ReservedTabs.Toggle:Clone()
 
 				local state = tbl.state

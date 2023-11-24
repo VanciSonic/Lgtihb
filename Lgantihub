@@ -1,7 +1,7 @@
 local GANTENG = {};
 
 -- GantengLib
-GANTENG["1"] = Instance.new("ScreenGui", game:GetService("CoreGui"));
+GANTENG["1"] = Instance.new("ScreenGui", game.CoreGui);
 GANTENG["1"]["IgnoreGuiInset"] = true;
 GANTENG["1"]["Enabled"] = false;
 GANTENG["1"]["ScreenInsets"] = Enum.ScreenInsets.DeviceSafeInsets;
@@ -1445,7 +1445,7 @@ GANTENG["aa"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.j
 GANTENG["aa"]["TextColor3"] = Color3.fromRGB(159, 159, 159);
 GANTENG["aa"]["Selectable"] = false;
 GANTENG["aa"]["AnchorPoint"] = Vector2.new(1, 0.5);
-GANTENG["aa"]["Size"] = UDim2.new(0, 92, 0, 24);
+GANTENG["aa"]["Size"] = UDim2.new(0, 122, 0, 24);
 GANTENG["aa"]["Name"] = [[Select]];
 GANTENG["aa"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENG["aa"]["Text"] = [[None]];
@@ -1508,7 +1508,7 @@ GANTENG["b2"] = Instance.new("Frame", GANTENG["a6"]);
 GANTENG["b2"]["BorderSizePixel"] = 0;
 GANTENG["b2"]["BackgroundColor3"] = Color3.fromRGB(45, 45, 45);
 GANTENG["b2"]["AnchorPoint"] = Vector2.new(1, 0);
-GANTENG["b2"]["Size"] = UDim2.new(0, 92, 0, 0);
+GANTENG["b2"]["Size"] = UDim2.new(0, 121, 0, 0);
 GANTENG["b2"]["ClipsDescendants"] = true;
 GANTENG["b2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENG["b2"]["Position"] = UDim2.new(0.9539999961853027, 0, 0, 31);
@@ -3007,7 +3007,7 @@ GANTENG_MODULES[GANTENG["114"]] = {
 			newTab.Name = name
 			newTab.Parent = Tabs
 
-			newButtonTab.ButtonFrame.Text = name
+			newButtonTab.ButtonFrame.TextButton.Text = name
 
 			newButtonTab.ButtonFrame.BackgroundTransparency = 1
 			newButtonTab.ButtonFrame.ImageFrame.ImageLabel.Image = icon
@@ -3547,11 +3547,11 @@ GANTENG_MODULES[GANTENG["114"]] = {
 					if opened == false then
 						opened = true
 						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0, 92,0, 75) })
+						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0, 122,0, 90) })
 					elseif opened == true then
 						opened = false
 						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0, 92,0, 0) })
+						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0, 122,0, 0) })
 					end
 				end
 

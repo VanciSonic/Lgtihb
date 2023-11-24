@@ -3002,7 +3002,7 @@ G2L_MODULES[G2L["111"]] = {
 			end)
 			-- THE INSIDES
 
-			function TAB:CreateLabel(name, desc)
+			function TAB:AddLabel(name, desc)
 				local newLabel = ReservedTabs.Label:Clone()
 
 				newLabel.Name = name
@@ -3012,7 +3012,7 @@ G2L_MODULES[G2L["111"]] = {
 			end
 
 
-			function TAB:CreateButton(name, desc, callback)
+			function TAB:AddButton(name, desc, callback)
 				local newButton = ReservedTabs.Button:Clone()
 
 				newButton.Name = name
@@ -3064,7 +3064,7 @@ G2L_MODULES[G2L["111"]] = {
 			end
 
 
-			function TAB:CreateToggle(name, tbl, callback)
+			function TAB:AddToggle(name, tbl, callback)
 				local newToggle = ReservedTabs.Toggle:Clone()
 
 				local state = tbl.state
@@ -3134,7 +3134,7 @@ G2L_MODULES[G2L["111"]] = {
 
 			end
 
-			function TAB:CreateTextbox(name, desc, tbl, callback)
+			function TAB:AddTextbox(name, tbl, callback)
 				local placeholdertext = tbl.placeholdertext
 				local defaulttext = tbl.defaulttext
 				local clearonfocus = tbl.clearonfocus
@@ -3191,7 +3191,7 @@ G2L_MODULES[G2L["111"]] = {
 				end)
 			end
 
-			function TAB:CreateKeybind(name, desc, tbl, callback)
+			function TAB:AddKeybind(name, tbl, callback)
 				local defaultkey = tbl.defaultkey
 				local triggerwhilebinding = tbl.triggerwhilebinding
 				local newKey = ReservedTabs.Keybind:Clone()
@@ -3298,7 +3298,7 @@ G2L_MODULES[G2L["111"]] = {
 				end)
 			end
 
-			function TAB:CreateSlider(name, desc, tbl, callback)
+			function TAB:AddSlider(name, tbl, callback)
 				local newSlider = ReservedTabs.Slider:Clone()
 
 				local min = tbl.min
@@ -3433,7 +3433,7 @@ G2L_MODULES[G2L["111"]] = {
 				end)
 			end
 
-			function TAB:CreateDropdown(name, desc, tbl, callback)
+			function TAB:AddDropdown(name, tbl, callback)
 				local newDropdown = ReservedTabs.Dropdown:Clone()
 
 				local list = tbl.list

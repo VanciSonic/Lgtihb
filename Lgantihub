@@ -2714,7 +2714,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 			LocalPlayerInfo.Profile.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 
 			local function RefreshTime()
-				if Mainframe.Parent  then
+				if Mainframe  then
 					LocalPlayerInfo.Time.Text =os.date("%H:%M:%S", os.time())
 					task.wait(.5)
 					RefreshTime()
@@ -2744,12 +2744,12 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				end
 
 				Frame.InputBegan:Connect(function(input)
-					if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and Frame.Parent  then
+					if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and Frame then
 						dragToggle = true
 						dragStart = input.Position
 						startPos = Frame.Position
 						input.Changed:Connect(function() 
-							if (input.UserInputState == Enum.UserInputState.End) and Frame.Parent  then
+							if (input.UserInputState == Enum.UserInputState.End) and Frame then
 								dragToggle = false
 							end
 						end)
@@ -2757,13 +2757,13 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				end)
 
 				Frame.InputChanged:Connect(function(input)
-					if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and Frame.Parent  then
+					if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and Frame then
 						dragInput = input
 					end
 				end)
 
 				game:GetService("UserInputService").InputChanged:Connect(function(input)
-					if (input == dragInput and dragToggle) and Frame.Parent  then
+					if (input == dragInput and dragToggle) and Frame then
 						updateInput(input)
 					end
 				end)
@@ -2925,7 +2925,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 
 					-- Reparent items in their original order
 					for _, item in ipairs(originalItems) do
-						item.Parent = Tabs.SearchedTab
+						item= Tabs.SearchedTab
 					end
 				end)
 			end)
@@ -2942,7 +2942,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 
 					for _, item in pairs(Tabs.SearchedTab:GetChildren()) do
 						if item:IsA("Frame") then
-							item.Parent = originalProperty.Item[item.Name].Parent
+							item= originalProperty.Item[item.Name].Parent
 						end
 					end
 
@@ -3047,7 +3047,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				newCg.Title.Text = title
 				newCg.Description.Text = desc
 				newCg.Visible = true
-				newCg.Parent = Landing.Changelogs.ScrollingFrame
+				newCg= Landing.Changelogs.ScrollingFrame
 			end
 		end
 
@@ -3063,11 +3063,11 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 			MainTabs[name] = newTab
 
 			newButtonTab.Name = name
-			newButtonTab.Parent = SideBar.Buttons
+			newButtonTab= SideBar.Buttons
 			newButtonTab.Visible = true
 
 			newTab.Name = name
-			newTab.Parent = Tabs
+			newTab= Tabs
 
 			newButtonTab.ButtonFrame.BackgroundTransparency = 1
 			newButtonTab.ButtonFrame.ImageFrame.ImageLabel.Image = icon
@@ -3098,7 +3098,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				local newLabel = ReservedTabs.Label:Clone()
 
 				newLabel.Name = name
-				newLabel.Parent = newTab
+				newLabel= newTab
 				newLabel.Visible = true
 				newLabel.Frame.TextLabel.Text = name
 
@@ -3115,7 +3115,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				local newLine = ReservedTabs.Border:Clone()
 
 				newLine.Name = name or newLine.Name
-				newLine.Parent = newTab
+				newLine= newTab
 				newLine.Visible = true
 			end
 
@@ -3123,7 +3123,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				local newLine = ReservedTabs.Seperator:Clone()
 
 				newLine.Name = name or newLine.Name
-				newLine.Parent = newTab
+				newLine= newTab
 				newLine.Visible = true
 
 				newLine.TextLabel.Text = name
@@ -3135,7 +3135,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				local newButton = ReservedTabs.Button:Clone()
 
 				newButton.Name = name
-				newButton.Parent = newTab
+				newButton= newTab
 				newButton.Visible = true
 
 				newButton.Frame.TextLabel.Text = name
@@ -3203,7 +3203,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				end
 
 				newToggle.Name = name
-				newToggle.Parent = newTab
+				newToggle= newTab
 				newToggle.Visible = true
 
 				newToggle.Frame.TextLabel.Text = name
@@ -3300,7 +3300,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				local clearonfocus = tbl.clearonfocus
 
 				local newTextbox = ReservedTabs.Textbox:Clone()
-				newTextbox.Parent = newTab
+				newTextbox= newTab
 				newTextbox.Name = name
 				newTextbox.Visible = true
 
@@ -3372,7 +3372,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				self.CurrentKey = key
 
 				newKey.Name = name
-				newKey.Parent = newTab
+				newKey= newTab
 				newKey.Visible = true
 
 				newKey.Frame.TextLabel.Text = name
@@ -3385,7 +3385,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 						listening = true
 						Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
 						event = UserInputService.InputBegan:Connect(function(input)
-							if input.UserInputType == Enum.UserInputType.Keyboard and script.Parent.Parent  then
+							if input.UserInputType == Enum.UserInputType.Keyboard and script.Parent then
 
 								newKey.Frame.Bind.Text = input.KeyCode.Name
 								Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
@@ -3397,7 +3397,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 								end
 							elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
 								input.UserInputType == Enum.UserInputType.MouseButton2 or
-								input.UserInputType == Enum.UserInputType.MouseButton3 and script.Parent.Parent  then
+								input.UserInputType == Enum.UserInputType.MouseButton3 and script.Parent then
 
 								local match = input.UserInputType.Name:match("MouseButton(%d+)")
 								newKey.Frame.Bind.Text = (match and "MB" .. match) or input.UserInputType.Name
@@ -3415,7 +3415,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				end)
 
 				UserInputService.InputBegan:Connect(function(input)
-					if listening == false and script.Parent.Parent  then
+					if listening == false and script.Parent then
 						if input.UserInputType == Enum.UserInputType.Keyboard then
 							if input.KeyCode == TAB.CurrentKey then
 								callback(input)
@@ -3474,7 +3474,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				local inc = tbl.inc
 				local default = tbl.default
 
-				newSlider.Parent = newTab
+				newSlider= newTab
 				newSlider.Visible = true
 				newSlider.Name = name
 				newSlider.Frame.TextLabel.Text = name
@@ -3559,7 +3559,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				end)
 
 				UserInputService.InputEnded:Connect(function(input)
-					if Mainframe.Parent  and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and script.Parent.Parent  then
+					if Mainframe and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and script.Parent then
 						MouseDown = false
 						Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
 					end
@@ -3626,7 +3626,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 
 				newDropdown.Name = name
 				newDropdown.Visible = true
-				newDropdown.Parent = newTab
+				newDropdown= newTab
 				newDropdown.Frame.TextLabel.Text = name
 				newDropdown.Frame.Select.Text = default
 
@@ -3646,7 +3646,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 					local newOption = ReservedTabs.OptionDropdown:Clone()
 
 					newOption.Name = v
-					newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
+					newOption= newDropdown.SelectionFrame.ScrollingFrame
 					newOption.Text = v
 					newOption.Visible = true
 
@@ -3706,7 +3706,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 							local newOption = ReservedTabs.OptionDropdown:Clone()
 
 							newOption.Name = v
-							newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
+							newOption= newDropdown.SelectionFrame.ScrollingFrame
 							newOption.Text = v
 							newOption.Visible = true
 
@@ -3727,7 +3727,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 						local newOption = ReservedTabs.OptionDropdown:Clone()
 
 						newOption.Name = tbl or tostring(tbl)
-						newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
+						newOption= newDropdown.SelectionFrame.ScrollingFrame
 						newOption.Text = tbl or tostring(tbl)
 						newOption.Visible = true
 

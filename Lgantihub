@@ -3192,14 +3192,12 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				local self = setmetatable({}, TAB)
 				local newToggle = ReservedTabs.Toggle:Clone()
 
-				local state
+				local state = false
 
 				if type(tbl) == "table" then
 					state = tbl.state
 				elseif type(tbl) == "boolean" then
 					state = tbl
-				else
-					state = tbl or false
 				end
 
 				newToggle.Name = name

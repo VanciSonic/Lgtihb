@@ -3198,6 +3198,8 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 					state = tbl.state
 				elseif type(tbl) == "boolean" then
 					state = tbl
+				elseif tbl == nil then
+					state = false
 				end
 
 				newToggle.Name = name

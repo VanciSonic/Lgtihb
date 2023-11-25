@@ -2770,7 +2770,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 			end
 
 			EnableDrag(script.Parent.DropShadowHolder)
-
+			EnableDrag(GANTENG["11b"])
 
 
 			-- Topbar menu functions

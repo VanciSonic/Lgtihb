@@ -3069,8 +3069,6 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 			newTab.Name = name
 			newTab.Parent = Tabs
 
-			newButtonTab.ButtonFrame.Text = name
-
 			newButtonTab.ButtonFrame.BackgroundTransparency = 1
 			newButtonTab.ButtonFrame.ImageFrame.ImageLabel.Image = icon
 			

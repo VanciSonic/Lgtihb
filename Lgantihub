@@ -2714,7 +2714,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 			LocalPlayerInfo.Profile.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 
 			local function RefreshTime()
-				if Mainframe.Parent ~= nil then
+				if Mainframe.Parent  then
 					LocalPlayerInfo.Time.Text =os.date("%H:%M:%S", os.time())
 					task.wait(.5)
 					RefreshTime()
@@ -2744,12 +2744,12 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				end
 
 				Frame.InputBegan:Connect(function(input)
-					if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and Frame.Parent ~= nil then
+					if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and Frame.Parent  then
 						dragToggle = true
 						dragStart = input.Position
 						startPos = Frame.Position
 						input.Changed:Connect(function() 
-							if (input.UserInputState == Enum.UserInputState.End) and Frame.Parent ~= nil then
+							if (input.UserInputState == Enum.UserInputState.End) and Frame.Parent  then
 								dragToggle = false
 							end
 						end)
@@ -2757,13 +2757,13 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				end)
 
 				Frame.InputChanged:Connect(function(input)
-					if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and Frame.Parent ~= nil then
+					if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and Frame.Parent  then
 						dragInput = input
 					end
 				end)
 
 				game:GetService("UserInputService").InputChanged:Connect(function(input)
-					if (input == dragInput and dragToggle) and Frame.Parent ~= nil then
+					if (input == dragInput and dragToggle) and Frame.Parent  then
 						updateInput(input)
 					end
 				end)
@@ -3385,7 +3385,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 						listening = true
 						Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
 						event = UserInputService.InputBegan:Connect(function(input)
-							if input.UserInputType == Enum.UserInputType.Keyboard and script.Parent.Parent ~= nil then
+							if input.UserInputType == Enum.UserInputType.Keyboard and script.Parent.Parent  then
 
 								newKey.Frame.Bind.Text = input.KeyCode.Name
 								Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
@@ -3397,7 +3397,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 								end
 							elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
 								input.UserInputType == Enum.UserInputType.MouseButton2 or
-								input.UserInputType == Enum.UserInputType.MouseButton3 and script.Parent.Parent ~= nil then
+								input.UserInputType == Enum.UserInputType.MouseButton3 and script.Parent.Parent  then
 
 								local match = input.UserInputType.Name:match("MouseButton(%d+)")
 								newKey.Frame.Bind.Text = (match and "MB" .. match) or input.UserInputType.Name
@@ -3415,7 +3415,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				end)
 
 				UserInputService.InputBegan:Connect(function(input)
-					if listening == false and script.Parent.Parent ~= nil then
+					if listening == false and script.Parent.Parent  then
 						if input.UserInputType == Enum.UserInputType.Keyboard then
 							if input.KeyCode == TAB.CurrentKey then
 								callback(input)
@@ -3559,7 +3559,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				end)
 
 				UserInputService.InputEnded:Connect(function(input)
-					if Mainframe.Parent ~= nil and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and script.Parent.Parent ~= nil then
+					if Mainframe.Parent  and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and script.Parent.Parent  then
 						MouseDown = false
 						Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
 					end

@@ -2983,7 +2983,6 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 				local twen = Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0,0,0,0)})
 				twen.Completed:Wait()
 				script.Parent:Destroy()
-				thread = nil
 			end)
 
 			Warning.Yes.MouseEnter:Connect(function()
@@ -3093,10 +3092,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 			end)
 			-- THE INSIDES
 
-			local thread
-
-			function ye()
-				function TAB:AddLabel(name)
+			function TAB:AddLabel(name)
 				local self = setmetatable({}, TAB)
 
 				local newLabel = ReservedTabs.Label:Clone()
@@ -3752,8 +3748,6 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 
 
 			return TAB
-			end
-			thread = coroutine.create(ye)
 		end
 
 

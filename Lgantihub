@@ -3194,13 +3194,13 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 
 				local state = false
 
-				if type(tbl) == "table" then
-					state = tbl.state
-				elseif type(tbl) == "boolean" then
-					state = tbl
-				elseif tbl == nil then
-					state = false
-				end
+				if type(tbl) == "boolean" then
+        				state = tbl
+ 				elseif type(tbl) == "table" and tbl.state ~= nil then
+     					state = tbl.state
+    				else
+        				state = false
+   				end
 
 				newToggle.Name = name
 				newToggle.Parent = newTab

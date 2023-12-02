@@ -1,0 +1,169 @@
+-- Instances: 13 | Scripts: 0 | Modules: 1
+local NOTIF = {};
+
+-- GantengNotification
+NOTIF["1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
+NOTIF["1"]["IgnoreGuiInset"] = true;
+NOTIF["1"]["ScreenInsets"] = Enum.ScreenInsets.DeviceSafeInsets;
+NOTIF["1"]["Name"] = [[GantengNotification]];
+NOTIF["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
+
+-- GantengNotification.Pre
+NOTIF["2"] = Instance.new("Frame", NOTIF["1"]);
+NOTIF["2"]["BorderSizePixel"] = 0;
+NOTIF["2"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+NOTIF["2"]["AnchorPoint"] = Vector2.new(0.5, 0);
+NOTIF["2"]["BackgroundTransparency"] = 1;
+NOTIF["2"]["Size"] = UDim2.new(0, 447, 0, 64);
+NOTIF["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+NOTIF["2"]["Position"] = UDim2.new(0.49900001287460327, 0, 0, -64);
+NOTIF["2"]["Name"] = [[Pre]];
+
+-- GantengNotification.Pre.Frame
+NOTIF["3"] = Instance.new("Frame", NOTIF["2"]);
+NOTIF["3"]["BorderSizePixel"] = 0;
+NOTIF["3"]["BackgroundColor3"] = Color3.fromRGB(48, 48, 48);
+NOTIF["3"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+NOTIF["3"]["BackgroundTransparency"] = 0.014999999664723873;
+NOTIF["3"]["Size"] = UDim2.new(0.9660000205039978, 0, 0.8100000023841858, 0);
+NOTIF["3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+NOTIF["3"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+
+-- GantengNotification.Pre.Frame.UICorner
+NOTIF["4"] = Instance.new("UICorner", NOTIF["3"]);
+NOTIF["4"]["CornerRadius"] = UDim.new(0, 14);
+
+-- GantengNotification.Pre.Frame.Icon
+NOTIF["5"] = Instance.new("ImageLabel", NOTIF["3"]);
+NOTIF["5"]["BorderSizePixel"] = 0;
+NOTIF["5"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+NOTIF["5"]["Image"] = [[rbxassetid://15006559003]];
+NOTIF["5"]["Size"] = UDim2.new(0, 36, 0, 36);
+NOTIF["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+NOTIF["5"]["Name"] = [[Icon]];
+NOTIF["5"].BackgroundTransparency = 1
+NOTIF["5"]["Position"] = UDim2.new(0.020792989060282707, 0, 0.15141981840133667, 0);
+
+-- GantengNotification.Pre.Frame.Icon.UIAspectRatioConstraint
+NOTIF["6"] = Instance.new("UIAspectRatioConstraint", NOTIF["5"]);
+
+
+-- GantengNotification.Pre.Frame.Icon.UICorner
+NOTIF["7"] = Instance.new("UICorner", NOTIF["5"]);
+NOTIF["7"]["CornerRadius"] = UDim.new(0, 12);
+
+-- GantengNotification.Pre.Frame.Title
+NOTIF["8"] = Instance.new("TextLabel", NOTIF["3"]);
+NOTIF["8"]["BorderSizePixel"] = 0;
+NOTIF["8"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+NOTIF["8"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+NOTIF["8"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+NOTIF["8"]["TextTransparency"] = 0.10000000149011612;
+NOTIF["8"]["TextSize"] = 16;
+NOTIF["8"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+NOTIF["8"]["Size"] = UDim2.new(0, 378, 0, 12);
+NOTIF["8"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+NOTIF["8"]["Text"] = [[NOTIFICATION]];
+NOTIF["8"]["Name"] = [[Title]];
+NOTIF["8"]["BackgroundTransparency"] = 1;
+NOTIF["8"]["Position"] = UDim2.new(0.12300000339746475, 0, 0.23800000548362732, 0);
+
+-- GantengNotification.Pre.Frame.Description
+NOTIF["9"] = Instance.new("TextLabel", NOTIF["3"]);
+NOTIF["9"]["BorderSizePixel"] = 0;
+NOTIF["9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+NOTIF["9"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+NOTIF["9"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+NOTIF["9"]["TextTransparency"] = 0.10000000149011612;
+NOTIF["9"]["TextSize"] = 15;
+NOTIF["9"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+NOTIF["9"]["Size"] = UDim2.new(0, 385, 0, 18);
+NOTIF["9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+NOTIF["9"]["Text"] = [[description]];
+NOTIF["9"]["Name"] = [[Description]];
+NOTIF["9"]["BackgroundTransparency"] = 1;
+NOTIF["9"]["Position"] = UDim2.new(0.12300004065036774, 0, 0.4793519079685211, 0);
+
+-- GantengNotification.Pre.Frame.UIGradient
+NOTIF["a"] = Instance.new("UIGradient", NOTIF["3"]);
+NOTIF["a"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(137, 151, 183)),ColorSequenceKeypoint.new(0.244, Color3.fromRGB(219, 218, 255)),ColorSequenceKeypoint.new(0.591, Color3.fromRGB(179, 206, 255)),ColorSequenceKeypoint.new(0.810, Color3.fromRGB(139, 145, 157)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(153, 159, 194))};
+
+-- GantengNotification.Pre.Frame.TextLabel
+NOTIF["b"] = Instance.new("TextLabel", NOTIF["3"]);
+NOTIF["b"]["BorderSizePixel"] = 0;
+NOTIF["b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+NOTIF["b"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+NOTIF["b"]["TextTransparency"] = 0.4000000059604645;
+NOTIF["b"]["TextSize"] = 15;
+NOTIF["b"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+NOTIF["b"]["Size"] = UDim2.new(0, 36, 0, 17);
+NOTIF["b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+NOTIF["b"]["Text"] = [[now]];
+NOTIF["b"]["BackgroundTransparency"] = 1;
+NOTIF["b"]["Position"] = UDim2.new(0.8965027332305908, 0, 0.15141981840133667, 0);
+
+-- GantengNotification.Pre.Sound
+NOTIF["c"] = Instance.new("Sound", NOTIF["2"]);
+NOTIF["c"]["Volume"] = 1.5;
+NOTIF["c"]["SoundId"] = [[rbxassetid://15523875979]];
+NOTIF["c"]["RollOffMode"] = Enum.RollOffMode.InverseTapered;
+
+-- GantengNotification.Library
+NOTIF["d"] = Instance.new("ModuleScript", NOTIF["1"]);
+NOTIF["d"]["Name"] = [[Library]];
+
+-- Require NOTIF wrapper
+local NOTIF_REQUIRE = require;
+local NOTIF_MODULES = {};
+local function require(Module:ModuleScript)
+	local ModuleState = NOTIF_MODULES[Module];
+	if ModuleState then
+		if not ModuleState.Required then
+			ModuleState.Required = true;
+			ModuleState.Value = ModuleState.Closure();
+		end
+		return ModuleState.Value;
+	end;
+	return NOTIF_REQUIRE(Module);
+end
+
+NOTIF_MODULES[NOTIF["d"]] = {
+	Closure = function()
+		local script = NOTIF["d"];
+		local LIBRARY = {}
+		local Frame = script.Parent.Pre:Clone()
+		local function tween(a,b,c)
+			local d = game:GetService("TweenService"):Create(a, b, c)
+			d:Play()
+			return d
+		end
+
+		script.Parent.Pre:Destroy()
+		Frame.Parent = nil
+		function LIBRARY:SendNotification(name, desc, icon)
+			task.spawn(function()
+				local new = Frame:Clone()
+
+				new.Parent = script.Parent
+
+				new.Visible = true
+				new.Frame.Title.Text = name
+				new.Frame.Description.Text = desc
+				new.Frame.Icon.Image = icon or "rbxassetid://15006559003"
+
+				tween(new, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.5, 0,0, 0)})
+				new.Sound:Play()
+				task.wait(5.5)
+
+				tween(new, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.499, 0,0, -64)})
+
+				task.wait(0.5)
+				new:Destroy()
+			end)
+		end
+		return LIBRARY
+
+	end;
+};
+
+return require(NOTIF["d"]);

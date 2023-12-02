@@ -3210,6 +3210,8 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 
 				if state == false then
 					newToggle.Frame.Toggle.Filler.Transparency = 1
+				elseif state == true then
+					callback(state)
 				end
 
 				newToggle.Frame.MouseEnter:Connect(function()

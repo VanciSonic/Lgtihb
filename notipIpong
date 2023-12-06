@@ -1,4 +1,4 @@
--- Instances: 13 | Scripts: 0 | Modules: 1
+-- Instances: 15 | Scripts: 0 | Modules: 1
 local NOTIF = {};
 
 -- GantengNotification
@@ -16,8 +16,10 @@ NOTIF["2"]["AnchorPoint"] = Vector2.new(0.5, 0);
 NOTIF["2"]["BackgroundTransparency"] = 1;
 NOTIF["2"]["Size"] = UDim2.new(0, 447, 0, 64);
 NOTIF["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-NOTIF["2"]["Position"] = UDim2.new(0.49900001287460327, 0, 0, -64);
+NOTIF["2"]["Position"] = UDim2.new(0.49900001287460327, 0, 0, -59);
 NOTIF["2"]["Name"] = [[Pre]];
+-- Attributes
+NOTIF["2"]:SetAttribute([[Tweening]], false);
 
 -- GantengNotification.Pre.Frame
 NOTIF["3"] = Instance.new("Frame", NOTIF["2"]);
@@ -41,7 +43,7 @@ NOTIF["5"]["Image"] = [[rbxassetid://15006559003]];
 NOTIF["5"]["Size"] = UDim2.new(0, 36, 0, 36);
 NOTIF["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 NOTIF["5"]["Name"] = [[Icon]];
-NOTIF["5"].BackgroundTransparency = 1
+NOTIF["5"]["BackgroundTransparency"] = 1;
 NOTIF["5"]["Position"] = UDim2.new(0.020792989060282707, 0, 0.15141981840133667, 0);
 
 -- GantengNotification.Pre.Frame.Icon.UIAspectRatioConstraint
@@ -109,8 +111,12 @@ NOTIF["c"]["SoundId"] = [[rbxassetid://15523875979]];
 NOTIF["c"]["RollOffMode"] = Enum.RollOffMode.InverseTapered;
 
 -- GantengNotification.Library
-NOTIF["d"] = Instance.new("ModuleScript", NOTIF["1"]);
-NOTIF["d"]["Name"] = [[Library]];
+NOTIF["e"] = Instance.new("ModuleScript", NOTIF["1"]);
+NOTIF["e"]["Name"] = [[Library]];
+
+-- GantengNotification.NotipFrame
+NOTIF["f"] = Instance.new("Folder", NOTIF["1"]);
+NOTIF["f"]["Name"] = [[NotipFrame]];
 
 -- Require NOTIF wrapper
 local NOTIF_REQUIRE = require;
@@ -127,43 +133,80 @@ local function require(Module:ModuleScript)
 	return NOTIF_REQUIRE(Module);
 end
 
-NOTIF_MODULES[NOTIF["d"]] = {
+NOTIF_MODULES[NOTIF["e"]] = {
 	Closure = function()
-		local script = NOTIF["d"];
+		local script = NOTIF["e"];
 		local LIBRARY = {}
 		local Frame = script.Parent.Pre:Clone()
-		local function tween(a,b,c)
-			local d = game:GetService("TweenService"):Create(a, b, c)
-			d:Play()
-			return d
+
+		local function tween(object, properties)
+			local tweenInfo = TweenInfo.new(properties.Duration or 0.5, properties.EasingStyle or Enum.EasingStyle.Quint, properties.EasingDirection or Enum.EasingDirection.Out)
+			local tweenGoal = {}
+			for property, value in pairs(properties) do
+				if property ~= "Duration" and property ~= "EasingStyle" and property ~= "EasingDirection" then
+					tweenGoal[property] = value
+				end
+			end
+			return game:GetService("TweenService"):Create(object, tweenInfo, tweenGoal)
 		end
 
 		script.Parent.Pre:Destroy()
 		Frame.Parent = nil
+
 		function LIBRARY:SendNotification(name, desc, icon)
 			task.spawn(function()
 				local new = Frame:Clone()
-
-				new.Parent = script.Parent
+				new.Parent = script.Parent.NotipFrame
 
 				new.Visible = true
 				new.Frame.Title.Text = name
 				new.Frame.Description.Text = desc
 				new.Frame.Icon.Image = icon or "rbxassetid://15006559003"
 
-				tween(new, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.5, 0,0, 0)})
+				task.wait() -- Introduce a short delay before checking positions
+
+				if #script.Parent.NotipFrame:GetChildren() > 1 then
+					for _, v in pairs(script.Parent.NotipFrame:GetChildren()) do
+						if v.Position.Y.Offset > 0 and v.Position.Y.Offset <= 59 then
+							task.spawn(function()
+								local tw = tween(v, {Duration = 0.5, EasingStyle = Enum.EasingStyle.Quint, EasingDirection = Enum.EasingDirection.Out, Position = UDim2.new(0.499, 0, 0, -64)})
+								tw:Play()
+								tw.Completed:Wait()
+								v:Destroy()
+							end)
+						elseif v.Position.Y.Offset > -59 then
+							local tw = tween(v, {Duration = 0.5, EasingStyle = Enum.EasingStyle.Quint, EasingDirection = Enum.EasingDirection.Out, Position = UDim2.new(0.499, 0, 0, v.Position.Y.Offset + 59)})
+							tw:Play()
+
+
+							if v.Position.Y.Offset > -59 and  v.Position.Y.Offset <= 0 then
+								local tw = tween(v, {Duration = 0.5, EasingStyle = Enum.EasingStyle.Quint, EasingDirection = Enum.EasingDirection.Out, Position = UDim2.new(0.499, 0, 0, 59)})
+								tw:Play()
+							elseif v.Position.Y.Offset > 0 then
+								local tw = tween(v, {Duration = 0.5, EasingStyle = Enum.EasingStyle.Quint, EasingDirection = Enum.EasingDirection.Out, Position = UDim2.new(0.499, 0, 0, 118)})
+								tw:Play()
+							end
+						end
+					end
+				end
+
+				local tw1 = tween(new, {Duration = 0.5, EasingStyle = Enum.EasingStyle.Quint, EasingDirection = Enum.EasingDirection.Out, Position = UDim2.new(0.5, 0, 0, 0)})
 				new.Sound:Play()
-				task.wait(5.5)
+				tw1:Play()
+				tw1.Completed:Wait()
 
-				tween(new, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.499, 0,0, -64)})
+				task.wait(5)
 
-				task.wait(0.5)
+				local tw2 = tween(new, {Duration = 0.5, EasingStyle = Enum.EasingStyle.Quint, EasingDirection = Enum.EasingDirection.Out, Position = UDim2.new(0.499, 0, 0, -64)})
+				tw2:Play()
+				tw2.Completed:Wait()
 				new:Destroy()
 			end)
 		end
+
 		return LIBRARY
 
 	end;
 };
 
-return require(NOTIF["d"]);
+return require(NOTIF["e"]);

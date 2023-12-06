@@ -1,0 +1,271 @@
+-- Instances: 17 | Scripts: 0 | Modules: 1
+local LISTLIB = {};
+
+-- GantengList
+LISTLIB["1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
+LISTLIB["1"]["IgnoreGuiInset"] = true;
+LISTLIB["1"]["ScreenInsets"] = Enum.ScreenInsets.DeviceSafeInsets;
+LISTLIB["1"]["Name"] = [[GantengList]];
+LISTLIB["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
+
+-- GantengList.Frame
+LISTLIB["2"] = Instance.new("Frame", LISTLIB["1"]);
+LISTLIB["2"]["BorderSizePixel"] = 0;
+LISTLIB["2"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+LISTLIB["2"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+LISTLIB["2"]["Size"] = UDim2.new(0, 253, 0, 321);
+LISTLIB["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+LISTLIB["2"]["Position"] = UDim2.new(0.4980332851409912, 0, 0.5163043737411499, 0);
+
+-- GantengList.Frame.UICorner
+LISTLIB["3"] = Instance.new("UICorner", LISTLIB["2"]);
+LISTLIB["3"]["CornerRadius"] = UDim.new(0, 15);
+
+-- GantengList.Frame.UIGradient
+LISTLIB["4"] = Instance.new("UIGradient", LISTLIB["2"]);
+LISTLIB["4"]["Rotation"] = 37;
+LISTLIB["4"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(54, 54, 54)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(14, 14, 14))};
+
+-- GantengList.Frame.Close
+LISTLIB["5"] = Instance.new("TextButton", LISTLIB["2"]);
+LISTLIB["5"]["TextWrapped"] = true;
+LISTLIB["5"]["BorderSizePixel"] = 0;
+LISTLIB["5"]["TextScaled"] = true;
+LISTLIB["5"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+LISTLIB["5"]["TextSize"] = 23;
+LISTLIB["5"]["FontFace"] = Font.new([[rbxasset://fonts/families/FredokaOne.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+LISTLIB["5"]["TextColor3"] = Color3.fromRGB(201, 201, 201);
+LISTLIB["5"]["Size"] = UDim2.new(0.10671936720609665, 0, 0.07476635277271271, 0);
+LISTLIB["5"]["Name"] = [[Close]];
+LISTLIB["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+LISTLIB["5"]["Text"] = [[X]];
+LISTLIB["5"]["Position"] = UDim2.new(0.8537548184394836, 0, 0.018691588193178177, 0);
+LISTLIB["5"]["BackgroundTransparency"] = 1;
+
+-- GantengList.Frame.Close.UIAspectRatioConstraint
+LISTLIB["6"] = Instance.new("UIAspectRatioConstraint", LISTLIB["5"]);
+
+
+-- GantengList.Frame.Title
+LISTLIB["7"] = Instance.new("TextLabel", LISTLIB["2"]);
+LISTLIB["7"]["TextWrapped"] = true;
+LISTLIB["7"]["BorderSizePixel"] = 0;
+LISTLIB["7"]["TextScaled"] = true;
+LISTLIB["7"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+LISTLIB["7"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+LISTLIB["7"]["TextSize"] = 21;
+LISTLIB["7"]["TextColor3"] = Color3.fromRGB(201, 201, 201);
+LISTLIB["7"]["Size"] = UDim2.new(0.6521739363670349, 0, 0.06542056053876877, 0);
+LISTLIB["7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+LISTLIB["7"]["Text"] = [[List]];
+LISTLIB["7"]["Name"] = [[Title]];
+LISTLIB["7"]["BackgroundTransparency"] = 1;
+LISTLIB["7"]["Position"] = UDim2.new(0.17391304671764374, 0, 0.018691588193178177, 0);
+
+-- GantengList.Frame.Frame
+LISTLIB["8"] = Instance.new("Frame", LISTLIB["2"]);
+LISTLIB["8"]["BorderSizePixel"] = 0;
+LISTLIB["8"]["BackgroundColor3"] = Color3.fromRGB(201, 201, 201);
+LISTLIB["8"]["Size"] = UDim2.new(0.9130434989929199, 0, 0.006230529397726059, 0);
+LISTLIB["8"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+LISTLIB["8"]["Position"] = UDim2.new(0.04743070900440216, 0, 0.10963454842567444, 0);
+
+-- GantengList.Frame.ScrollingFrame
+LISTLIB["9"] = Instance.new("ScrollingFrame", LISTLIB["2"]);
+LISTLIB["9"]["Active"] = true;
+LISTLIB["9"]["BorderSizePixel"] = 0;
+LISTLIB["9"]["CanvasSize"] = UDim2.new(0, 0, 0, 1);
+LISTLIB["9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+LISTLIB["9"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
+LISTLIB["9"]["BackgroundTransparency"] = 1;
+LISTLIB["9"]["Size"] = UDim2.new(0.9130434989929199, 0, 0.8598130941390991, 0);
+LISTLIB["9"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
+LISTLIB["9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+LISTLIB["9"]["ScrollBarThickness"] = 0;
+LISTLIB["9"]["Position"] = UDim2.new(0.043477900326251984, 0, 0.14018692076206207, 0);
+
+-- GantengList.Frame.ScrollingFrame.UIListLayout
+LISTLIB["a"] = Instance.new("UIListLayout", LISTLIB["9"]);
+LISTLIB["a"]["Padding"] = UDim.new(0, 5);
+LISTLIB["a"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+
+-- GantengList.Frame.DropShadowHolder
+LISTLIB["b"] = Instance.new("Frame", LISTLIB["2"]);
+LISTLIB["b"]["ZIndex"] = 0;
+LISTLIB["b"]["BorderSizePixel"] = 0;
+LISTLIB["b"]["BackgroundTransparency"] = 1;
+LISTLIB["b"]["Size"] = UDim2.new(1, 0, 1, 0);
+LISTLIB["b"]["Name"] = [[DropShadowHolder]];
+
+-- GantengList.Frame.DropShadowHolder.DropShadow
+LISTLIB["c"] = Instance.new("ImageLabel", LISTLIB["b"]);
+LISTLIB["c"]["ZIndex"] = 0;
+LISTLIB["c"]["BorderSizePixel"] = 0;
+LISTLIB["c"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
+LISTLIB["c"]["ScaleType"] = Enum.ScaleType.Slice;
+LISTLIB["c"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
+LISTLIB["c"]["ImageTransparency"] = 0.5;
+LISTLIB["c"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+LISTLIB["c"]["Image"] = [[rbxassetid://6014261993]];
+LISTLIB["c"]["Size"] = UDim2.new(1, 47, 1, 47);
+LISTLIB["c"]["Name"] = [[DropShadow]];
+LISTLIB["c"]["BackgroundTransparency"] = 1;
+LISTLIB["c"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+
+-- GantengList.Frame.Object
+LISTLIB["d"] = Instance.new("Frame", LISTLIB["2"]);
+LISTLIB["d"]["BorderSizePixel"] = 0;
+LISTLIB["d"]["BackgroundColor3"] = Color3.fromRGB(159, 159, 159);
+LISTLIB["d"]["Size"] = UDim2.new(1, 0, 0.08699999749660492, 0);
+LISTLIB["d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+LISTLIB["d"]["Visible"] = false;
+LISTLIB["d"]["Name"] = [[Object]];
+
+-- GantengList.Frame.Object.UICorner
+LISTLIB["e"] = Instance.new("UICorner", LISTLIB["d"]);
+LISTLIB["e"]["CornerRadius"] = UDim.new(0, 7);
+
+-- GantengList.Frame.Object.UIGradient
+LISTLIB["f"] = Instance.new("UIGradient", LISTLIB["d"]);
+LISTLIB["f"]["Rotation"] = 37;
+LISTLIB["f"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(96, 96, 96)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(64, 64, 64))};
+
+-- GantengList.Frame.Object.TextLabel
+LISTLIB["10"] = Instance.new("TextLabel", LISTLIB["d"]);
+LISTLIB["10"]["TextWrapped"] = true;
+LISTLIB["10"]["BorderSizePixel"] = 0;
+LISTLIB["10"]["TextScaled"] = true;
+LISTLIB["10"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+LISTLIB["10"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+LISTLIB["10"]["TextSize"] = 14;
+LISTLIB["10"]["TextColor3"] = Color3.fromRGB(201, 201, 201);
+LISTLIB["10"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+LISTLIB["10"]["Size"] = UDim2.new(1, 0, 0.699999988079071, 0);
+LISTLIB["10"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+LISTLIB["10"]["Text"] = [[1]];
+LISTLIB["10"]["BackgroundTransparency"] = 1;
+LISTLIB["10"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+
+-- GantengList.Library
+LISTLIB["11"] = Instance.new("ModuleScript", LISTLIB["1"]);
+LISTLIB["11"]["Name"] = [[Library]];
+
+-- Require LISTLIB wrapper
+local LISTLIB_REQUIRE = require;
+local LISTLIB_MODULES = {};
+local function require(Module:ModuleScript)
+	local ModuleState = LISTLIB_MODULES[Module];
+	if ModuleState then
+		if not ModuleState.Required then
+			ModuleState.Required = true;
+			ModuleState.Value = ModuleState.Closure();
+		end
+		return ModuleState.Value;
+	end;
+	return LISTLIB_REQUIRE(Module);
+end
+
+LISTLIB_MODULES[LISTLIB["11"]] = {
+	Closure = function()
+		local script = LISTLIB["11"];
+		local LIBRARY = {}
+		print('running')
+		local TweenService = game:GetService("TweenService")
+
+		local function tween(a,b,c)
+			local d = TweenService:Create(a,b,c)
+			d:Play()
+			return d
+		end
+
+		local function EnableDrag(Frame)
+			local dragToggle
+			local dragSpeed = .25
+			local dragInput
+			local dragStart
+			local dragPos
+
+			local function updateInput(input)
+				local Delta = input.Position - dragStart
+				local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+				TweenService:Create(Frame, TweenInfo.new(.1), {Position = Position}):Play()
+			end
+
+			Frame.InputBegan:Connect(function(input)
+				if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+					dragToggle = true
+					dragStart = input.Position
+					startPos = Frame.Position
+					input.Changed:Connect(function()
+						if (input.UserInputState == Enum.UserInputState.End) then
+							dragToggle = false
+						end
+					end)
+				end
+			end)
+
+			Frame.InputChanged:Connect(function(input)
+				if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+					dragInput = input
+				end
+			end)
+
+			game:GetService("UserInputService").InputChanged:Connect(function(input)
+				if (input == dragInput and dragToggle) then
+					updateInput(input)
+				end
+			end)
+		end
+
+
+
+
+		local Frame = script.Parent.Frame
+		Frame.Size = UDim2.new(0,0,0,0)
+		script.Parent.Frame.Visible = false
+		function LIBRARY:AddList(title, list)
+			local newFrame = Frame:Clone()
+			newFrame.Name = title
+			newFrame.Parent = script.Parent
+			newFrame.Title.Text = title
+			newFrame.Visible = true
+
+			for i,v in pairs(list) do
+				local newobj = newFrame.Object:Clone()
+
+				newobj.Name = v
+				newobj.TextLabel.Text = v
+
+				newobj.Parent = newFrame.ScrollingFrame
+				newobj.Visible = true
+
+			end
+
+			EnableDrag(newFrame)
+
+			newFrame.Close.MouseButton1Click:Connect(function()
+				task.spawn(function()
+					local tw = tween(newFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0,0,0)})
+					tw.Completed:Wait()
+					newFrame:Destroy()
+				end)
+			end)
+
+			newFrame.Close.MouseEnter:Connect(function()
+				tween(newFrame.Close, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {TextColor3 = Color3.fromRGB(200,0,0)})
+			end)
+			newFrame.Close.MouseLeave:Connect(function()
+				tween(newFrame.Close, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {TextColor3 = Color3.fromRGB(200,200,200)})
+			end)
+
+			tween(newFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 253,0, 321)})
+
+
+		end
+
+		return LIBRARY
+
+	end;
+};
+
+return require(LISTLIB["11"]);

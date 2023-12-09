@@ -2703,13 +2703,7 @@ GANTENG_MODULES[GANTENG["11a"]] = {
 
 
 			-- Init LocalPlayerInfo
-			if Username == false then
-				LocalPlayerInfo.UserName.Text = LocalPlayer.DisplayName
-
-			elseif Username == true then
-				LocalPlayerInfo.UserName.Text = "@"..LocalPlayer.Name
-
-			end
+			LocalPlayerInfo.UserName.Text = "@"..LocalPlayer.Name
 
 			LocalPlayerInfo.Profile.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 

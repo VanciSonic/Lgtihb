@@ -3251,6 +3251,10 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 				end
 
+				if state == true then
+					callback(state)
+				end
+
 				newToggle.Frame.MouseEnter:Connect(function()
 					Tween(newToggle.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
 				end)

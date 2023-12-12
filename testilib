@@ -2656,7 +2656,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 		function LIBRARY:Init(name, image, requiredLoading, Username, socials)
 			local self = setmetatable({}, LIBRARY)
 			namehub = name
-			-- config
+			-- config setting save
 			if isfile(namehub..".json") then
 				config = HttpService:JSONDecode(readfile(namehub..".json"))
 				--print(config)

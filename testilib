@@ -3249,7 +3249,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				end
 
 				if state == true then
-					callback(state)
+					task.spawn(function()
+							callback(state)
+						end)
 				end
 
 				newToggle.Frame.MouseEnter:Connect(function()
@@ -3274,12 +3276,18 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						state = not state
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						callback(state)
+						task.spawn(function()
+							callback(state)
+						end)
 					elseif state == false then
 						state = not state
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						callback(state)
+						task.spawn(function()
+							callback(state)
+						end)
+						
+						
 					end
 
 				end)
@@ -3312,12 +3320,16 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						state = not state
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						callback(state)
+						task.spawn(function()
+							callback(state)
+						end)
 					elseif state == false then
 						state = not state
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						callback(state)
+						task.spawn(function()
+							callback(state)
+						end)
 					end
 				end
 
@@ -3326,12 +3338,16 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						state = bool
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						callback(state)
+						task.spawn(function()
+							callback(state)
+						end)
 					elseif bool == false then
 						state = bool
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						callback(state)
+						task.spawn(function()
+							callback(state)
+						end)
 					end
 				end
 
@@ -3353,7 +3369,10 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				end
 
 				if defaulttext ~= "" then
-					callback(defaulttext)
+
+					task.spawn(function()
+						callback(defaulttext)
+					end)
 				end
 
 				local newTextbox = ReservedTabs.Textbox:Clone()
@@ -3382,8 +3401,11 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				newTextbox.Frame.Textbox.FocusLost:Connect(function()
 					Tween(newTextbox.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
 					config.Objects[nametab][name] = newTextbox.Frame.Textbox.Text
-					callback(newTextbox.Frame.Textbox.Text)
-
+					
+					
+					task.spawn(function()
+						callback(newTextbox.Frame.Textbox.Text)
+					end)
 				end)
 
 				local Event
@@ -3474,7 +3496,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 								self.CurrentKey = input.KeyCode  -- Store the current key in the object
 								config.Objects[nametab][name] = input.KeyCode.Name
 								if triggerwhilebinding == true then
-									callback(input)
+									task.spawn(function()
+										callback(input)
+									end)
 								end
 							elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
 								input.UserInputType == Enum.UserInputType.MouseButton2 or
@@ -3489,7 +3513,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 								self.CurrentKey = input.UserInputType  -- Store the current key in the object
 								config.Objects[nametab][name] = input.KeyCode.Name
 								if triggerwhilebinding == true then
-									callback(input)
+									task.spawn(function()
+										callback(input)
+									end)
 								end
 							end
 						end)
@@ -3501,13 +3527,17 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						if input.UserInputType == Enum.UserInputType.Keyboard then
 							if input.KeyCode == TAB.CurrentKey then
 
-								callback(input)
+								task.spawn(function()
+									callback(input)
+								end)
 							end
 						elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
 							input.UserInputType == Enum.UserInputType.MouseButton2 or
 							input.UserInputType == Enum.UserInputType.MouseButton3 then
 							if input.UserInputType == TAB.CurrentKey then
-								callback(input)
+								task.spawn(function()
+									callback(input)
+								end)
 							end
 						end
 					end
@@ -3560,14 +3590,16 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				if config.Objects[nametab][name] ~= nil then
 
 					default = config.Objects[nametab][name]
-					callback(default)
-
 					
+					task.spawn(function()
+						callback(default)
+					end)
+
 				else
 					config.Objects[nametab][name] = tbl.default
 					default = tbl.default
 				end
-				
+
 
 
 				--config.Objects[nametab][name] = config.Objects[nametab][name] or default
@@ -3625,7 +3657,10 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 						Label.Text = perc
 						config.Objects[nametab][name] = perc
-						callback(perc, newSlider)
+
+						task.spawn(function()
+							callback(perc, newSlider)
+						end)
 
 						Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(Percent, 1) })
 					until MouseDown == false
@@ -3641,7 +3676,10 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 								Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(convertValueToScale(inputText), 1) })
 								config.Objects[nametab][name] = perc
-								callback(inputText, newSlider)
+
+								task.spawn(function()
+									callback(inputText, newSlider)
+								end)
 							end
 						end
 
@@ -3706,7 +3744,10 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 							Label.Text = tostring(int)
 							Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(convertValueToScale(inputText), 1) })
 							config.Objects[nametab][name] = config.Objects[nametab][name] or inputText
-							callback(inputText, newSlider)
+
+							task.spawn(function()
+								callback(inputText, newSlider)
+							end)
 						end
 					end
 				end
@@ -3724,12 +3765,17 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 				if config.Objects[nametab][name] then
 					default = config.Objects[nametab][name]
-					callback(default)
+
+					task.spawn(function()
+						callback(default)
+					end)
 				else
 					default = tbl.default or "None"
 					config.Objects[nametab][name] = default
 					if default ~= "None" then
-						callback(default)
+						task.spawn(function()
+							callback(default)
+						end)
 					end
 				end
 
@@ -3765,7 +3811,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						Toggle()
 						newDropdown.Frame.Select.Text = v
 						config.Objects[nametab][name] = v
-						callback(v)
+						task.spawn(function()
+							callback(v)
+						end)
 					end)
 
 					newOption.MouseEnter:Connect(function()
@@ -3825,7 +3873,10 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 							newOption.MouseButton1Click:Connect(function()
 								Toggle()
 								newDropdown.Frame.Select.Text = v
-								callback(v)
+
+								task.spawn(function()
+									callback(v)
+								end)
 							end)
 
 							newOption.MouseEnter:Connect(function()
@@ -3846,7 +3897,10 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						newOption.MouseButton1Click:Connect(function()
 							Toggle()
 							newDropdown.Frame.Select.Text = tbl
-							callback(tbl)
+
+							task.spawn(function()
+								callback(tbl)
+							end)
 						end)
 
 						newOption.MouseEnter:Connect(function()

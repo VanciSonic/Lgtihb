@@ -3250,6 +3250,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 				if state == true then
 					task.spawn(function()
+						task.wait(1)
 							callback(state)
 						end)
 				end
@@ -3371,6 +3372,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				if defaulttext ~= "" then
 
 					task.spawn(function()
+						task.wait(1)
 						callback(defaulttext)
 					end)
 				end
@@ -3592,6 +3594,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 					default = config.Objects[nametab][name]
 					
 					task.spawn(function()
+						task.wait(1)
 						callback(default)
 					end)
 
@@ -3767,6 +3770,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 					default = config.Objects[nametab][name]
 
 					task.spawn(function()
+						task.wait(1)
 						callback(default)
 					end)
 				else
@@ -3774,6 +3778,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 					config.Objects[nametab][name] = default
 					if default ~= "None" then
 						task.spawn(function()
+							task.wait(1)
 							callback(default)
 						end)
 					end

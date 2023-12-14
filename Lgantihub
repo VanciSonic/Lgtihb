@@ -2658,8 +2658,14 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 			namehub = name
 			-- config setting save
 			if isfile(namehub..".json") then
-				config = HttpService:JSONDecode(readfile(namehub..".json"))
-				--print(config)
+				local success, results = pcall(function()
+                                     config = HttpService:JSONDecode(readfile(namehub..".json"))
+				end)
+                                if not success then
+                                     warn("Error while reading config file Ganteng Hub.json, using default settings.")
+                                     config = {}
+				     config.Objects = {}
+                                end
 			else
 				config = {}
 				config.Objects = {}

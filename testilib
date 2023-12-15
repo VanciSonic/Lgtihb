@@ -2637,10 +2637,19 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 
 		local config 
+        
+        local function SaveConfig()
+            writefile(namehub..".json",HttpService:JSONEncode(config))
+        end
 
+        -- variable that stored all functions, this useful when closing the script/ui will stop all task
+        local TaskThreads = {}
 
-
-
+        local function StopAllThreads()
+            for i,v in ipairs(TaskThreads) do
+                v:Cancel()
+            end
+        end
 
 
 		local SideButtons = {}
@@ -2658,8 +2667,14 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 			namehub = name
 			-- config setting save
 			if isfile(namehub..".json") then
-				config = HttpService:JSONDecode(readfile(namehub..".json"))
-				--print(config)
+				local success, results = pcall(function()
+                                     config = HttpService:JSONDecode(readfile(namehub..".json"))
+				end)
+                                if not success then
+                                     warn("Error while reading config file Ganteng Hub.json, using default settings.")
+                                     config = {}
+				     config.Objects = {}
+                                end
 			else
 				config = {}
 				config.Objects = {}
@@ -2667,6 +2682,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 			config.Name = name
 
+            
 
 			script.Parent.Enabled = true
 			local discord = socials.discord
@@ -3249,10 +3265,11 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				end
 
 				if state == true then
-					task.spawn(function()
+                    TaskThreads[name] = task.spawn(function()
 						task.wait(1)
-							callback(state)
-						end)
+						callback(state)
+					end)
+					
 				end
 
 				newToggle.Frame.MouseEnter:Connect(function()
@@ -3277,15 +3294,17 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						state = not state
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						task.spawn(function()
+						TaskThreads[name] = task.spawn(function()
 							callback(state)
+                            SaveConfig()
 						end)
 					elseif state == false then
 						state = not state
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						task.spawn(function()
+						TaskThreads[name] = task.spawn(function()
 							callback(state)
+                            SaveConfig()
 						end)
 						
 						
@@ -3321,15 +3340,17 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						state = not state
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						task.spawn(function()
+						TaskThreads[name] = task.spawn(function()
 							callback(state)
+                            SaveConfig()
 						end)
 					elseif state == false then
 						state = not state
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						task.spawn(function()
+						TaskThreads[name] = task.spawn(function()
 							callback(state)
+                            SaveConfig()
 						end)
 					end
 				end
@@ -3339,15 +3360,17 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						state = bool
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						task.spawn(function()
+						TaskThreads[name] = task.spawn(function()
 							callback(state)
+                            SaveConfig()
 						end)
 					elseif bool == false then
 						state = bool
 						config.Objects[nametab][name] = state
 						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						task.spawn(function()
+						TaskThreads[name] = task.spawn(function()
 							callback(state)
+                            SaveConfig()
 						end)
 					end
 				end
@@ -3371,7 +3394,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 				if defaulttext ~= "" then
 
-					task.spawn(function()
+					TaskThreads[name] = task.spawn(function()
 						task.wait(1)
 						callback(defaulttext)
 					end)
@@ -3405,8 +3428,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 					config.Objects[nametab][name] = newTextbox.Frame.Textbox.Text
 					
 					
-					task.spawn(function()
+					TaskThreads[name] = task.spawn(function()
 						callback(newTextbox.Frame.Textbox.Text)
+                        SaveConfig()
 					end)
 				end)
 
@@ -3498,8 +3522,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 								self.CurrentKey = input.KeyCode  -- Store the current key in the object
 								config.Objects[nametab][name] = input.KeyCode.Name
 								if triggerwhilebinding == true then
-									task.spawn(function()
+									TaskThreads[name] = task.spawn(function()
 										callback(input)
+                                        SaveConfig()
 									end)
 								end
 							elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
@@ -3515,8 +3540,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 								self.CurrentKey = input.UserInputType  -- Store the current key in the object
 								config.Objects[nametab][name] = input.KeyCode.Name
 								if triggerwhilebinding == true then
-									task.spawn(function()
+									TaskThreads[name] = task.spawn(function()
 										callback(input)
+                                        SaveConfig()
 									end)
 								end
 							end
@@ -3529,16 +3555,18 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						if input.UserInputType == Enum.UserInputType.Keyboard then
 							if input.KeyCode == TAB.CurrentKey then
 
-								task.spawn(function()
+								TaskThreads[name] = task.spawn(function()
 									callback(input)
+                                    SaveConfig()
 								end)
 							end
 						elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
 							input.UserInputType == Enum.UserInputType.MouseButton2 or
 							input.UserInputType == Enum.UserInputType.MouseButton3 then
 							if input.UserInputType == TAB.CurrentKey then
-								task.spawn(function()
+								TaskThreads[name] = task.spawn(function()
 									callback(input)
+                                    SaveConfig()
 								end)
 							end
 						end
@@ -3593,7 +3621,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 					default = config.Objects[nametab][name]
 					
-					task.spawn(function()
+					TaskThreads[name] = task.spawn(function()
 						task.wait(1)
 						callback(default)
 					end)
@@ -3661,8 +3689,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						Label.Text = perc
 						config.Objects[nametab][name] = perc
 
-						task.spawn(function()
+						TaskThreads[name] = task.spawn(function()
 							callback(perc, newSlider)
+                            SaveConfig()
 						end)
 
 						Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(Percent, 1) })
@@ -3680,8 +3709,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 								Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(convertValueToScale(inputText), 1) })
 								config.Objects[nametab][name] = perc
 
-								task.spawn(function()
+								TaskThreads[name] = task.spawn(function()
 									callback(inputText, newSlider)
+                                    SaveConfig()
 								end)
 							end
 						end
@@ -3748,8 +3778,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 							Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(convertValueToScale(inputText), 1) })
 							config.Objects[nametab][name] = config.Objects[nametab][name] or inputText
 
-							task.spawn(function()
+							TaskThreads[name] = task.spawn(function()
 								callback(inputText, newSlider)
+                                SaveConfig()
 							end)
 						end
 					end
@@ -3769,17 +3800,19 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				if config.Objects[nametab][name] then
 					default = config.Objects[nametab][name]
 
-					task.spawn(function()
+					TaskThreads[name] = task.spawn(function()
 						task.wait(1)
 						callback(default)
+                        SaveConfig()
 					end)
 				else
 					default = tbl.default or "None"
 					config.Objects[nametab][name] = default
 					if default ~= "None" then
-						task.spawn(function()
+						TaskThreads[name] = task.spawn(function()
 							task.wait(1)
 							callback(default)
+                            SaveConfig()
 						end)
 					end
 				end
@@ -3816,8 +3849,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 						Toggle()
 						newDropdown.Frame.Select.Text = v
 						config.Objects[nametab][name] = v
-						task.spawn(function()
+						TaskThreads[name] = task.spawn(function()
 							callback(v)
+                            SaveConfig()
 						end)
 					end)
 
@@ -3879,8 +3913,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 								Toggle()
 								newDropdown.Frame.Select.Text = v
 
-								task.spawn(function()
+								TaskThreads[name] = task.spawn(function()
 									callback(v)
+                                    SaveConfig()
 								end)
 							end)
 
@@ -3903,8 +3938,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 							Toggle()
 							newDropdown.Frame.Select.Text = tbl
 
-							task.spawn(function()
+							TaskThreads[name] = task.spawn(function()
 								callback(tbl)
+                                SaveConfig()
 							end)
 						end)
 
@@ -3919,12 +3955,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				return self
 			end
 
-			task.spawn(function()
-				while true do
-					writefile(namehub..".json",HttpService:JSONEncode(config))
-					task.wait(1)
-				end
-			end)
+			
 
 			return TAB
 		end

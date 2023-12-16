@@ -3079,8 +3079,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 			
 		
 			for title, desc in pairs(list) do
-				local newCg = getRandomIndex(title, desc):Clone()
 				print('Added "'..title..':'..desc..'".')
+				local newCg = getRandomIndex(title, desc):Clone()
+				
 				newCg.Name = title
 				newCg.Parent = Landing.Changelogs.ScrollingFrame
 		

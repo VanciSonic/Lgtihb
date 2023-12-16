@@ -3067,25 +3067,33 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 			local generatedNumber = math.random(1, #ReservedChangelog:GetChildren())
 
-			for i,v in pairs(ReservedChangelog:GetChildren()) do
+			for i,v in ipairs(ReservedChangelog:GetChildren()) do
 				if i == generatedNumber then
-					return v
+					return v:Clone()
 				end
 			end
 		end
 
-		function LIBRARY:AddChangelog(list)
-			for title,desc in pairs(list) do
-				local newCg = getRandomIndex(title, desc):Clone()
-
+		local index = 1
+		function LIBRARY:AddChangelogs(list)
+			
+		
+			for title, desc in pairs(list) do
+				local newCg = getRandomIndex()
 				newCg.Name = title
 				newCg.Parent = Landing.Changelogs.ScrollingFrame
+		
+				-- Update properties
 				newCg.Title.Text = title
 				newCg.Description.Text = desc
 				newCg.Visible = true
-				
+		
+				-- Adjust position in the scrolling frame
+				newCg.LayoutOrder = index
+				index = index + 1
 			end
 		end
+		
 
 
 

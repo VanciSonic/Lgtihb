@@ -2,7 +2,7 @@
 local GANTENGLIB = {};
 
 -- GantengLib
-GANTENGLIB["1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
+GANTENGLIB["1"] = Instance.new("ScreenGui", game.CoreGui);
 GANTENGLIB["1"]["IgnoreGuiInset"] = true;
 GANTENGLIB["1"]["Enabled"] = false;
 GANTENGLIB["1"]["ScreenInsets"] = Enum.ScreenInsets.DeviceSafeInsets;

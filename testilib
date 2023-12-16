@@ -3078,11 +3078,11 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 		function LIBRARY:AddChangelog(list)
 			local order = {}
 			
-			for title, desc in pairs(list) do
+			for title, _ in pairs(list) do
 				table.insert(order, title)
 			end
 			
-			table.sort(order)  -- Sort the titles to maintain order
+			table.sort(order, function(a, b) return a > b end)  -- Sort in reverse order
 			
 			for _, title in ipairs(order) do
 				local desc = list[title]
@@ -3102,6 +3102,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				index = index + 1
 			end
 		end
+		
 		
 		
 

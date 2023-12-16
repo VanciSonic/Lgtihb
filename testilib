@@ -3075,6 +3075,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 		end
 
 		local index = 1
+		-- semoga bisa
 		function LIBRARY:AddChangelog(list)
 			local order = {}
 			

@@ -3069,7 +3069,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 			for i,v in ipairs(ReservedChangelog:GetChildren()) do
 				if i == generatedNumber then
-					return v:Clone()
+					return v
 				end
 			end
 		end
@@ -3079,7 +3079,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 			
 		
 			for title, desc in pairs(list) do
-				local newCg = getRandomIndex()
+				local newCg = getRandomIndex(title, desc):Clone()
 				newCg.Name = title
 				newCg.Parent = Landing.Changelogs.ScrollingFrame
 		

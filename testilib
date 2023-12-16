@@ -3080,7 +3080,6 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 		
 			for title, desc in pairs(list) do
 				print('Added "'..title..':'..desc..'".')
-				
 				local newCg = getRandomIndex(title, desc):Clone()
 				
 				newCg.Name = title

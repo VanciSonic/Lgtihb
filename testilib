@@ -2633,8 +2633,10 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 		local SavingConfig = false
 		if isfile("GHAutosave") then
 			if readfile("GHAutosave") == "true" then
+				Topbar.ToggleInfo.Toggle.Filler.Transparency = 0
 				SavingConfig = true
 			elseif readfile("GHAutosave") == "false" then
+				Topbar.ToggleInfo.Toggle.Filler.Transparency = 1
 				SavingConfig = false
 			end
 		end

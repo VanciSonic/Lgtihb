@@ -3076,25 +3076,33 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 		local index = 1
 		function LIBRARY:AddChangelog(list)
+			local order = {}
 			
-		
 			for title, desc in pairs(list) do
-				print('Added "'..title..':'..desc..'".')
+				table.insert(order, title)
+			end
+			
+			table.sort(order)  -- Sort the titles to maintain order
+			
+			for _, title in ipairs(order) do
+				local desc = list[title]
+				print('Added "' .. title .. ':' .. desc .. '".')
 				local newCg = getRandomIndex(title, desc):Clone()
 				
 				newCg.Name = title
 				newCg.Parent = Landing.Changelogs.ScrollingFrame
-		
+				
 				-- Update properties
 				newCg.Title.Text = title
 				newCg.Description.Text = desc
 				newCg.Visible = true
-		
+				
 				-- Adjust position in the scrolling frame
 				newCg.LayoutOrder = index
 				index = index + 1
 			end
 		end
+		
 		
 
 

@@ -2815,7 +2815,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 			end
 
 			EnableDrag(script.Parent.DropShadowHolder)
-
+			EnableDrag(GANTENGLIB["11b"])
 
 
 			-- Topbar menu functions
@@ -2866,6 +2866,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 			Topbar.ToggleInfo.MouseButton1Click:Connect(function()
 				SavingConfig = not SavingConfig
+				writefile("GHAutosave", tostring(SavingConfig))
 
 				if SavingConfig == true then
 					Tween(Topbar.ToggleInfo.Toggle.Filler, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})

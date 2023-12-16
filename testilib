@@ -2645,1332 +2645,1307 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 
 		local config 
-        
-        local function SaveConfig()
-            if SavingConfig == true Thickness
+
+		local function SaveConfig()
+			if SavingConfig == true then
 				writefile(namehub..".json",HttpService:JSONEncode(config))
-			end
-        end
-
-        -- variable that stored all functions, this useful when closing the script/ui will stop all task
-        local TaskThreads = {}
-
-        local function StopAllThreads()
-            for i,v in ipairs(TaskThreads) do
-                v:Cancel()
-            end
-        end
-
-
-		local SideButtons = {}
-		local MainTabs = {}
-		-- MAIN FUNCTION
-		local function Tween(instance, tweeninfo, propertyTable)
-			local tween = TweenService:Create(instance, tweeninfo, propertyTable)
-			tween:Play()
-			return tween
 		end
+	end
+
+	-- variable that stored all functions, this useful when closing the script/ui will stop all task
+	local TaskThreads = {}
+
+	local function StopAllThreads()
+		for i,v in ipairs(TaskThreads) do
+			v:Cancel()
+		end
+	end
 
 
-		function LIBRARY:Init(name, image, requiredLoading, Username, socials)
-			local self = setmetatable({}, LIBRARY)
-			namehub = name
-			-- config setting save
-			if isfile(namehub..".json") then
-				local success, results = pcall(function()
-                                     config = HttpService:JSONDecode(readfile(namehub..".json"))
-				end)
-                                if not success then
-                                     warn("Error while reading config file Ganteng Hub.json, using default settings.")
-                                     config = {}
-				     config.Objects = {}
-                                end
-			else
+	local SideButtons = {}
+	local MainTabs = {}
+	-- MAIN FUNCTION
+	local function Tween(instance, tweeninfo, propertyTable)
+		local tween = TweenService:Create(instance, tweeninfo, propertyTable)
+		tween:Play()
+		return tween
+	end
+
+
+	function LIBRARY:Init(name, image, requiredLoading, Username, socials)
+		local self = setmetatable({}, LIBRARY)
+		namehub = name
+		-- config setting save
+		if isfile(namehub..".json") then
+			local success, results = pcall(function()
+				config = HttpService:JSONDecode(readfile(namehub..".json"))
+			end)
+			if not success then
+				warn("Error while reading config file Ganteng Hub.json, using default settings.")
 				config = {}
 				config.Objects = {}
 			end
+		else
+			config = {}
+			config.Objects = {}
+		end
 
-			config.Name = name
-
-            
-
-			script.Parent.Enabled = true
-			local discord = socials.discord
-			local youtube = socials.youtube
-
-			Gui.Enabled =true
-			-- Setting names
-			GuiTitle.Text = name
+		config.Name = name
 
 
-			if requiredLoading == true then
-				Intro.Visible = true
-				local progressbar = Intro.ProgressBar
-				local fill = progressbar.Fill
-				local percentText = Intro.PercentProgress
-				local percent = 0
-				local intValue = Instance.new("IntValue")
 
-				task.spawn(function()
-					intValue:GetPropertyChangedSignal("Value"):Connect(function()
-						percentText.Text = intValue.Value.."%"
-					end)
+		script.Parent.Enabled = true
+		local discord = socials.discord
+		local youtube = socials.youtube
+
+		Gui.Enabled =true
+		-- Setting names
+		GuiTitle.Text = name
+
+
+		if requiredLoading == true then
+			Intro.Visible = true
+			local progressbar = Intro.ProgressBar
+			local fill = progressbar.Fill
+			local percentText = Intro.PercentProgress
+			local percent = 0
+			local intValue = Instance.new("IntValue")
+
+			task.spawn(function()
+				intValue:GetPropertyChangedSignal("Value"):Connect(function()
+					percentText.Text = intValue.Value.."%"
 				end)
+			end)
 
-				local function Open()
-					local tween = Tween(Intro,TweenInfo.new(1,Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(0,0)})
+			local function Open()
+				local tween = Tween(Intro,TweenInfo.new(1,Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(0,0)})
 
-					tween.Completed:Connect(function()
-						task.wait(0.2)
-						Intro.Visible = false
-					end)
+				tween.Completed:Connect(function()
+					task.wait(0.2)
+					Intro.Visible = false
+				end)
+			end
+
+			function self:SetProgress(intPercent)
+				percent = intPercent
+				if percent > 100 or percent < 0 then
+					error("Percent must between 0 - 100.")
 				end
+				local tween = Tween(fill, TweenInfo.new(.7, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(intPercent/100,1)})
+				Tween(intValue,TweenInfo.new(1,Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Value = percent})
 
-				function self:SetProgress(intPercent)
-					percent = intPercent
-					if percent > 100 or percent < 0 then
-						error("Percent must between 0 - 100.")
-					end
-					local tween = Tween(fill, TweenInfo.new(.7, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(intPercent/100,1)})
-					Tween(intValue,TweenInfo.new(1,Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Value = percent})
-
-					tween.Completed:Wait()
-					if percent >= 100 then
-						task.wait(.75)
-						Open()
-					end
-				end
-
-				function self:Finish()
-					local tween = Tween(fill, TweenInfo.new(.7, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(1,1)})
-					Tween(intValue,TweenInfo.new(1,Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Value = 100})
-					tween.Completed:Wait()
+				tween.Completed:Wait()
+				if percent >= 100 then
+					task.wait(.75)
 					Open()
 				end
-				function self:SetTimeOut(seconds)
-
-				end
 			end
 
+			function self:Finish()
+				local tween = Tween(fill, TweenInfo.new(.7, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(1,1)})
+				Tween(intValue,TweenInfo.new(1,Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Value = 100})
+				tween.Completed:Wait()
+				Open()
+			end
+			function self:SetTimeOut(seconds)
 
-			-- Init LocalPlayerInfo
-			LocalPlayerInfo.UserName.Text = "@"..LocalPlayer.Name
+			end
+		end
 
-			LocalPlayerInfo.Profile.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 
-			local function RefreshTime()
-				if Mainframe.Parent ~= nil then
-					LocalPlayerInfo.Time.Text =os.date("%H:%M:%S", os.time())
-					task.wait(.5)
-					RefreshTime()
-				end
+		-- Init LocalPlayerInfo
+		LocalPlayerInfo.UserName.Text = "@"..LocalPlayer.Name
+
+		LocalPlayerInfo.Profile.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+
+		local function RefreshTime()
+			if Mainframe.Parent ~= nil then
+				LocalPlayerInfo.Time.Text =os.date("%H:%M:%S", os.time())
+				task.wait(.5)
+				RefreshTime()
+			end
+		end
+
+		task.spawn(RefreshTime)
+
+
+
+
+		-- idk rest of them
+
+
+
+		local function EnableDrag(Frame)
+			local dragToggle
+			local dragSpeed = .25
+			local dragInput
+			local dragStart
+			local dragPos
+
+			local function updateInput(input)
+				local Delta = input.Position - dragStart
+				local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+				TweenService:Create(Frame, TweenInfo.new(.1), {Position = Position}):Play()
 			end
 
-			task.spawn(RefreshTime)
-
-
-
-
-			-- idk rest of them
-
-
-
-			local function EnableDrag(Frame)
-				local dragToggle
-				local dragSpeed = .25
-				local dragInput
-				local dragStart
-				local dragPos
-
-				local function updateInput(input)
-					local Delta = input.Position - dragStart
-					local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
-					TweenService:Create(Frame, TweenInfo.new(.1), {Position = Position}):Play()
-				end
-
-				Frame.InputBegan:Connect(function(input)
-					if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-						dragToggle = true
-						dragStart = input.Position
-						startPos = Frame.Position
-						input.Changed:Connect(function()
-							if (input.UserInputState == Enum.UserInputState.End) then
-								dragToggle = false
-							end
-						end)
-					end
-				end)
-
-				Frame.InputChanged:Connect(function(input)
-					if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-						dragInput = input
-					end
-				end)
-
-				game:GetService("UserInputService").InputChanged:Connect(function(input)
-					if (input == dragInput and dragToggle) then
-						updateInput(input)
-					end
-				end)
-			end
-
-			EnableDrag(script.Parent.DropShadowHolder)
-			EnableDrag(Gui.Icon)
-
-
-			-- Topbar menu functions
-			local timeout = false
-			Topbar.Move.MouseButton1Click:Connect(function()
-				if Maxxed == false and timeout == false then
-					Maxxed = true
-					timeout = true
-					-- tween pos the sidebar to non visible
-					Tween(SideBar, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.fromScale(-0.14, 0.5)})
-
-					-- tween pos to full
-					Tween(Mainside, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.fromScale(0, 0)})
-					Tween(Mainside, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(1,1)})
-
-
-					if Topbar.SearchBar.Visible == false then
-				--[[----------------------------
-				This for handling if searchbar not visible, applys as alternative.
-				----------------------------]]--
-						Tween(Topbar.Alternative, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.326, 0,0.474, 0)})
-					end
-
-
-					task.wait(0.25)
-					timeout = false
-				elseif Maxxed == true and timeout == false then
-					Maxxed = false
-					timeout = true
-					-- tween pos the sidebar to visible
-					Tween(SideBar, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.fromScale(0.14, 0.5)})
-
-					-- tween pos to full
-					Tween(Mainside, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.fromScale(0.281, 0)})
-					Tween(Mainside, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(0.719,1)})
-
-					if Topbar.SearchBar.Visible == false then
-				--[[----------------------------
-				This for handling if searchbar not visible, applys as alternative.
-				----------------------------]]--
-						Tween(Topbar.Alternative, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.326, 0,-0.474, 0)})
-					end
-
-					task.wait(0.25)
-					timeout = false
-				end
-			end)
-
-			Topbar.ToggleInfo.MouseButton1Click:Connect(function()
-				SavingConfig = not SavingConfig
-				writefile("GHAutosave", tostring(SavingConfig))
-
-				if SavingConfig == true then
-					Tween(Topbar.ToggleInfo.Toggle.Filler, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-				elseif SavingConfig == false then
-					Tween(Topbar.ToggleInfo.Toggle.Filler, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-				end
-			end)
-
-			-- Socials things
-			local YoutubeButton = Landing.Infos.Socials.Youtube
-			local DiscordButton = Landing.Infos.Socials.Discord
-
-			YoutubeButton.MouseEnter:Connect(function()
-				Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.504, 0,0.837, 0) })
-				Tween(YoutubeButton.UIGradient, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Rotation = 775 })
-			end)
-			YoutubeButton.MouseLeave:Connect(function()
-				Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.459, 0,0.674, 0) })
-				Tween(YoutubeButton.UIGradient, TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Rotation = 55 })
-
-				Tween(YoutubeButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 1.5})
-				Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
-			end)
-
-			YoutubeButton.MouseButton1Down:Connect(function()
-				Tween(YoutubeButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 0})
-				Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0.4})
-			end)
-			YoutubeButton.MouseButton1Up:Connect(function()
-				Tween(YoutubeButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 1.5})
-				Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
-			end)
-
-			YoutubeButton.MouseButton1Click:Connect(function()
-				setclipboard(youtube)
-			end)
-
-			DiscordButton.MouseEnter:Connect(function()
-				Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.504, 0,0.837, 0) })
-				Tween(DiscordButton.UIGradient, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Rotation = 775 })
-			end)
-			DiscordButton.MouseLeave:Connect(function()
-				Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.459, 0,0.674, 0) })
-				Tween(DiscordButton.UIGradient, TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Rotation = 55 })
-
-				Tween(DiscordButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 1.5})
-				Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
-			end)
-
-			DiscordButton.MouseButton1Down:Connect(function()
-				Tween(DiscordButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 0})
-				Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0.4})
-			end)
-			DiscordButton.MouseButton1Up:Connect(function()
-				Tween(DiscordButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 1.5})
-				Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
-			end)
-
-			DiscordButton.MouseButton1Click:Connect(function()
-				setclipboard(DiscordButton)
-			end)
-
-			-- TODO: i swear this so hard to make
-			Topbar.SearchBar.Visible = false
-
-			local originalProperty = {}
-			originalProperty.Tabs = {}
-			originalProperty.Item = {}
-			originalProperty.Indexed = false
-			local event
-
-			Topbar.SearchBar.Focused:Connect(function()
-				originalProperty.Indexed = true
-
-				event = Topbar.SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
-					Tabs.SearchedTab.Visible = true
-
-					for _, tab in pairs(Tabs:GetChildren()) do
-						if tab ~= Tabs.SearchedTab then
-							originalProperty.Tabs[tab.Name] = {}
-							originalProperty.Tabs[tab.Name].Visible = tab.Visible
-							tab.Visible = false
+			Frame.InputBegan:Connect(function(input)
+				if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+					dragToggle = true
+					dragStart = input.Position
+					startPos = Frame.Position
+					input.Changed:Connect(function()
+						if (input.UserInputState == Enum.UserInputState.End) then
+							dragToggle = false
 						end
+					end)
+				end
+			end)
+
+			Frame.InputChanged:Connect(function(input)
+				if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+					dragInput = input
+				end
+			end)
+
+			game:GetService("UserInputService").InputChanged:Connect(function(input)
+				if (input == dragInput and dragToggle) then
+					updateInput(input)
+				end
+			end)
+		end
+
+		EnableDrag(script.Parent.DropShadowHolder)
+		EnableDrag(Gui.Icon)
+
+
+		-- Topbar menu functions
+		local timeout = false
+		Topbar.Move.MouseButton1Click:Connect(function()
+			if Maxxed == false and timeout == false then
+				Maxxed = true
+				timeout = true
+				-- tween pos the sidebar to non visible
+				Tween(SideBar, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.fromScale(-0.14, 0.5)})
+
+				-- tween pos to full
+				Tween(Mainside, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.fromScale(0, 0)})
+				Tween(Mainside, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(1,1)})
+
+
+				if Topbar.SearchBar.Visible == false then
+				--[[----------------------------
+				This for handling if searchbar not visible, applys as alternative.
+				----------------------------]]--
+					Tween(Topbar.Alternative, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.326, 0,0.474, 0)})
+				end
+
+
+				task.wait(0.25)
+				timeout = false
+			elseif Maxxed == true and timeout == false then
+				Maxxed = false
+				timeout = true
+				-- tween pos the sidebar to visible
+				Tween(SideBar, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.fromScale(0.14, 0.5)})
+
+				-- tween pos to full
+				Tween(Mainside, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.fromScale(0.281, 0)})
+				Tween(Mainside, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Size = UDim2.fromScale(0.719,1)})
+
+				if Topbar.SearchBar.Visible == false then
+				--[[----------------------------
+				This for handling if searchbar not visible, applys as alternative.
+				----------------------------]]--
+					Tween(Topbar.Alternative, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.326, 0,-0.474, 0)})
+				end
+
+				task.wait(0.25)
+				timeout = false
+			end
+		end)
+
+		Topbar.ToggleInfo.MouseButton1Click:Connect(function()
+			SavingConfig = not SavingConfig
+			writefile("GHAutosave", tostring(SavingConfig))
+
+			if SavingConfig == true then
+				Tween(Topbar.ToggleInfo.Toggle.Filler, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+			elseif SavingConfig == false then
+				Tween(Topbar.ToggleInfo.Toggle.Filler, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+			end
+		end)
+
+		-- Socials things
+		local YoutubeButton = Landing.Infos.Socials.Youtube
+		local DiscordButton = Landing.Infos.Socials.Discord
+
+		YoutubeButton.MouseEnter:Connect(function()
+			Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.504, 0,0.837, 0) })
+			Tween(YoutubeButton.UIGradient, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Rotation = 775 })
+		end)
+		YoutubeButton.MouseLeave:Connect(function()
+			Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.459, 0,0.674, 0) })
+			Tween(YoutubeButton.UIGradient, TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Rotation = 55 })
+
+			Tween(YoutubeButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 1.5})
+			Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
+		end)
+
+		YoutubeButton.MouseButton1Down:Connect(function()
+			Tween(YoutubeButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 0})
+			Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0.4})
+		end)
+		YoutubeButton.MouseButton1Up:Connect(function()
+			Tween(YoutubeButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 1.5})
+			Tween(YoutubeButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
+		end)
+
+		YoutubeButton.MouseButton1Click:Connect(function()
+			setclipboard(youtube)
+		end)
+
+		DiscordButton.MouseEnter:Connect(function()
+			Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.504, 0,0.837, 0) })
+			Tween(DiscordButton.UIGradient, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Rotation = 775 })
+		end)
+		DiscordButton.MouseLeave:Connect(function()
+			Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.459, 0,0.674, 0) })
+			Tween(DiscordButton.UIGradient, TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Rotation = 55 })
+
+			Tween(DiscordButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 1.5})
+			Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
+		end)
+
+		DiscordButton.MouseButton1Down:Connect(function()
+			Tween(DiscordButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 0})
+			Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0.4})
+		end)
+		DiscordButton.MouseButton1Up:Connect(function()
+			Tween(DiscordButton.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Thickness = 1.5})
+			Tween(DiscordButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
+		end)
+
+		DiscordButton.MouseButton1Click:Connect(function()
+			setclipboard(DiscordButton)
+		end)
+
+		-- TODO: i swear this so hard to make
+		Topbar.SearchBar.Visible = false
+
+		local originalProperty = {}
+		originalProperty.Tabs = {}
+		originalProperty.Item = {}
+		originalProperty.Indexed = false
+		local event
+
+		Topbar.SearchBar.Focused:Connect(function()
+			originalProperty.Indexed = true
+
+			event = Topbar.SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
+				Tabs.SearchedTab.Visible = true
+
+				for _, tab in pairs(Tabs:GetChildren()) do
+					if tab ~= Tabs.SearchedTab then
+						originalProperty.Tabs[tab.Name] = {}
+						originalProperty.Tabs[tab.Name].Visible = tab.Visible
+						tab.Visible = false
 					end
+				end
 
-					-- Use an array to store the items in their original order
-					local originalItems = {}
+				-- Use an array to store the items in their original order
+				local originalItems = {}
 
-					for _, tab in pairs(Tabs:GetChildren()) do
-						if tab ~= Tabs.SearchedTab then
-							for _, item in pairs(tab:GetChildren()) do
-								if item:IsA("Frame") and item:FindFirstChild("Frame") and not item:GetAttribute("Label") then
-									if string.find(string.lower(item.Frame.TextLabel.Text), string.lower(Topbar.SearchBar.Text)) then
-										originalProperty.Item[item.Name] = {}
-										originalProperty.Item[item.Name]["Parent"] = item.Parent
-										table.insert(originalItems, item)
-									end
+				for _, tab in pairs(Tabs:GetChildren()) do
+					if tab ~= Tabs.SearchedTab then
+						for _, item in pairs(tab:GetChildren()) do
+							if item:IsA("Frame") and item:FindFirstChild("Frame") and not item:GetAttribute("Label") then
+								if string.find(string.lower(item.Frame.TextLabel.Text), string.lower(Topbar.SearchBar.Text)) then
+									originalProperty.Item[item.Name] = {}
+									originalProperty.Item[item.Name]["Parent"] = item.Parent
+									table.insert(originalItems, item)
 								end
 							end
 						end
 					end
+				end
 
-					-- Reparent items in their original order
-					for _, item in ipairs(originalItems) do
-						item.Parent = Tabs.SearchedTab
-					end
-				end)
-			end)
-
-			Topbar.SearchBar.FocusLost:Connect(function()
-				if originalProperty.Indexed == true then
-					Tabs.SearchedTab.Visible = false
-
-					for _, tab in pairs(Tabs:GetChildren()) do
-						if tab ~= Tabs.SearchedTab then
-							tab.Visible = originalProperty.Tabs[tab.Name].Visible
-						end
-					end
-
-					for _, item in pairs(Tabs.SearchedTab:GetChildren()) do
-						if item:IsA("Frame") then
-							item.Parent = originalProperty.Item[item.Name].Parent
-						end
-					end
-
-					originalProperty.Indexed = false
+				-- Reparent items in their original order
+				for _, item in ipairs(originalItems) do
+					item.Parent = Tabs.SearchedTab
 				end
 			end)
+		end)
+
+		Topbar.SearchBar.FocusLost:Connect(function()
+			if originalProperty.Indexed == true then
+				Tabs.SearchedTab.Visible = false
+
+				for _, tab in pairs(Tabs:GetChildren()) do
+					if tab ~= Tabs.SearchedTab then
+						tab.Visible = originalProperty.Tabs[tab.Name].Visible
+					end
+				end
+
+				for _, item in pairs(Tabs.SearchedTab:GetChildren()) do
+					if item:IsA("Frame") then
+						item.Parent = originalProperty.Item[item.Name].Parent
+					end
+				end
+
+				originalProperty.Indexed = false
+			end
+		end)
 
 
 
 
 
-			Topbar.Minimize.MouseButton1Click:Connect(function()
-				local twen = Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0,0,0,0)})
-				Mainframe.Parent.Parent.Icon.Visible = true
-				twen.Completed:Wait()
-				Mainframe.Parent.Visible = false
-			end)
+		Topbar.Minimize.MouseButton1Click:Connect(function()
+			local twen = Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0,0,0,0)})
+			Mainframe.Parent.Parent.Icon.Visible = true
+			twen.Completed:Wait()
+			Mainframe.Parent.Visible = false
+		end)
 
-			Topbar.Close.MouseButton1Click:Connect(function()
-				Warning.Visible = true
-				Warning.Size = UDim2.new(0,0,0,0)
-				Tween(Warning, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(1,0,1,0)})
-			end)
+		Topbar.Close.MouseButton1Click:Connect(function()
+			Warning.Visible = true
+			Warning.Size = UDim2.new(0,0,0,0)
+			Tween(Warning, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(1,0,1,0)})
+		end)
 
-			Mainframe.Parent.Parent.Icon.Icon.MouseButton1Click:Connect(function()
-				Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0, 506,0, 296)})
-				Mainframe.Parent.Parent.Icon.Visible = false
-				Mainframe.Parent.Visible = true
-			end)
-
-
+		Mainframe.Parent.Parent.Icon.Icon.MouseButton1Click:Connect(function()
+			Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0, 506,0, 296)})
+			Mainframe.Parent.Parent.Icon.Visible = false
+			Mainframe.Parent.Visible = true
+		end)
 
 
 
-			-- warning handler
-
-			Warning.Yes.MouseButton1Click:Connect(function()
-				local twen = Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0,0,0,0)})
-				twen.Completed:Wait()
-				script.Parent:Destroy()
-			end)
-
-			Warning.Yes.MouseEnter:Connect(function()
-				Tween(Warning.Yes, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(45,45,45)})
-			end)
-			Warning.Yes.MouseLeave:Connect(function()
-				Tween(Warning.Yes.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 1})
-				Tween(Warning.Yes, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(35,35,35)})
-			end)
-
-			Warning.Yes.MouseButton1Down:Connect(function()
-				Tween(Warning.Yes.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 0})
-			end)
-			Warning.Yes.MouseButton1Up:Connect(function()
-				Tween(Warning.Yes.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 1})
-			end)
-
-			Warning.No.MouseButton1Click:Connect(function()
-				local twen = Tween(Warning, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0,0,0,0)})
-				twen.Completed:Wait()
-				Warning.Visible = false
-			end)
-
-			Warning.No.MouseEnter:Connect(function()
-				Tween(Warning.No, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(45,45,45)})
-			end)
-			Warning.No.MouseLeave:Connect(function()
-				Tween(Warning.No.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 1})
-				Tween(Warning.No, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(35,35,35)})
-			end)
-
-			Warning.No.MouseButton1Down:Connect(function()
-				Tween(Warning.No.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 0})
-			end)
-			Warning.No.MouseButton1Up:Connect(function()
-				Tween(Warning.No.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 1})
-			end)
 
 
+		-- warning handler
+
+		Warning.Yes.MouseButton1Click:Connect(function()
+			local twen = Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0,0,0,0)})
+			twen.Completed:Wait()
+			script.Parent:Destroy()
+		end)
+
+		Warning.Yes.MouseEnter:Connect(function()
+			Tween(Warning.Yes, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(45,45,45)})
+		end)
+		Warning.Yes.MouseLeave:Connect(function()
+			Tween(Warning.Yes.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 1})
+			Tween(Warning.Yes, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(35,35,35)})
+		end)
+
+		Warning.Yes.MouseButton1Down:Connect(function()
+			Tween(Warning.Yes.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 0})
+		end)
+		Warning.Yes.MouseButton1Up:Connect(function()
+			Tween(Warning.Yes.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 1})
+		end)
+
+		Warning.No.MouseButton1Click:Connect(function()
+			local twen = Tween(Warning, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0,0,0,0)})
+			twen.Completed:Wait()
+			Warning.Visible = false
+		end)
+
+		Warning.No.MouseEnter:Connect(function()
+			Tween(Warning.No, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(45,45,45)})
+		end)
+		Warning.No.MouseLeave:Connect(function()
+			Tween(Warning.No.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 1})
+			Tween(Warning.No, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(35,35,35)})
+		end)
+
+		Warning.No.MouseButton1Down:Connect(function()
+			Tween(Warning.No.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 0})
+		end)
+		Warning.No.MouseButton1Up:Connect(function()
+			Tween(Warning.No.UIStroke, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Transparency = 1})
+		end)
+
+
+
+		return self
+	end
+
+	function getRandomIndex(a,b)
+		local str = a..b
+		math.randomseed(#str)
+
+		local generatedNumber = math.random(1, #ReservedChangelog:GetChildren())
+
+		for i,v in ipairs(ReservedChangelog:GetChildren()) do
+			if i == generatedNumber then
+				return v
+			end
+		end
+	end
+
+	local index = 1
+	function LIBRARY:AddChangelog(list)
+		local order = {}
+
+		for title, desc in pairs(list) do
+			table.insert(order, title)
+		end
+
+		table.sort(order)  -- Sort the titles to maintain order
+
+		for _, title in ipairs(order) do
+			local desc = list[title]
+			print('Added "' .. title .. ':' .. desc .. '".')
+			local newCg = getRandomIndex(title, desc):Clone()
+
+			newCg.Name = title
+			newCg.Parent = Landing.Changelogs.ScrollingFrame
+
+			-- Update properties
+			newCg.Title.Text = title
+			newCg.Description.Text = desc
+			newCg.Visible = true
+
+			-- Adjust position in the scrolling frame
+			newCg.LayoutOrder = index
+			index = index + 1
+		end
+	end
+
+
+
+
+
+	function LIBRARY:AddTab(name, icon)
+		local TAB = setmetatable({}, LIBRARY)
+
+
+		if not config.Objects[name] then
+			config.Objects[name] = {}
+		end
+
+		local nametab = name
+
+
+
+		local newButtonTab = Reserved.ButtonFrame:Clone()
+		local newTab = Reserved.ScrollingTab:Clone()
+
+		SideButtons[name] = newButtonTab
+		MainTabs[name] = newTab
+
+		newButtonTab.Name = name
+		newButtonTab.Parent = SideBar.Buttons
+		newButtonTab.Visible = true
+
+		newTab.Name = name
+		newTab.Parent = Tabs
+
+		newButtonTab.ButtonFrame.TextButton.Text = name
+
+		newButtonTab.ButtonFrame.BackgroundTransparency = 1
+		newButtonTab.ButtonFrame.ImageFrame.ImageLabel.Image = icon
+		newButtonTab.ButtonFrame.TextButton.Text = name
+		newButtonTab.ButtonFrame.MouseButton1Click:Connect(function()
+			Topbar.Alternative.TextLabel.Text = name
+			Landing.Visible = false
+			newTab.Visible = true
+			Tween(newButtonTab.ButtonFrame, TweenInfo.new(0.25), { BackgroundTransparency = 0 })
+			for i,v in pairs(SideButtons) do
+				if v.Name ~= newButtonTab.Name then
+					Tween(v.ButtonFrame, TweenInfo.new(0.25), { BackgroundTransparency = 1 })
+				end
+			end
+			for i,v in pairs(MainTabs) do
+				if v.Name ~= newButtonTab.Name then
+					v.Visible = false
+				end
+			end
+		end)
+		-- THE INSIDES
+
+		function TAB:AddLabel(name)
+			local self = setmetatable({}, TAB)
+
+			local newLabel = ReservedTabs.Label:Clone()
+
+			newLabel.Name = name
+			newLabel.Parent = newTab
+			newLabel.Visible = true
+			newLabel.Frame.TextLabel.Text = name
+
+
+			function self:Set(text)
+
+				newLabel.Frame.TextLabel.Text = text
+			end
 
 			return self
 		end
 
-		function getRandomIndex(a,b)
-			local str = a..b
-			math.randomseed(#str)
+		function TAB:AddLine(name)
+			local newLine = ReservedTabs.Border:Clone()
 
-			local generatedNumber = math.random(1, #ReservedChangelog:GetChildren())
-
-			for i,v in ipairs(ReservedChangelog:GetChildren()) do
-				if i == generatedNumber then
-					return v
-				end
-			end
+			newLine.Name = name or newLine.Name
+			newLine.Parent = newTab
+			newLine.Visible = true
 		end
 
-		local index = 1
-		function LIBRARY:AddChangelog(list)
-			local order = {}
-			
-			for title, desc in pairs(list) do
-				table.insert(order, title)
-			end
-			
-			table.sort(order)  -- Sort the titles to maintain order
-			
-			for _, title in ipairs(order) do
-				local desc = list[title]
-				print('Added "' .. title .. ':' .. desc .. '".')
-				local newCg = getRandomIndex(title, desc):Clone()
-				
-				newCg.Name = title
-				newCg.Parent = Landing.Changelogs.ScrollingFrame
-				
-				-- Update properties
-				newCg.Title.Text = title
-				newCg.Description.Text = desc
-				newCg.Visible = true
-				
-				-- Adjust position in the scrolling frame
-				newCg.LayoutOrder = index
-				index = index + 1
-			end
+		function TAB:AddSeperator(name)
+			local newLine = ReservedTabs.Seperator:Clone()
+
+			newLine.Name = name or newLine.Name
+			newLine.Parent = newTab
+			newLine.Visible = true
+
+			newLine.TextLabel.Text = name
 		end
-		
-		
 
 
+		function TAB:AddButton(name, desc, callback)
+			local self = setmetatable({}, TAB)
+			local newButton = ReservedTabs.Button:Clone()
 
-		function LIBRARY:AddTab(name, icon)
-			local TAB = setmetatable({}, LIBRARY)
+			newButton.Name = name
+			newButton.Parent = newTab
+			newButton.Visible = true
 
+			newButton.Frame.TextLabel.Text = name
 
-			if not config.Objects[name] then
-				config.Objects[name] = {}
+			function self:Set(text)
+				newButton.Frame.TextLabel.Text = text
 			end
 
-			local nametab = name
+			newButton.Frame.MouseEnter:Connect(function()
+				Tween(newButton.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+			end)
+
+			newButton.Frame.MouseLeave:Connect(function()
+				Tween(newButton.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
+				Tween(newButton.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+			end)
 
 
+			newButton.Frame.MouseButton1Down:Connect(function()
+				Tween(newButton.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+			end)
+			newButton.Frame.MouseButton1Up:Connect(function()
+				Tween(newButton.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+			end)
 
-			local newButtonTab = Reserved.ButtonFrame:Clone()
-			local newTab = Reserved.ScrollingTab:Clone()
+			newButton.Frame.MouseButton1Click:Connect(callback)
 
-			SideButtons[name] = newButtonTab
-			MainTabs[name] = newTab
+			local Event
 
-			newButtonTab.Name = name
-			newButtonTab.Parent = SideBar.Buttons
-			newButtonTab.Visible = true
+			newButton.Frame.MouseEnter:Connect(function(x,y)
+				if ShowInfo == true then
+					InfoFrame.Visible = true
 
-			newTab.Name = name
-			newTab.Parent = Tabs
+					InfoFrame.Title.Text = name
+					InfoFrame.Description.Text = desc
+					InfoFrame.Position = UDim2.fromOffset(x,y)
 
-			newButtonTab.ButtonFrame.TextButton.Text = name
-
-			newButtonTab.ButtonFrame.BackgroundTransparency = 1
-			newButtonTab.ButtonFrame.ImageFrame.ImageLabel.Image = icon
-			newButtonTab.ButtonFrame.TextButton.Text = name
-			newButtonTab.ButtonFrame.MouseButton1Click:Connect(function()
-				Topbar.Alternative.TextLabel.Text = name
-				Landing.Visible = false
-				newTab.Visible = true
-				Tween(newButtonTab.ButtonFrame, TweenInfo.new(0.25), { BackgroundTransparency = 0 })
-				for i,v in pairs(SideButtons) do
-					if v.Name ~= newButtonTab.Name then
-						Tween(v.ButtonFrame, TweenInfo.new(0.25), { BackgroundTransparency = 1 })
-					end
-				end
-				for i,v in pairs(MainTabs) do
-					if v.Name ~= newButtonTab.Name then
-						v.Visible = false
-					end
+					Event = newButton.Frame.MouseMoved:Connect(function(x,y)
+						Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
+					end)
 				end
 			end)
-			-- THE INSIDES
-
-			function TAB:AddLabel(name)
-				local self = setmetatable({}, TAB)
-
-				local newLabel = ReservedTabs.Label:Clone()
-
-				newLabel.Name = name
-				newLabel.Parent = newTab
-				newLabel.Visible = true
-				newLabel.Frame.TextLabel.Text = name
-
-
-				function self:Set(text)
-
-					newLabel.Frame.TextLabel.Text = text
+			newButton.Frame.MouseLeave:Connect(function()
+				if ShowInfo == true then
+					InfoFrame.Visible = false
+					Event:Disconnect()
 				end
-
-				return self
-			end
-
-			function TAB:AddLine(name)
-				local newLine = ReservedTabs.Border:Clone()
-
-				newLine.Name = name or newLine.Name
-				newLine.Parent = newTab
-				newLine.Visible = true
-			end
-
-			function TAB:AddSeperator(name)
-				local newLine = ReservedTabs.Seperator:Clone()
-
-				newLine.Name = name or newLine.Name
-				newLine.Parent = newTab
-				newLine.Visible = true
-
-				newLine.TextLabel.Text = name
-			end
+			end)
+			return self
+		end
 
 
-			function TAB:AddButton(name, desc, callback)
-				local self = setmetatable({}, TAB)
-				local newButton = ReservedTabs.Button:Clone()
+		function TAB:AddToggle(name, desc, tbl, callback)
+			local self = setmetatable({}, TAB)
+			local newToggle = ReservedTabs.Toggle:Clone()
 
-				newButton.Name = name
-				newButton.Parent = newTab
-				newButton.Visible = true
+			local state = false
 
-				newButton.Frame.TextLabel.Text = name
+			if config.Objects[nametab][name] ~= nil then
+				state = config.Objects[nametab][name]
 
-				function self:Set(text)
-					newButton.Frame.TextLabel.Text = text
-				end
-
-				newButton.Frame.MouseEnter:Connect(function()
-					Tween(newButton.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-				end)
-
-				newButton.Frame.MouseLeave:Connect(function()
-					Tween(newButton.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
-					Tween(newButton.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-				end)
-
-
-				newButton.Frame.MouseButton1Down:Connect(function()
-					Tween(newButton.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-				end)
-				newButton.Frame.MouseButton1Up:Connect(function()
-					Tween(newButton.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-				end)
-
-				newButton.Frame.MouseButton1Click:Connect(callback)
-
-				local Event
-
-				newButton.Frame.MouseEnter:Connect(function(x,y)
-					if ShowInfo == true then
-						InfoFrame.Visible = true
-
-						InfoFrame.Title.Text = name
-						InfoFrame.Description.Text = desc
-						InfoFrame.Position = UDim2.fromOffset(x,y)
-
-						Event = newButton.Frame.MouseMoved:Connect(function(x,y)
-							Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
-						end)
-					end
-				end)
-				newButton.Frame.MouseLeave:Connect(function()
-					if ShowInfo == true then
-						InfoFrame.Visible = false
-						Event:Disconnect()
-					end
-				end)
-				return self
-			end
-
-
-			function TAB:AddToggle(name, desc, tbl, callback)
-				local self = setmetatable({}, TAB)
-				local newToggle = ReservedTabs.Toggle:Clone()
-
-				local state = false
-
-				if config.Objects[nametab][name] ~= nil then
-					state = config.Objects[nametab][name]
-
+			else
+				if type(tbl) == "table" then
+					state = tbl.state
+				elseif type(tbl) == "boolean" then
+					state = tbl
 				else
-					if type(tbl) == "table" then
-						state = tbl.state
-					elseif type(tbl) == "boolean" then
-						state = tbl
-					else
-						state = tbl
-					end
-
-					config.Objects[nametab][name] =state
+					state = tbl
 				end
 
-				newToggle.Name = name
-				newToggle.Parent = newTab
-				newToggle.Visible = true
+				config.Objects[nametab][name] =state
+			end
 
-				newToggle.Frame.TextLabel.Text = name
+			newToggle.Name = name
+			newToggle.Parent = newTab
+			newToggle.Visible = true
 
-				if not state then
-					newToggle.Frame.Toggle.Filler.Transparency = 1
+			newToggle.Frame.TextLabel.Text = name
 
-				end
+			if not state then
+				newToggle.Frame.Toggle.Filler.Transparency = 1
 
+			end
+
+			if state == true then
+				TaskThreads[name] = task.spawn(function()
+					task.wait(1)
+					callback(state)
+				end)
+
+			end
+
+			newToggle.Frame.MouseEnter:Connect(function()
+				Tween(newToggle.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+			end)
+
+			newToggle.Frame.MouseLeave:Connect(function()
+				Tween(newToggle.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
+				Tween(newToggle.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+			end)
+
+
+			newToggle.Frame.MouseButton1Down:Connect(function()
+				Tween(newToggle.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+			end)
+			newToggle.Frame.MouseButton1Up:Connect(function()
+				Tween(newToggle.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+			end)
+
+			newToggle.Frame.MouseButton1Click:Connect(function()
 				if state == true then
-                    TaskThreads[name] = task.spawn(function()
-						task.wait(1)
+					state = not state
+					config.Objects[nametab][name] = state
+					Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+					TaskThreads[name] = task.spawn(function()
 						callback(state)
+						SaveConfig()
 					end)
-					
+				elseif state == false then
+					state = not state
+					config.Objects[nametab][name] = state
+					Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+					TaskThreads[name] = task.spawn(function()
+						callback(state)
+						SaveConfig()
+					end)
+
+
 				end
 
-				newToggle.Frame.MouseEnter:Connect(function()
-					Tween(newToggle.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-				end)
-
-				newToggle.Frame.MouseLeave:Connect(function()
-					Tween(newToggle.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
-					Tween(newToggle.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-				end)
+			end)
 
 
-				newToggle.Frame.MouseButton1Down:Connect(function()
-					Tween(newToggle.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-				end)
-				newToggle.Frame.MouseButton1Up:Connect(function()
-					Tween(newToggle.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-				end)
+			local Event
 
-				newToggle.Frame.MouseButton1Click:Connect(function()
-					if state == true then
-						state = not state
-						config.Objects[nametab][name] = state
-						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						TaskThreads[name] = task.spawn(function()
-							callback(state)
-                            SaveConfig()
-						end)
-					elseif state == false then
-						state = not state
-						config.Objects[nametab][name] = state
-						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						TaskThreads[name] = task.spawn(function()
-							callback(state)
-                            SaveConfig()
-						end)
-						
-						
-					end
+			newToggle.Frame.MouseEnter:Connect(function(x,y)
+				if ShowInfo == true then
+					InfoFrame.Visible = true
 
-				end)
+					InfoFrame.Title.Text = name
+					InfoFrame.Description.Text = desc
+					InfoFrame.Position = UDim2.fromOffset(x,y)
 
-
-				local Event
-
-				newToggle.Frame.MouseEnter:Connect(function(x,y)
-					if ShowInfo == true then
-						InfoFrame.Visible = true
-
-						InfoFrame.Title.Text = name
-						InfoFrame.Description.Text = desc
-						InfoFrame.Position = UDim2.fromOffset(x,y)
-
-						Event = newToggle.Frame.MouseMoved:Connect(function(x,y)
-							Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
-						end)
-					end
-				end)
-				newToggle.Frame.MouseLeave:Connect(function()
-					if ShowInfo == true then
-						InfoFrame.Visible = false
-						Event:Disconnect()
-					end
-				end)
-
-				function self:Toggle()
-					if state == true then
-						state = not state
-						config.Objects[nametab][name] = state
-						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						TaskThreads[name] = task.spawn(function()
-							callback(state)
-                            SaveConfig()
-						end)
-					elseif state == false then
-						state = not state
-						config.Objects[nametab][name] = state
-						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						TaskThreads[name] = task.spawn(function()
-							callback(state)
-                            SaveConfig()
-						end)
-					end
+					Event = newToggle.Frame.MouseMoved:Connect(function(x,y)
+						Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
+					end)
 				end
-
-				function self:Set(bool)
-					if bool == true then
-						state = bool
-						config.Objects[nametab][name] = state
-						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						TaskThreads[name] = task.spawn(function()
-							callback(state)
-                            SaveConfig()
-						end)
-					elseif bool == false then
-						state = bool
-						config.Objects[nametab][name] = state
-						Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						TaskThreads[name] = task.spawn(function()
-							callback(state)
-                            SaveConfig()
-						end)
-					end
+			end)
+			newToggle.Frame.MouseLeave:Connect(function()
+				if ShowInfo == true then
+					InfoFrame.Visible = false
+					Event:Disconnect()
 				end
+			end)
 
-				return self
+			function self:Toggle()
+				if state == true then
+					state = not state
+					config.Objects[nametab][name] = state
+					Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+					TaskThreads[name] = task.spawn(function()
+						callback(state)
+						SaveConfig()
+					end)
+				elseif state == false then
+					state = not state
+					config.Objects[nametab][name] = state
+					Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+					TaskThreads[name] = task.spawn(function()
+						callback(state)
+						SaveConfig()
+					end)
+				end
 			end
 
-			function TAB:AddTextbox(name, desc, tbl, callback)
-				local self = setmetatable({}, TAB)
-
-				local placeholdertext = tbl.placeholdertext
-				local defaulttext
-				local clearonfocus = tbl.clearonfocus
-
-				if config.Objects[nametab][name] then
-					defaulttext = config.Objects[nametab][name]
-				else
-					defaulttext = tbl.defaulttext
-					config.Objects[nametab][name] = defaulttext
-				end
-
-				if defaulttext ~= "" then
-
+			function self:Set(bool)
+				if bool == true then
+					state = bool
+					config.Objects[nametab][name] = state
+					Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
 					TaskThreads[name] = task.spawn(function()
-						task.wait(1)
-						callback(defaulttext)
+						callback(state)
+						SaveConfig()
+					end)
+				elseif bool == false then
+					state = bool
+					config.Objects[nametab][name] = state
+					Tween(newToggle.Frame.Toggle.Filler, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+					TaskThreads[name] = task.spawn(function()
+						callback(state)
+						SaveConfig()
 					end)
 				end
-
-				local newTextbox = ReservedTabs.Textbox:Clone()
-				newTextbox.Parent = newTab
-				newTextbox.Name = name
-				newTextbox.Visible = true
-
-				newTextbox.Frame.Textbox.PlaceholderText = placeholdertext or ""
-				newTextbox.Frame.Textbox.Text = defaulttext or ""
-				newTextbox.Frame.Textbox.ClearTextOnFocus = clearonfocus or true
-				newTextbox.Frame.TextLabel.Text = name
-
-				newTextbox.Frame.MouseEnter:Connect(function()
-					Tween(newTextbox.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-				end)
-
-				newTextbox.Frame.MouseLeave:Connect(function()
-					Tween(newTextbox.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
-
-				end)
-
-				newTextbox.Frame.Textbox.Focused:Connect(function()
-					Tween(newTextbox.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-				end)
-
-				newTextbox.Frame.Textbox.FocusLost:Connect(function()
-					Tween(newTextbox.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-					config.Objects[nametab][name] = newTextbox.Frame.Textbox.Text
-					
-					
-					TaskThreads[name] = task.spawn(function()
-						callback(newTextbox.Frame.Textbox.Text)
-                        SaveConfig()
-					end)
-				end)
-
-				local Event
-
-				newTextbox.Frame.MouseEnter:Connect(function(x,y)
-					if ShowInfo == true then
-						InfoFrame.Visible = true
-
-						InfoFrame.Title.Text = name
-						InfoFrame.Description.Text = desc
-						InfoFrame.Position = UDim2.fromOffset(x,y)
-
-						Event = newTextbox.Frame.MouseMoved:Connect(function(x,y)
-							Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
-						end)
-					end
-				end)
-				newTextbox.Frame.MouseLeave:Connect(function()
-					if ShowInfo == true then
-						InfoFrame.Visible = false
-						Event:Disconnect()
-					end
-				end)
-
-				function self:Set(text)
-					newTextbox.Frame.Textbox.Text = text
-					config.Objects[nametab][name] = config.Objects[nametab][name] or newTextbox.Frame.Textbox.Text
-				end
-
-				return self
 			end
 
-			function TAB:AddKeybind(name, desc, tbl, callback)
-				local defaultkey
+			return self
+		end
 
-				if config.Objects[nametab][name] then
-					if config.Objects[nametab][name]:find("MouseButton") and type(config.Objects[nametab][name]) == "string" then
-						defaultkey = Enum.UserInputType[config.Objects[nametab][name]]
-					elseif not config.Objects[nametab][name]:find("MouseButton") and type(config.Objects[nametab][name]) == "string" then
-						defaultkey = Enum.KeyCode[config.Objects[nametab][name]]
-					end
-				else
-					defaultkey = tbl.defaultkey
-				end
+		function TAB:AddTextbox(name, desc, tbl, callback)
+			local self = setmetatable({}, TAB)
 
-				local triggerwhilebinding = tbl.triggerwhilebinding
-				local newKey = ReservedTabs.Keybind:Clone()
-				local key
+			local placeholdertext = tbl.placeholdertext
+			local defaulttext
+			local clearonfocus = tbl.clearonfocus
 
+			if config.Objects[nametab][name] then
+				defaulttext = config.Objects[nametab][name]
+			else
+				defaulttext = tbl.defaulttext
+				config.Objects[nametab][name] = defaulttext
+			end
 
+			if defaulttext ~= "" then
 
-				local listening = false
-				local event
-
-				key = defaultkey or nil
-				self.CurrentKey = key
-
-				newKey.Name = name
-				newKey.Parent = newTab
-				newKey.Visible = true
-
-				config.Objects[nametab][name] = defaultkey.Name
-
-				if self.CurrentKey == Enum then
-					config.Objects[nametab][name] = Enum.KeyCode[config.Objects[nametab][name]] or defaultkey.Name
-				end
-
-
-
-
-
-				newKey.Frame.TextLabel.Text = name
-
-				local match = defaultkey.Name:match("MouseButton(%d+)")
-				newKey.Frame.Bind.Text = (match and "MB" .. match) or defaultkey.Name or "None"
-
-				newKey.Frame.Bind.MouseButton1Click:Connect(function()
-					if listening == false then
-						listening = true
-						Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						event = UserInputService.InputBegan:Connect(function(input)
-							if input.UserInputType == Enum.UserInputType.Keyboard then
-
-								newKey.Frame.Bind.Text = input.KeyCode.Name
-								Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-								listening = false
-								event:Disconnect()
-								self.CurrentKey = input.KeyCode  -- Store the current key in the object
-								config.Objects[nametab][name] = input.KeyCode.Name
-								if triggerwhilebinding == true then
-									TaskThreads[name] = task.spawn(function()
-										callback(input)
-                                        SaveConfig()
-									end)
-								end
-							elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
-								input.UserInputType == Enum.UserInputType.MouseButton2 or
-								input.UserInputType == Enum.UserInputType.MouseButton3 then
-
-								local match = input.UserInputType.Name:match("MouseButton(%d+)")
-								newKey.Frame.Bind.Text = (match and "MB" .. match) or input.UserInputType.Name
-
-								Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-								listening = false
-								event:Disconnect()
-								self.CurrentKey = input.UserInputType  -- Store the current key in the object
-								config.Objects[nametab][name] = input.KeyCode.Name
-								if triggerwhilebinding == true then
-									TaskThreads[name] = task.spawn(function()
-										callback(input)
-                                        SaveConfig()
-									end)
-								end
-							end
-						end)
-					end
+				TaskThreads[name] = task.spawn(function()
+					task.wait(1)
+					callback(defaulttext)
 				end)
+			end
 
-				UserInputService.InputBegan:Connect(function(input)
-					if listening == false then
+			local newTextbox = ReservedTabs.Textbox:Clone()
+			newTextbox.Parent = newTab
+			newTextbox.Name = name
+			newTextbox.Visible = true
+
+			newTextbox.Frame.Textbox.PlaceholderText = placeholdertext or ""
+			newTextbox.Frame.Textbox.Text = defaulttext or ""
+			newTextbox.Frame.Textbox.ClearTextOnFocus = clearonfocus or true
+			newTextbox.Frame.TextLabel.Text = name
+
+			newTextbox.Frame.MouseEnter:Connect(function()
+				Tween(newTextbox.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+			end)
+
+			newTextbox.Frame.MouseLeave:Connect(function()
+				Tween(newTextbox.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
+
+			end)
+
+			newTextbox.Frame.Textbox.Focused:Connect(function()
+				Tween(newTextbox.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+			end)
+
+			newTextbox.Frame.Textbox.FocusLost:Connect(function()
+				Tween(newTextbox.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+				config.Objects[nametab][name] = newTextbox.Frame.Textbox.Text
+
+
+				TaskThreads[name] = task.spawn(function()
+					callback(newTextbox.Frame.Textbox.Text)
+					SaveConfig()
+				end)
+			end)
+
+			local Event
+
+			newTextbox.Frame.MouseEnter:Connect(function(x,y)
+				if ShowInfo == true then
+					InfoFrame.Visible = true
+
+					InfoFrame.Title.Text = name
+					InfoFrame.Description.Text = desc
+					InfoFrame.Position = UDim2.fromOffset(x,y)
+
+					Event = newTextbox.Frame.MouseMoved:Connect(function(x,y)
+						Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
+					end)
+				end
+			end)
+			newTextbox.Frame.MouseLeave:Connect(function()
+				if ShowInfo == true then
+					InfoFrame.Visible = false
+					Event:Disconnect()
+				end
+			end)
+
+			function self:Set(text)
+				newTextbox.Frame.Textbox.Text = text
+				config.Objects[nametab][name] = config.Objects[nametab][name] or newTextbox.Frame.Textbox.Text
+			end
+
+			return self
+		end
+
+		function TAB:AddKeybind(name, desc, tbl, callback)
+			local defaultkey
+
+			if config.Objects[nametab][name] then
+				if config.Objects[nametab][name]:find("MouseButton") and type(config.Objects[nametab][name]) == "string" then
+					defaultkey = Enum.UserInputType[config.Objects[nametab][name]]
+				elseif not config.Objects[nametab][name]:find("MouseButton") and type(config.Objects[nametab][name]) == "string" then
+					defaultkey = Enum.KeyCode[config.Objects[nametab][name]]
+				end
+			else
+				defaultkey = tbl.defaultkey
+			end
+
+			local triggerwhilebinding = tbl.triggerwhilebinding
+			local newKey = ReservedTabs.Keybind:Clone()
+			local key
+
+
+
+			local listening = false
+			local event
+
+			key = defaultkey or nil
+			self.CurrentKey = key
+
+			newKey.Name = name
+			newKey.Parent = newTab
+			newKey.Visible = true
+
+			config.Objects[nametab][name] = defaultkey.Name
+
+			if self.CurrentKey == Enum then
+				config.Objects[nametab][name] = Enum.KeyCode[config.Objects[nametab][name]] or defaultkey.Name
+			end
+
+
+
+
+
+			newKey.Frame.TextLabel.Text = name
+
+			local match = defaultkey.Name:match("MouseButton(%d+)")
+			newKey.Frame.Bind.Text = (match and "MB" .. match) or defaultkey.Name or "None"
+
+			newKey.Frame.Bind.MouseButton1Click:Connect(function()
+				if listening == false then
+					listening = true
+					Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+					event = UserInputService.InputBegan:Connect(function(input)
 						if input.UserInputType == Enum.UserInputType.Keyboard then
-							if input.KeyCode == TAB.CurrentKey then
 
+							newKey.Frame.Bind.Text = input.KeyCode.Name
+							Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+							listening = false
+							event:Disconnect()
+							self.CurrentKey = input.KeyCode  -- Store the current key in the object
+							config.Objects[nametab][name] = input.KeyCode.Name
+							if triggerwhilebinding == true then
 								TaskThreads[name] = task.spawn(function()
 									callback(input)
-                                    SaveConfig()
+									SaveConfig()
 								end)
 							end
 						elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
 							input.UserInputType == Enum.UserInputType.MouseButton2 or
 							input.UserInputType == Enum.UserInputType.MouseButton3 then
-							if input.UserInputType == TAB.CurrentKey then
+
+							local match = input.UserInputType.Name:match("MouseButton(%d+)")
+							newKey.Frame.Bind.Text = (match and "MB" .. match) or input.UserInputType.Name
+
+							Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+							listening = false
+							event:Disconnect()
+							self.CurrentKey = input.UserInputType  -- Store the current key in the object
+							config.Objects[nametab][name] = input.KeyCode.Name
+							if triggerwhilebinding == true then
 								TaskThreads[name] = task.spawn(function()
 									callback(input)
-                                    SaveConfig()
+									SaveConfig()
 								end)
 							end
 						end
+					end)
+				end
+			end)
+
+			UserInputService.InputBegan:Connect(function(input)
+				if listening == false then
+					if input.UserInputType == Enum.UserInputType.Keyboard then
+						if input.KeyCode == TAB.CurrentKey then
+
+							TaskThreads[name] = task.spawn(function()
+								callback(input)
+								SaveConfig()
+							end)
+						end
+					elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
+						input.UserInputType == Enum.UserInputType.MouseButton2 or
+						input.UserInputType == Enum.UserInputType.MouseButton3 then
+						if input.UserInputType == TAB.CurrentKey then
+							TaskThreads[name] = task.spawn(function()
+								callback(input)
+								SaveConfig()
+							end)
+						end
 					end
+				end
+			end)
+
+
+			newKey.Frame.MouseEnter:Connect(function()
+				Tween(newKey.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+			end)
+
+			newKey.Frame.MouseLeave:Connect(function()
+				Tween(newKey.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
+
+			end)
+
+
+			local Event
+
+			newKey.Frame.MouseEnter:Connect(function(x,y)
+				if ShowInfo == true then
+					InfoFrame.Visible = true
+
+					InfoFrame.Title.Text = name
+					InfoFrame.Description.Text = desc
+					InfoFrame.Position = UDim2.fromOffset(x,y)
+
+					Event = newKey.Frame.MouseMoved:Connect(function(x,y)
+						Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
+					end)
+				end
+			end)
+			newKey.Frame.MouseLeave:Connect(function()
+				if ShowInfo == true then
+					InfoFrame.Visible = false
+					Event:Disconnect()
+				end
+			end)
+		end
+
+		function TAB:AddSlider(name, desc, tbl, callback)
+			local self = setmetatable({}, TAB)
+
+			local newSlider = ReservedTabs.Slider:Clone()
+
+			local min = tbl.min
+			local max = tbl.max
+			local inc = tbl.inc
+			local default
+
+			if config.Objects[nametab][name] ~= nil then
+
+				default = config.Objects[nametab][name]
+
+				TaskThreads[name] = task.spawn(function()
+					task.wait(1)
+					callback(default)
 				end)
 
-
-				newKey.Frame.MouseEnter:Connect(function()
-					Tween(newKey.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-				end)
-
-				newKey.Frame.MouseLeave:Connect(function()
-					Tween(newKey.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
-
-				end)
-
-
-				local Event
-
-				newKey.Frame.MouseEnter:Connect(function(x,y)
-					if ShowInfo == true then
-						InfoFrame.Visible = true
-
-						InfoFrame.Title.Text = name
-						InfoFrame.Description.Text = desc
-						InfoFrame.Position = UDim2.fromOffset(x,y)
-
-						Event = newKey.Frame.MouseMoved:Connect(function(x,y)
-							Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
-						end)
-					end
-				end)
-				newKey.Frame.MouseLeave:Connect(function()
-					if ShowInfo == true then
-						InfoFrame.Visible = false
-						Event:Disconnect()
-					end
-				end)
+			else
+				config.Objects[nametab][name] = tbl.default
+				default = tbl.default
 			end
 
-			function TAB:AddSlider(name, desc, tbl, callback)
-				local self = setmetatable({}, TAB)
 
-				local newSlider = ReservedTabs.Slider:Clone()
 
-				local min = tbl.min
-				local max = tbl.max
-				local inc = tbl.inc
-				local default
+			--config.Objects[nametab][name] = config.Objects[nametab][name] or default
+			newSlider.Parent = newTab
+			newSlider.Visible = true
+			newSlider.Name = name
+			newSlider.Frame.TextLabel.Text = name
 
-				if config.Objects[nametab][name] ~= nil then
+			local Mouse = LocalPlayer:GetMouse()
+			local tweenServ = TweenService
 
-					default = config.Objects[nametab][name]
-					
+			local Trigger = newSlider.Frame.FrameSlider.Trigger
+			local Label = newSlider.Frame.Textbox
+			local Fill = newSlider.Frame.FrameSlider.Fill
+			local Parent = newSlider.Frame
+
+			local perc
+			local Percent
+			local MouseDown = false
+			local delayTw = 0.3
+
+			local function convertValueToScale(value)
+				return (value - min) / (max - min) * (1 - 0) + 0
+			end
+
+
+			Label.Text = tostring(default) or tostring(min)
+			Fill.Size = UDim2.fromScale(convertValueToScale(default), 1)
+
+			local function Update()
+				MouseDown = true
+				repeat
+					task.wait()
+					Percent = math.clamp((Mouse.X - Parent.AbsolutePosition.X) / Parent.AbsoluteSize.X, 0, 1)
+					perc = min + (Percent * (max - min))
+
+					-- Calculate the rounded value with the specified precision
+					local roundedValue = math.round(perc / inc) * inc
+
+					-- Clamp the value to the specified range
+					perc = math.clamp(roundedValue, min, max)
+
+					local function fixInt(number, decimalPlaces)
+						local multiplier = 10 ^ decimalPlaces
+						return math.floor(number * multiplier + 0.5) / multiplier
+					end
+
+
+
+
+					local amount = tostring(inc)
+					amount:gsub("%d+.","")
+					amount = #amount
+					perc = fixInt(perc,tonumber(amount))
+
+					Label.Text = perc
+					config.Objects[nametab][name] = perc
+
 					TaskThreads[name] = task.spawn(function()
-						task.wait(1)
-						callback(default)
+						callback(perc, newSlider)
+						SaveConfig()
 					end)
 
-				else
-					config.Objects[nametab][name] = tbl.default
-					default = tbl.default
-				end
+					Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(Percent, 1) })
+				until MouseDown == false
+			end
 
-
-
-				--config.Objects[nametab][name] = config.Objects[nametab][name] or default
-				newSlider.Parent = newTab
-				newSlider.Visible = true
-				newSlider.Name = name
-				newSlider.Frame.TextLabel.Text = name
-
-				local Mouse = LocalPlayer:GetMouse()
-				local tweenServ = TweenService
-
-				local Trigger = newSlider.Frame.FrameSlider.Trigger
-				local Label = newSlider.Frame.Textbox
-				local Fill = newSlider.Frame.FrameSlider.Fill
-				local Parent = newSlider.Frame
-
-				local perc
-				local Percent
-				local MouseDown = false
-				local delayTw = 0.3
-
-				local function convertValueToScale(value)
-					return (value - min) / (max - min) * (1 - 0) + 0
-				end
-
-
-				Label.Text = tostring(default) or tostring(min)
-				Fill.Size = UDim2.fromScale(convertValueToScale(default), 1)
-
-				local function Update()
-					MouseDown = true
-					repeat
-						task.wait()
-						Percent = math.clamp((Mouse.X - Parent.AbsolutePosition.X) / Parent.AbsoluteSize.X, 0, 1)
-						perc = min + (Percent * (max - min))
-
-						-- Calculate the rounded value with the specified precision
-						local roundedValue = math.round(perc / inc) * inc
-
-						-- Clamp the value to the specified range
-						perc = math.clamp(roundedValue, min, max)
-
-						local function fixInt(number, decimalPlaces)
-							local multiplier = 10 ^ decimalPlaces
-							return math.floor(number * multiplier + 0.5) / multiplier
-						end
-
-
-
-
-						local amount = tostring(inc)
-						amount:gsub("%d+.","")
-						amount = #amount
-						perc = fixInt(perc,tonumber(amount))
-
-						Label.Text = perc
-						config.Objects[nametab][name] = perc
-
-						TaskThreads[name] = task.spawn(function()
-							callback(perc, newSlider)
-                            SaveConfig()
-						end)
-
-						Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(Percent, 1) })
-					until MouseDown == false
-				end
-
-				local event
-				Label.Focused:Connect(function()
-					Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-					event = Label:GetPropertyChangedSignal("Text"):Connect(function()
-						local inputText = tonumber(Label.Text)
-						if inputText then
-							if inputText <= max and inputText >= min then
-
-								Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(convertValueToScale(inputText), 1) })
-								config.Objects[nametab][name] = perc
-
-								TaskThreads[name] = task.spawn(function()
-									callback(inputText, newSlider)
-                                    SaveConfig()
-								end)
-							end
-						end
-
-
-					end)
-				end)
-				Label.FocusLost:Connect(function()
-					Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-				end)
-
-				Trigger.MouseButton1Down:Connect(function()
-					Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-					Update()
-				end)
-
-				UserInputService.InputEnded:Connect(function(input)
-					if Mainframe.Parent ~= nil and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						MouseDown = false
-						Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-					end
-				end)
-
-
-
-				newSlider.Frame.MouseEnter:Connect(function()
-					Tween(newSlider.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-				end)
-
-				newSlider.Frame.MouseLeave:Connect(function()
-					Tween(newSlider.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
-
-				end)
-
-
-
-				local Event
-
-				newSlider.Frame.MouseEnter:Connect(function(x,y)
-					if ShowInfo == true then
-						InfoFrame.Visible = true
-
-						InfoFrame.Title.Text = name
-						InfoFrame.Description.Text = desc
-						InfoFrame.Position = UDim2.fromOffset(x,y)
-
-						Event = newSlider.Frame.MouseMoved:Connect(function(x,y)
-							Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
-						end)
-					end
-				end)
-				newSlider.Frame.MouseLeave:Connect(function()
-					if ShowInfo == true then
-						InfoFrame.Visible = false
-						Event:Disconnect()
-					end
-				end)
-
-				function self:Set(int)
-					local inputText = int
+			local event
+			Label.Focused:Connect(function()
+				Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+				event = Label:GetPropertyChangedSignal("Text"):Connect(function()
+					local inputText = tonumber(Label.Text)
 					if inputText then
 						if inputText <= max and inputText >= min then
-							Label.Text = tostring(int)
+
 							Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(convertValueToScale(inputText), 1) })
-							config.Objects[nametab][name] = config.Objects[nametab][name] or inputText
+							config.Objects[nametab][name] = perc
 
 							TaskThreads[name] = task.spawn(function()
 								callback(inputText, newSlider)
-                                SaveConfig()
+								SaveConfig()
 							end)
 						end
 					end
-				end
 
-				return self
+
+				end)
+			end)
+			Label.FocusLost:Connect(function()
+				Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+			end)
+
+			Trigger.MouseButton1Down:Connect(function()
+				Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+				Update()
+			end)
+
+			UserInputService.InputEnded:Connect(function(input)
+				if Mainframe.Parent ~= nil and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					MouseDown = false
+					Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+				end
+			end)
+
+
+
+			newSlider.Frame.MouseEnter:Connect(function()
+				Tween(newSlider.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+			end)
+
+			newSlider.Frame.MouseLeave:Connect(function()
+				Tween(newSlider.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
+
+			end)
+
+
+
+			local Event
+
+			newSlider.Frame.MouseEnter:Connect(function(x,y)
+				if ShowInfo == true then
+					InfoFrame.Visible = true
+
+					InfoFrame.Title.Text = name
+					InfoFrame.Description.Text = desc
+					InfoFrame.Position = UDim2.fromOffset(x,y)
+
+					Event = newSlider.Frame.MouseMoved:Connect(function(x,y)
+						Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
+					end)
+				end
+			end)
+			newSlider.Frame.MouseLeave:Connect(function()
+				if ShowInfo == true then
+					InfoFrame.Visible = false
+					Event:Disconnect()
+				end
+			end)
+
+			function self:Set(int)
+				local inputText = int
+				if inputText then
+					if inputText <= max and inputText >= min then
+						Label.Text = tostring(int)
+						Tween(Fill, TweenInfo.new(delayTw, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale(convertValueToScale(inputText), 1) })
+						config.Objects[nametab][name] = config.Objects[nametab][name] or inputText
+
+						TaskThreads[name] = task.spawn(function()
+							callback(inputText, newSlider)
+							SaveConfig()
+						end)
+					end
+				end
 			end
 
-			function TAB:AddDropdown(name, desc, tbl, callback)
-				local self = setmetatable({}, TAB)
+			return self
+		end
 
-				local newDropdown = ReservedTabs.Dropdown:Clone()
+		function TAB:AddDropdown(name, desc, tbl, callback)
+			local self = setmetatable({}, TAB)
 
-				local list = tbl.list
-				local default
+			local newDropdown = ReservedTabs.Dropdown:Clone()
 
-				if config.Objects[nametab][name] then
-					default = config.Objects[nametab][name]
+			local list = tbl.list
+			local default
 
+			if config.Objects[nametab][name] then
+				default = config.Objects[nametab][name]
+
+				TaskThreads[name] = task.spawn(function()
+					task.wait(1)
+					callback(default)
+					SaveConfig()
+				end)
+			else
+				default = tbl.default or "None"
+				config.Objects[nametab][name] = default
+				if default ~= "None" then
 					TaskThreads[name] = task.spawn(function()
 						task.wait(1)
 						callback(default)
-                        SaveConfig()
-					end)
-				else
-					default = tbl.default or "None"
-					config.Objects[nametab][name] = default
-					if default ~= "None" then
-						TaskThreads[name] = task.spawn(function()
-							task.wait(1)
-							callback(default)
-                            SaveConfig()
-						end)
-					end
-				end
-
-				local opened = false
-
-				newDropdown.Name = name
-				newDropdown.Visible = true
-				newDropdown.Parent = newTab
-				newDropdown.Frame.TextLabel.Text = name
-				newDropdown.Frame.Select.Text = default
-
-				local function Toggle()
-					if opened == false then
-						opened = true
-						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 90) })
-					elseif opened == true then
-						opened = false
-						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 0) })
-					end
-				end
-
-				for i,v in ipairs(list) do
-					local newOption = ReservedTabs.OptionDropdown:Clone()
-
-					newOption.Name = v
-					newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
-					newOption.Text = v
-					newOption.Visible = true
-
-					newOption.MouseButton1Click:Connect(function()
-						Toggle()
-						newDropdown.Frame.Select.Text = v
-						config.Objects[nametab][name] = v
-						TaskThreads[name] = task.spawn(function()
-							callback(v)
-                            SaveConfig()
-						end)
-					end)
-
-					newOption.MouseEnter:Connect(function()
-						Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(37,37,37)})
-					end)
-					newOption.MouseLeave:Connect(function()
-						Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+						SaveConfig()
 					end)
 				end
+			end
 
-				newDropdown.Frame.Select.MouseButton1Click:Connect(function()
+			local opened = false
+
+			newDropdown.Name = name
+			newDropdown.Visible = true
+			newDropdown.Parent = newTab
+			newDropdown.Frame.TextLabel.Text = name
+			newDropdown.Frame.Select.Text = default
+
+			local function Toggle()
+				if opened == false then
+					opened = true
+					Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+					Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 90) })
+				elseif opened == true then
+					opened = false
+					Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+					Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 0) })
+				end
+			end
+
+			for i,v in ipairs(list) do
+				local newOption = ReservedTabs.OptionDropdown:Clone()
+
+				newOption.Name = v
+				newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
+				newOption.Text = v
+				newOption.Visible = true
+
+				newOption.MouseButton1Click:Connect(function()
 					Toggle()
+					newDropdown.Frame.Select.Text = v
+					config.Objects[nametab][name] = v
+					TaskThreads[name] = task.spawn(function()
+						callback(v)
+						SaveConfig()
+					end)
 				end)
 
-				local Event
-
-				newDropdown.Frame.MouseEnter:Connect(function(x,y)
-					if ShowInfo == true then
-						InfoFrame.Visible = true
-
-						InfoFrame.Title.Text = name
-						InfoFrame.Description.Text = desc
-						InfoFrame.Position = UDim2.fromOffset(x,y)
-
-						Event = newDropdown.Frame.MouseMoved:Connect(function(x,y)
-							Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
-						end)
-					end
+				newOption.MouseEnter:Connect(function()
+					Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(37,37,37)})
 				end)
-				newDropdown.Frame.MouseLeave:Connect(function()
-					if ShowInfo == true then
-						InfoFrame.Visible = false
-						Event:Disconnect()
-					end
+				newOption.MouseLeave:Connect(function()
+					Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
 				end)
+			end
+
+			newDropdown.Frame.Select.MouseButton1Click:Connect(function()
+				Toggle()
+			end)
+
+			local Event
+
+			newDropdown.Frame.MouseEnter:Connect(function(x,y)
+				if ShowInfo == true then
+					InfoFrame.Visible = true
+
+					InfoFrame.Title.Text = name
+					InfoFrame.Description.Text = desc
+					InfoFrame.Position = UDim2.fromOffset(x,y)
+
+					Event = newDropdown.Frame.MouseMoved:Connect(function(x,y)
+						Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
+					end)
+				end
+			end)
+			newDropdown.Frame.MouseLeave:Connect(function()
+				if ShowInfo == true then
+					InfoFrame.Visible = false
+					Event:Disconnect()
+				end
+			end)
 
 
-				-- sesuai request sonic :batusenyum:
-				function self:Clear()
-					for _, options in pairs(newDropdown.SelectionFrame.ScrollingFrame:GetChildren()) do
-						if options:IsA("TextButton") then
-							options:Destroy()
-						end
+			-- sesuai request sonic :batusenyum:
+			function self:Clear()
+				for _, options in pairs(newDropdown.SelectionFrame.ScrollingFrame:GetChildren()) do
+					if options:IsA("TextButton") then
+						options:Destroy()
 					end
-				end 
+				end
+			end 
 
-				function self:Add(tbl)
-					if typeof(tbl) == "table" then
-						for i,v in pairs(tbl) do
-							local newOption = ReservedTabs.OptionDropdown:Clone()
-
-							newOption.Name = v
-							newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
-							newOption.Text = v
-							newOption.Visible = true
-
-							newOption.MouseButton1Click:Connect(function()
-								Toggle()
-								newDropdown.Frame.Select.Text = v
-
-								TaskThreads[name] = task.spawn(function()
-									callback(v)
-                                    SaveConfig()
-								end)
-							end)
-
-							newOption.MouseEnter:Connect(function()
-								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(37,37,37)})
-							end)
-							newOption.MouseLeave:Connect(function()
-								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-							end)
-						end
-					elseif typeof(tbl) == "string" or typeof(tbl) == "number" then
+			function self:Add(tbl)
+				if typeof(tbl) == "table" then
+					for i,v in pairs(tbl) do
 						local newOption = ReservedTabs.OptionDropdown:Clone()
 
-						newOption.Name = tbl or tostring(tbl)
+						newOption.Name = v
 						newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
-						newOption.Text = tbl or tostring(tbl)
+						newOption.Text = v
 						newOption.Visible = true
 
 						newOption.MouseButton1Click:Connect(function()
 							Toggle()
-							newDropdown.Frame.Select.Text = tbl
+							newDropdown.Frame.Select.Text = v
 
 							TaskThreads[name] = task.spawn(function()
-								callback(tbl)
-                                SaveConfig()
+								callback(v)
+								SaveConfig()
 							end)
 						end)
 
@@ -3981,20 +3956,45 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 							Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
 						end)
 					end
+				elseif typeof(tbl) == "string" or typeof(tbl) == "number" then
+					local newOption = ReservedTabs.OptionDropdown:Clone()
+
+					newOption.Name = tbl or tostring(tbl)
+					newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
+					newOption.Text = tbl or tostring(tbl)
+					newOption.Visible = true
+
+					newOption.MouseButton1Click:Connect(function()
+						Toggle()
+						newDropdown.Frame.Select.Text = tbl
+
+						TaskThreads[name] = task.spawn(function()
+							callback(tbl)
+							SaveConfig()
+						end)
+					end)
+
+					newOption.MouseEnter:Connect(function()
+						Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(37,37,37)})
+					end)
+					newOption.MouseLeave:Connect(function()
+						Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+					end)
 				end
-				return self
 			end
-
-			
-
-			return TAB
+			return self
 		end
 
 
 
-		return LIBRARY
+		return TAB
+	end
+
+
+
+	return LIBRARY
 
 	end;
-};
+	};
 
-return require(GANTENGLIB["11a"]);
+	return require(GANTENGLIB["11a"]);

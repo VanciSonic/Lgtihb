@@ -3991,7 +3991,6 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 	end
 
 
-
 	return LIBRARY
 
 	end;

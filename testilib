@@ -3076,13 +3076,14 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 
 		function LIBRARY:AddChangelog(list)
 			for title,desc in pairs(list) do
-				local newCg = getRandomIndex(title, desc)
+				local newCg = getRandomIndex(title, desc):Clone()
 
 				newCg.Name = title
+				newCg.Parent = Landing.Changelogs.ScrollingFrame
 				newCg.Title.Text = title
 				newCg.Description.Text = desc
 				newCg.Visible = true
-				newCg.Parent = Landing.Changelogs.ScrollingFrame
+				
 			end
 		end
 

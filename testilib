@@ -3909,7 +3909,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 							options:Destroy()
 						end
 					end
-				end
+				end 
 
 				function self:Add(tbl)
 					if typeof(tbl) == "table" then

@@ -370,11 +370,11 @@ GANTENGLIB["2a"]["AutoButtonColor"] = false;
 GANTENGLIB["2a"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
 GANTENGLIB["2a"]["Selectable"] = false;
 GANTENGLIB["2a"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["2a"]["Size"] = UDim2.new(0.22415801882743835, 0, 0.6400001645088196, 0);
+GANTENGLIB["2a"]["Size"] = UDim2.new(0.252, 0, 0.64, 0);
 GANTENGLIB["2a"]["Name"] = [[ToggleInfo]];
 GANTENGLIB["2a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["2a"]["Text"] = [[]];
-GANTENGLIB["2a"]["Position"] = UDim2.new(0.6930000185966492, 0, 0.4740000069141388, 0);
+GANTENGLIB["2a"]["Position"] = UDim2.new(0.679, 0, 0.474, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.MainSide.TopBar.ToggleInfo.UICorner
 GANTENGLIB["2b"] = Instance.new("UICorner", GANTENGLIB["2a"]);

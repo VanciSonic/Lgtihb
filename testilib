@@ -3075,7 +3075,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 		end
 
 		local index = 1
-		function LIBRARY:AddChangelogs(list)
+		function LIBRARY:AddChangelog(list)
 			
 		
 			for title, desc in pairs(list) do

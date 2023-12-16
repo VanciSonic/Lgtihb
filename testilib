@@ -2815,7 +2815,7 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 			end
 
 			EnableDrag(script.Parent.DropShadowHolder)
-			EnableDrag(GANTENGLIB["11b"])
+			EnableDrag(Gui.Icon)
 
 
 			-- Topbar menu functions

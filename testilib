@@ -393,7 +393,7 @@ GANTENGLIB["2c"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
 GANTENGLIB["2c"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
 GANTENGLIB["2c"]["Size"] = UDim2.new(0.7253822684288025, 0, 0.6129032969474792, 0);
 GANTENGLIB["2c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["2c"]["Text"] = [[Show Info]];
+GANTENGLIB["2c"]["Text"] = [[Save Config]];
 GANTENGLIB["2c"]["BackgroundTransparency"] = 1;
 GANTENGLIB["2c"]["Position"] = UDim2.new(0.4000000059604645, 0, 0.5, 0);
 
@@ -2630,6 +2630,14 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 		local InfoFrame = Gui.InfoFrame
 		local ReservedChangelog = Reserved.Changelog
 		-- Variables
+		local SavingConfig = false
+		if isfile("GHAutosave") then
+			if readfile("GHAutosave") == "true" then
+				SavingConfig = true
+			elseif readfile("GHAutosave") == "false" then
+				SavingConfig = false
+			end
+		end
 		local ShowInfo = false
 		local Maxxed = false
 		local namehub
@@ -2639,7 +2647,9 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 		local config 
         
         local function SaveConfig()
-            writefile(namehub..".json",HttpService:JSONEncode(config))
+            if SavingConfig == true Thickness
+				writefile(namehub..".json",HttpService:JSONEncode(config))
+			end
         end
 
         -- variable that stored all functions, this useful when closing the script/ui will stop all task
@@ -2855,11 +2865,11 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 			end)
 
 			Topbar.ToggleInfo.MouseButton1Click:Connect(function()
-				ShowInfo = not ShowInfo
+				SavingConfig = not SavingConfig
 
-				if ShowInfo == true then
+				if SavingConfig == true then
 					Tween(Topbar.ToggleInfo.Toggle.Filler, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-				elseif ShowInfo == false then
+				elseif SavingConfig == false then
 					Tween(Topbar.ToggleInfo.Toggle.Filler, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
 				end
 			end)
@@ -3075,15 +3085,14 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 		end
 
 		local index = 1
-		-- semoga bisa
 		function LIBRARY:AddChangelog(list)
 			local order = {}
 			
-			for title, _ in pairs(list) do
+			for title, desc in pairs(list) do
 				table.insert(order, title)
 			end
 			
-			table.sort(order, function(a, b) return a > b end)  -- Sort in reverse order
+			table.sort(order)  -- Sort the titles to maintain order
 			
 			for _, title in ipairs(order) do
 				local desc = list[title]
@@ -3103,7 +3112,6 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 				index = index + 1
 			end
 		end
-		
 		
 		
 

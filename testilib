@@ -3985,8 +3985,6 @@ GANTENGLIB_MODULES[GANTENGLIB["11a"]] = {
 			return self
 		end
 
-
-
 		return TAB
 	end
 

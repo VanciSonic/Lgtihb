@@ -2744,14 +2744,16 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 		local Maxxed = false
 		local namehub
 
-		-- ENV EMULATION
-		local function writefile(a)
-			print("WRITEFILE: "..a)
-		end
-		-- ENV EMULATION
-		local function isfile(a)
-			print("ISFILE: "..tostring(a))
-			return false
+		if game["Run Service"]:IsStudio() then
+			-- ENV EMULATION
+			local function writefile(a)
+				print("WRITEFILE: "..a)
+			end
+			-- ENV EMULATION
+			local function isfile(a)
+				print("ISFILE: "..tostring(a))
+				return false
+			end
 		end
 		--
 

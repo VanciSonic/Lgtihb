@@ -391,7 +391,7 @@ GANTENGLIB["2c"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
 GANTENGLIB["2c"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
 GANTENGLIB["2c"]["Size"] = UDim2.new(0.7253822684288025, 0, 0.6129032969474792, 0);
 GANTENGLIB["2c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["2c"]["Text"] = [[Show Info]];
+GANTENGLIB["2c"]["Text"] = [[Save Config]];
 GANTENGLIB["2c"]["BackgroundTransparency"] = 1;
 GANTENGLIB["2c"]["Position"] = UDim2.new(0.4000000059604645, 0, 0.5, 0);
 
@@ -2816,7 +2816,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 
 
 			--
-			SAT.Size = UDim2.new(0.35, 0,0, 0)
+			SAT.Size = UDim2.new(0, 0,0, 0)
 			SAT.Visible = false
 			--
 
@@ -2992,6 +2992,26 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 				end
 			end)
 
+
+            Topbar.Minimize.MouseButton1Click:Connect(function()
+				local twen = Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0,0,0,0)})
+				Mainframe.Parent.Parent.Icon.Visible = true
+				twen.Completed:Wait()
+				Mainframe.Parent.Visible = false
+			end)
+
+			Topbar.Close.MouseButton1Click:Connect(function()
+				Warning.Visible = true
+				Warning.Size = UDim2.new(0,0,0,0)
+				Tween(Warning, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(1,0,1,0)})
+			end)
+
+			Mainframe.Parent.Parent.Icon.Icon.MouseButton1Click:Connect(function()
+				Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0, 506,0, 296)})
+				Mainframe.Parent.Parent.Icon.Visible = false
+				Mainframe.Parent.Visible = true
+			end)
+
 			-- Socials things
 			local YoutubeButton = Landing.Infos.Socials.Youtube
 			local DiscordButton = Landing.Infos.Socials.Discord
@@ -3117,24 +3137,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 
 
 
-			Topbar.Minimize.MouseButton1Click:Connect(function()
-				local twen = Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0,0,0,0)})
-				Mainframe.Parent.Parent.Icon.Visible = true
-				twen.Completed:Wait()
-				Mainframe.Parent.Visible = false
-			end)
-
-			Topbar.Close.MouseButton1Click:Connect(function()
-				Warning.Visible = true
-				Warning.Size = UDim2.new(0,0,0,0)
-				Tween(Warning, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(1,0,1,0)})
-			end)
-
-			Mainframe.Parent.Parent.Icon.Icon.MouseButton1Click:Connect(function()
-				Tween(Mainframe.Parent, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0, 506,0, 296)})
-				Mainframe.Parent.Parent.Icon.Visible = false
-				Mainframe.Parent.Visible = true
-			end)
+			
 
 
 

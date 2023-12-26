@@ -2726,7 +2726,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 		local SAT = Gui.DropShadowHolder.StopAllTween
 		-- Variables
 		local SavingConfig = false
-		if not game:GetService("RunService") then
+		if not game:GetService("RunService"):IsStudio then
 			if isfile("GHAutosave") then
 				if readfile("GHAutosave") == "true" then
 					Topbar.ToggleInfo.Toggle.Filler.Transparency = 0
@@ -2759,7 +2759,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 		local config 
 
 		local function SaveConfig()
-			if SavingConfig == true and not game:GetService("RunService") then
+			if SavingConfig == true and not game:GetService("RunService"):IsStudio() then
 				writefile(namehub..".json",HttpService:JSONEncode(config))
 			end
 		end
@@ -2788,7 +2788,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 			local self = setmetatable({}, LIBRARY)
 			namehub = name
 			-- config setting save
-			if isfile(namehub..".json") and not game:GetService("RunService") then
+			if isfile(namehub..".json") and not game:GetService("RunService"):IsStudio() then
 				local success, results = pcall(function()
 					config = HttpService:JSONDecode(readfile(namehub..".json"))
 				end)

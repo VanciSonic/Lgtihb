@@ -3210,7 +3210,9 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 				table.insert(order, title)
 			end
 
-			table.sort(order)  -- Sort the titles to maintain order
+			table.sort(order, function(a,b)
+                return a > b
+            end)  -- Sort the titles to maintain order
 
 			for _, title in ipairs(order) do
 				local desc = list[title]

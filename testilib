@@ -2876,7 +2876,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 			LocalPlayerInfo.Profile.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 
 			local function RefreshTime()
-				if Mainframe and Mainframe.Parent then
+				if Mainframe.Parent ~= nil then
 					LocalPlayerInfo.Time.Text =os.date("%H:%M:%S", os.time())
 					task.wait(.5)
 					RefreshTime()
@@ -3907,7 +3907,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 				end)
 
 				UserInputService.InputEnded:Connect(function(input)
-					if Mainframe and Mainframe.Parent and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					if Mainframe.Parent ~= nil and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 						MouseDown = false
 						Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
 					end

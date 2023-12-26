@@ -3907,7 +3907,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 				end)
 
 				UserInputService.InputEnded:Connect(function(input)
-					if Mainframe.Parent ~= nil and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					if Mainframe and Mainframe.Parent and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 						MouseDown = false
 						Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
 					end

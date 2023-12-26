@@ -57,7 +57,7 @@ GANTENGLIB["7"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
 GANTENGLIB["7"]["BackgroundTransparency"] = 1;
 GANTENGLIB["7"]["Size"] = UDim2.new(1, 0, 0.7229729890823364, 0);
 GANTENGLIB["7"]["Selectable"] = false;
-GANTENGLIB["7"]["ClipsDescendants"] = false;
+GANTENGLIB["7"]["ClipsDescendants"] = true;
 GANTENGLIB["7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["7"]["ScrollBarThickness"] = 0;
 GANTENGLIB["7"]["Position"] = UDim2.new(0, 0, 0.14864864945411682, 0);
@@ -3907,10 +3907,12 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 				end)
 
 				UserInputService.InputEnded:Connect(function(input)
-					if Mainframe and Mainframe.Parent and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						MouseDown = false
-						Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-					end
+					local status, msg = pcall(function()
+                        if Mainframe and Mainframe.Parent and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                            MouseDown = false
+                            Tween(newSlider.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+                        end
+                    end)
 				end)
 
 

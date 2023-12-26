@@ -2201,7 +2201,7 @@ GANTENGLIB["f7"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
 GANTENGLIB["f7"]["Size"] = UDim2.new(1, 0, 1, 0);
 GANTENGLIB["f7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["f7"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
-GANTENGLIB["f7"]["Visible"] = false;
+GANTENGLIB["f7"]["Visible"] = true;
 GANTENGLIB["f7"]["Name"] = [[Intro]];
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.UICorner
@@ -2726,7 +2726,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 		local SAT = Gui.DropShadowHolder.StopAllTween
 		-- Variables
 		local SavingConfig = false
-		if not game["Run Service"]:IsStudio() then
+		if not game:GetService("RunService") then
 			if isfile("GHAutosave") then
 				if readfile("GHAutosave") == "true" then
 					Topbar.ToggleInfo.Toggle.Filler.Transparency = 0
@@ -2745,20 +2745,21 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 		local namehub
 
 		-- ENV EMULATION
-		local function writefile(a)
-			print("WRITEFILE: "..a)
-		end
-		-- ENV EMULATION
-		local function isfile(a)
-			print("ISFILE: "..tostring(a))
-			return false
+        if game:GetService("RunService"):IsStudio() then
+            function writefile(a)
+                print("WRITEFILE: "..a)
+            end
+            function isfile(a)
+                print("ISFILE: "..tostring(a))
+                return false
+            end
 		end
 		--
 
 		local config 
 
 		local function SaveConfig()
-			if SavingConfig == true and not game["Run Service"]:IsStudio() then
+			if SavingConfig == true and not game:GetService("RunService") then
 				writefile(namehub..".json",HttpService:JSONEncode(config))
 			end
 		end
@@ -2787,7 +2788,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 			local self = setmetatable({}, LIBRARY)
 			namehub = name
 			-- config setting save
-			if isfile(namehub..".json") and not game["Run Service"]:IsStudio() then
+			if isfile(namehub..".json") and not game:GetService("RunService") then
 				local success, results = pcall(function()
 					config = HttpService:JSONDecode(readfile(namehub..".json"))
 				end)

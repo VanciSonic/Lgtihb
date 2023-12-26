@@ -2876,7 +2876,7 @@ GANTENGLIB_MODULES[GANTENGLIB["125"]] = {
 			LocalPlayerInfo.Profile.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 
 			local function RefreshTime()
-				if Mainframe.Parent ~= nil then
+				if Mainframe and Mainframe.Parent then
 					LocalPlayerInfo.Time.Text =os.date("%H:%M:%S", os.time())
 					task.wait(.5)
 					RefreshTime()

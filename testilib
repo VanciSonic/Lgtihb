@@ -1,15 +1,18 @@
---[[====
-	Ganteng Hub UI LIBRARY
-	Author: SonicTuru, Chillz, Isnahamzah
-	
-	This belongs to Ganteng hub Developers.
-====]]
+																																--[[
+	==============================================
+	|	Ganteng Hub UI LIBRARY					|
+	|	Author: SonicTuru, Chillz, Isnahamzah	|
+	|											|
+	|	This belongs to Ganteng hub Developers.	|
+	==============================================
+																																]]
 
--- Instances: 318 | Scripts: 0 | Modules: 1
+
+-- Instances: 327 | Scripts: 0 | Modules: 1
 local GANTENGLIB = {};
 
 -- GantengLib
-GANTENGLIB["1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
+GANTENGLIB["1"] = Instance.new("ScreenGui", game:GetService("CoreGui"));
 GANTENGLIB["1"]["IgnoreGuiInset"] = true;
 GANTENGLIB["1"]["ScreenInsets"] = Enum.ScreenInsets.DeviceSafeInsets;
 GANTENGLIB["1"]["Name"] = [[GantengLib]];
@@ -503,7 +506,7 @@ GANTENGLIB["3a"]["TextColor3"] = Color3.fromRGB(167, 167, 167);
 GANTENGLIB["3a"]["Size"] = UDim2.new(1, 0, 1, 0);
 GANTENGLIB["3a"]["Active"] = true;
 GANTENGLIB["3a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["3a"]["Text"] = [[]];
+GANTENGLIB["3a"]["Text"] = [[Landing Page]];
 GANTENGLIB["3a"]["BackgroundTransparency"] = 1;
 
 -- GantengLib.DropShadowHolder.MainFrame.MainSide.Landing
@@ -1380,30 +1383,37 @@ GANTENGLIB["a2"] = Instance.new("UIGradient", GANTENGLIB["9f"]);
 GANTENGLIB["a2"]["Rotation"] = 55;
 GANTENGLIB["a2"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(195, 195, 195))};
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionDropdown
-GANTENGLIB["a3"] = Instance.new("TextButton", GANTENGLIB["66"]);
-GANTENGLIB["a3"]["BorderSizePixel"] = 0;
-GANTENGLIB["a3"]["AutoButtonColor"] = false;
-GANTENGLIB["a3"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
-GANTENGLIB["a3"]["TextSize"] = 14;
-GANTENGLIB["a3"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
-GANTENGLIB["a3"]["TextColor3"] = Color3.fromRGB(191, 191, 191);
-GANTENGLIB["a3"]["Visible"] = false;
-GANTENGLIB["a3"]["Size"] = UDim2.new(1, 0, 0, 21);
-GANTENGLIB["a3"]["Name"] = [[OptionDropdown]];
-GANTENGLIB["a3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["a3"]["Text"] = [[Option]];
-
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionDropdown.UIGradient
-GANTENGLIB["a4"] = Instance.new("UIGradient", GANTENGLIB["a3"]);
-GANTENGLIB["a4"]["Rotation"] = 55;
-GANTENGLIB["a4"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(128, 128, 128))};
-
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionDropdown.UIPadding
-GANTENGLIB["a5"] = Instance.new("UIPadding", GANTENGLIB["a3"]);
-GANTENGLIB["a5"]["PaddingLeft"] = UDim.new(0, 6);
-
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Border
+GANTENGLIB["a3"] = Instance.new("Frame", GANTENGLIB["66"]);
+GANTENGLIB["a3"]["BorderSizePixel"] = 0;
+GANTENGLIB["a3"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["a3"]["BackgroundTransparency"] = 1;
+GANTENGLIB["a3"]["Size"] = UDim2.new(1, 0, 0, 10);
+GANTENGLIB["a3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["a3"]["Position"] = UDim2.new(0, 0, 0.45348837971687317, 0);
+GANTENGLIB["a3"]["Visible"] = false;
+GANTENGLIB["a3"]["Name"] = [[Border]];
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Border.Frame
+GANTENGLIB["a4"] = Instance.new("TextButton", GANTENGLIB["a3"]);
+GANTENGLIB["a4"]["BorderSizePixel"] = 0;
+GANTENGLIB["a4"]["AutoButtonColor"] = false;
+GANTENGLIB["a4"]["BackgroundColor3"] = Color3.fromRGB(112, 112, 112);
+GANTENGLIB["a4"]["Selectable"] = false;
+GANTENGLIB["a4"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["a4"]["Size"] = UDim2.new(0.9599999785423279, 0, 0.3160000145435333, 0);
+GANTENGLIB["a4"]["Name"] = [[Frame]];
+GANTENGLIB["a4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["a4"]["Text"] = [[]];
+GANTENGLIB["a4"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+-- Attributes
+GANTENGLIB["a4"]:SetAttribute([[Label]], true);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Border.Frame.UICorner
+GANTENGLIB["a5"] = Instance.new("UICorner", GANTENGLIB["a4"]);
+GANTENGLIB["a5"]["CornerRadius"] = UDim.new(0, 5);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator
 GANTENGLIB["a6"] = Instance.new("Frame", GANTENGLIB["66"]);
 GANTENGLIB["a6"]["BorderSizePixel"] = 0;
 GANTENGLIB["a6"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -1412,1421 +1422,1474 @@ GANTENGLIB["a6"]["Size"] = UDim2.new(1, 0, 0, 10);
 GANTENGLIB["a6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["a6"]["Position"] = UDim2.new(0, 0, 0.45348837971687317, 0);
 GANTENGLIB["a6"]["Visible"] = false;
-GANTENGLIB["a6"]["Name"] = [[Border]];
+GANTENGLIB["a6"]["Name"] = [[Seperator]];
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Border.Frame
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator.Frame
 GANTENGLIB["a7"] = Instance.new("TextButton", GANTENGLIB["a6"]);
 GANTENGLIB["a7"]["BorderSizePixel"] = 0;
 GANTENGLIB["a7"]["AutoButtonColor"] = false;
 GANTENGLIB["a7"]["BackgroundColor3"] = Color3.fromRGB(112, 112, 112);
 GANTENGLIB["a7"]["Selectable"] = false;
 GANTENGLIB["a7"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["a7"]["Size"] = UDim2.new(0.9599999785423279, 0, 0.3160000145435333, 0);
+GANTENGLIB["a7"]["Size"] = UDim2.new(0.32263731956481934, 0, 0.31599998474121094, 0);
 GANTENGLIB["a7"]["Name"] = [[Frame]];
 GANTENGLIB["a7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["a7"]["Text"] = [[]];
-GANTENGLIB["a7"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["a7"]["Position"] = UDim2.new(0.1813187450170517, 0, 0.5000013113021851, 0);
 -- Attributes
 GANTENGLIB["a7"]:SetAttribute([[Label]], true);
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Border.Frame.UICorner
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator.Frame.UICorner
 GANTENGLIB["a8"] = Instance.new("UICorner", GANTENGLIB["a7"]);
 GANTENGLIB["a8"]["CornerRadius"] = UDim.new(0, 5);
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator
-GANTENGLIB["a9"] = Instance.new("Frame", GANTENGLIB["66"]);
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator.Frame
+GANTENGLIB["a9"] = Instance.new("TextButton", GANTENGLIB["a6"]);
 GANTENGLIB["a9"]["BorderSizePixel"] = 0;
-GANTENGLIB["a9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["a9"]["BackgroundTransparency"] = 1;
-GANTENGLIB["a9"]["Size"] = UDim2.new(1, 0, 0, 10);
+GANTENGLIB["a9"]["AutoButtonColor"] = false;
+GANTENGLIB["a9"]["BackgroundColor3"] = Color3.fromRGB(112, 112, 112);
+GANTENGLIB["a9"]["Selectable"] = false;
+GANTENGLIB["a9"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["a9"]["Size"] = UDim2.new(0.32345062494277954, 0, 0.31599998474121094, 0);
+GANTENGLIB["a9"]["Name"] = [[Frame]];
 GANTENGLIB["a9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["a9"]["Position"] = UDim2.new(0, 0, 0.45348837971687317, 0);
-GANTENGLIB["a9"]["Visible"] = false;
-GANTENGLIB["a9"]["Name"] = [[Seperator]];
-
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator.Frame
-GANTENGLIB["aa"] = Instance.new("TextButton", GANTENGLIB["a9"]);
-GANTENGLIB["aa"]["BorderSizePixel"] = 0;
-GANTENGLIB["aa"]["AutoButtonColor"] = false;
-GANTENGLIB["aa"]["BackgroundColor3"] = Color3.fromRGB(112, 112, 112);
-GANTENGLIB["aa"]["Selectable"] = false;
-GANTENGLIB["aa"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["aa"]["Size"] = UDim2.new(0.32263731956481934, 0, 0.31599998474121094, 0);
-GANTENGLIB["aa"]["Name"] = [[Frame]];
-GANTENGLIB["aa"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["aa"]["Text"] = [[]];
-GANTENGLIB["aa"]["Position"] = UDim2.new(0.1813187450170517, 0, 0.5000013113021851, 0);
+GANTENGLIB["a9"]["Text"] = [[]];
+GANTENGLIB["a9"]["Position"] = UDim2.new(0.8182748556137085, 0, 0.5000013113021851, 0);
 -- Attributes
-GANTENGLIB["aa"]:SetAttribute([[Label]], true);
+GANTENGLIB["a9"]:SetAttribute([[Label]], true);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator.Frame.UICorner
-GANTENGLIB["ab"] = Instance.new("UICorner", GANTENGLIB["aa"]);
-GANTENGLIB["ab"]["CornerRadius"] = UDim.new(0, 5);
-
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator.Frame
-GANTENGLIB["ac"] = Instance.new("TextButton", GANTENGLIB["a9"]);
-GANTENGLIB["ac"]["BorderSizePixel"] = 0;
-GANTENGLIB["ac"]["AutoButtonColor"] = false;
-GANTENGLIB["ac"]["BackgroundColor3"] = Color3.fromRGB(112, 112, 112);
-GANTENGLIB["ac"]["Selectable"] = false;
-GANTENGLIB["ac"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["ac"]["Size"] = UDim2.new(0.32345062494277954, 0, 0.31599998474121094, 0);
-GANTENGLIB["ac"]["Name"] = [[Frame]];
-GANTENGLIB["ac"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["ac"]["Text"] = [[]];
-GANTENGLIB["ac"]["Position"] = UDim2.new(0.8182748556137085, 0, 0.5000013113021851, 0);
--- Attributes
-GANTENGLIB["ac"]:SetAttribute([[Label]], true);
-
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator.Frame.UICorner
-GANTENGLIB["ad"] = Instance.new("UICorner", GANTENGLIB["ac"]);
-GANTENGLIB["ad"]["CornerRadius"] = UDim.new(0, 5);
+GANTENGLIB["aa"] = Instance.new("UICorner", GANTENGLIB["a9"]);
+GANTENGLIB["aa"]["CornerRadius"] = UDim.new(0, 5);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Seperator.TextLabel
-GANTENGLIB["ae"] = Instance.new("TextLabel", GANTENGLIB["a9"]);
-GANTENGLIB["ae"]["BorderSizePixel"] = 0;
-GANTENGLIB["ae"]["BackgroundColor3"] = Color3.fromRGB(11, 11, 11);
-GANTENGLIB["ae"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["ae"]["TextSize"] = 15;
-GANTENGLIB["ae"]["TextColor3"] = Color3.fromRGB(209, 209, 209);
-GANTENGLIB["ae"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["ae"]["AutomaticSize"] = Enum.AutomaticSize.X;
-GANTENGLIB["ae"]["Size"] = UDim2.new(0, 65, 0, 10);
-GANTENGLIB["ae"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["ae"]["Text"] = [[Seperator]];
-GANTENGLIB["ae"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["ab"] = Instance.new("TextLabel", GANTENGLIB["a6"]);
+GANTENGLIB["ab"]["BorderSizePixel"] = 0;
+GANTENGLIB["ab"]["BackgroundColor3"] = Color3.fromRGB(11, 11, 11);
+GANTENGLIB["ab"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["ab"]["TextSize"] = 15;
+GANTENGLIB["ab"]["TextColor3"] = Color3.fromRGB(209, 209, 209);
+GANTENGLIB["ab"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["ab"]["AutomaticSize"] = Enum.AutomaticSize.X;
+GANTENGLIB["ab"]["Size"] = UDim2.new(0, 65, 0, 10);
+GANTENGLIB["ab"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["ab"]["Text"] = [[Seperator]];
+GANTENGLIB["ab"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown
-GANTENGLIB["af"] = Instance.new("Frame", GANTENGLIB["66"]);
-GANTENGLIB["af"]["BorderSizePixel"] = 0;
-GANTENGLIB["af"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["af"]["BackgroundTransparency"] = 1;
-GANTENGLIB["af"]["Size"] = UDim2.new(1, 0, 0, 39);
-GANTENGLIB["af"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["af"]["Position"] = UDim2.new(9.046712534654944e-08, 0, 0, 0);
-GANTENGLIB["af"]["AutomaticSize"] = Enum.AutomaticSize.Y;
-GANTENGLIB["af"]["Visible"] = false;
-GANTENGLIB["af"]["Name"] = [[Dropdown]];
+GANTENGLIB["ac"] = Instance.new("Frame", GANTENGLIB["66"]);
+GANTENGLIB["ac"]["BorderSizePixel"] = 0;
+GANTENGLIB["ac"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["ac"]["BackgroundTransparency"] = 1;
+GANTENGLIB["ac"]["Size"] = UDim2.new(1, 0, 0, 39);
+GANTENGLIB["ac"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["ac"]["Position"] = UDim2.new(9.046712534654944e-08, 0, 0, 0);
+GANTENGLIB["ac"]["AutomaticSize"] = Enum.AutomaticSize.Y;
+GANTENGLIB["ac"]["Visible"] = false;
+GANTENGLIB["ac"]["Name"] = [[Dropdown]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame
-GANTENGLIB["b0"] = Instance.new("TextButton", GANTENGLIB["af"]);
-GANTENGLIB["b0"]["BorderSizePixel"] = 0;
-GANTENGLIB["b0"]["AutoButtonColor"] = false;
-GANTENGLIB["b0"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
-GANTENGLIB["b0"]["Selectable"] = false;
-GANTENGLIB["b0"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["b0"]["Size"] = UDim2.new(0.9599999785423279, 0, 0, 32);
-GANTENGLIB["b0"]["Name"] = [[Frame]];
-GANTENGLIB["b0"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["b0"]["Text"] = [[]];
-GANTENGLIB["b0"]["Position"] = UDim2.new(0.5, 0, 0, 19);
+GANTENGLIB["ad"] = Instance.new("TextButton", GANTENGLIB["ac"]);
+GANTENGLIB["ad"]["BorderSizePixel"] = 0;
+GANTENGLIB["ad"]["AutoButtonColor"] = false;
+GANTENGLIB["ad"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
+GANTENGLIB["ad"]["Selectable"] = false;
+GANTENGLIB["ad"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["ad"]["Size"] = UDim2.new(0.9599999785423279, 0, 0, 32);
+GANTENGLIB["ad"]["Name"] = [[Frame]];
+GANTENGLIB["ad"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["ad"]["Text"] = [[]];
+GANTENGLIB["ad"]["Position"] = UDim2.new(0.5, 0, 0, 19);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.UICorner
+GANTENGLIB["ae"] = Instance.new("UICorner", GANTENGLIB["ad"]);
+GANTENGLIB["ae"]["CornerRadius"] = UDim.new(0, 5);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.UIGradient
+GANTENGLIB["af"] = Instance.new("UIGradient", GANTENGLIB["ad"]);
+GANTENGLIB["af"]["Rotation"] = 55;
+GANTENGLIB["af"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(195, 195, 195))};
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.Select
+GANTENGLIB["b0"] = Instance.new("TextButton", GANTENGLIB["ad"]);
+GANTENGLIB["b0"]["TextWrapped"] = true;
+GANTENGLIB["b0"]["Active"] = false;
+GANTENGLIB["b0"]["BorderSizePixel"] = 0;
+GANTENGLIB["b0"]["AutoButtonColor"] = false;
+GANTENGLIB["b0"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["b0"]["BackgroundColor3"] = Color3.fromRGB(35, 35, 35);
+GANTENGLIB["b0"]["TextSize"] = 16;
+GANTENGLIB["b0"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["b0"]["TextColor3"] = Color3.fromRGB(159, 159, 159);
+GANTENGLIB["b0"]["Selectable"] = false;
+GANTENGLIB["b0"]["AnchorPoint"] = Vector2.new(1, 0.5);
+GANTENGLIB["b0"]["Size"] = UDim2.new(0, 109, 0, 24);
+GANTENGLIB["b0"]["Name"] = [[Select]];
+GANTENGLIB["b0"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["b0"]["Text"] = [[None]];
+GANTENGLIB["b0"]["Position"] = UDim2.new(0.9750000238418579, 0, 0.5, 0);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.Select.UICorner
 GANTENGLIB["b1"] = Instance.new("UICorner", GANTENGLIB["b0"]);
 GANTENGLIB["b1"]["CornerRadius"] = UDim.new(0, 5);
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.UIGradient
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.Select.UIGradient
 GANTENGLIB["b2"] = Instance.new("UIGradient", GANTENGLIB["b0"]);
 GANTENGLIB["b2"]["Rotation"] = 55;
 GANTENGLIB["b2"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(195, 195, 195))};
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.Select
-GANTENGLIB["b3"] = Instance.new("TextButton", GANTENGLIB["b0"]);
-GANTENGLIB["b3"]["TextWrapped"] = true;
-GANTENGLIB["b3"]["Active"] = false;
-GANTENGLIB["b3"]["BorderSizePixel"] = 0;
-GANTENGLIB["b3"]["AutoButtonColor"] = false;
-GANTENGLIB["b3"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["b3"]["BackgroundColor3"] = Color3.fromRGB(35, 35, 35);
-GANTENGLIB["b3"]["TextSize"] = 16;
-GANTENGLIB["b3"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["b3"]["TextColor3"] = Color3.fromRGB(159, 159, 159);
-GANTENGLIB["b3"]["Selectable"] = false;
-GANTENGLIB["b3"]["AnchorPoint"] = Vector2.new(1, 0.5);
-GANTENGLIB["b3"]["Size"] = UDim2.new(0, 109, 0, 24);
-GANTENGLIB["b3"]["Name"] = [[Select]];
-GANTENGLIB["b3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["b3"]["Text"] = [[None]];
-GANTENGLIB["b3"]["Position"] = UDim2.new(0.9750000238418579, 0, 0.5, 0);
-
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.Select.UICorner
-GANTENGLIB["b4"] = Instance.new("UICorner", GANTENGLIB["b3"]);
-GANTENGLIB["b4"]["CornerRadius"] = UDim.new(0, 5);
-
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.Select.UIGradient
-GANTENGLIB["b5"] = Instance.new("UIGradient", GANTENGLIB["b3"]);
-GANTENGLIB["b5"]["Rotation"] = 55;
-GANTENGLIB["b5"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(195, 195, 195))};
-
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.Select.UIPadding
-GANTENGLIB["b6"] = Instance.new("UIPadding", GANTENGLIB["b3"]);
-GANTENGLIB["b6"]["PaddingLeft"] = UDim.new(0, 5);
+GANTENGLIB["b3"] = Instance.new("UIPadding", GANTENGLIB["b0"]);
+GANTENGLIB["b3"]["PaddingLeft"] = UDim.new(0, 5);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.Select.ImageLabel
-GANTENGLIB["b7"] = Instance.new("ImageLabel", GANTENGLIB["b3"]);
-GANTENGLIB["b7"]["BorderSizePixel"] = 0;
-GANTENGLIB["b7"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["b7"]["ImageColor3"] = Color3.fromRGB(159, 159, 159);
-GANTENGLIB["b7"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["b7"]["Image"] = [[http://www.roblox.com/asset/?id=15390268248]];
-GANTENGLIB["b7"]["Size"] = UDim2.new(0.17544731497764587, 0, 0.6375312805175781, 0);
-GANTENGLIB["b7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["b7"]["BackgroundTransparency"] = 1;
-GANTENGLIB["b7"]["Position"] = UDim2.new(0.8299999833106995, 0, 0.5, 0);
+GANTENGLIB["b4"] = Instance.new("ImageLabel", GANTENGLIB["b0"]);
+GANTENGLIB["b4"]["BorderSizePixel"] = 0;
+GANTENGLIB["b4"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["b4"]["ImageColor3"] = Color3.fromRGB(159, 159, 159);
+GANTENGLIB["b4"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["b4"]["Image"] = [[http://www.roblox.com/asset/?id=15390268248]];
+GANTENGLIB["b4"]["Size"] = UDim2.new(0.17544731497764587, 0, 0.6375312805175781, 0);
+GANTENGLIB["b4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["b4"]["BackgroundTransparency"] = 1;
+GANTENGLIB["b4"]["Position"] = UDim2.new(0.8299999833106995, 0, 0.5, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.Select.ImageLabel.UIAspectRatioConstraint
-GANTENGLIB["b8"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["b7"]);
+GANTENGLIB["b5"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["b4"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.UIStroke
-GANTENGLIB["b9"] = Instance.new("UIStroke", GANTENGLIB["b0"]);
-GANTENGLIB["b9"]["Color"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["b9"]["Thickness"] = 0.8500000238418579;
-GANTENGLIB["b9"]["Transparency"] = 1;
-GANTENGLIB["b9"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+GANTENGLIB["b6"] = Instance.new("UIStroke", GANTENGLIB["ad"]);
+GANTENGLIB["b6"]["Color"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["b6"]["Thickness"] = 0.8500000238418579;
+GANTENGLIB["b6"]["Transparency"] = 1;
+GANTENGLIB["b6"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.Frame.TextLabel
-GANTENGLIB["ba"] = Instance.new("TextLabel", GANTENGLIB["b0"]);
-GANTENGLIB["ba"]["TextWrapped"] = true;
-GANTENGLIB["ba"]["BorderSizePixel"] = 0;
-GANTENGLIB["ba"]["TextScaled"] = true;
-GANTENGLIB["ba"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["ba"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["ba"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
-GANTENGLIB["ba"]["TextSize"] = 14;
-GANTENGLIB["ba"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["ba"]["Size"] = UDim2.new(0.6151160001754761, 0, 0.6129031777381897, 0);
-GANTENGLIB["ba"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["ba"]["Text"] = [[Dropdown]];
-GANTENGLIB["ba"]["BackgroundTransparency"] = 1;
-GANTENGLIB["ba"]["Position"] = UDim2.new(0.025755494832992554, 0, 0.1875, 0);
+GANTENGLIB["b7"] = Instance.new("TextLabel", GANTENGLIB["ad"]);
+GANTENGLIB["b7"]["TextWrapped"] = true;
+GANTENGLIB["b7"]["BorderSizePixel"] = 0;
+GANTENGLIB["b7"]["TextScaled"] = true;
+GANTENGLIB["b7"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["b7"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["b7"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+GANTENGLIB["b7"]["TextSize"] = 14;
+GANTENGLIB["b7"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["b7"]["Size"] = UDim2.new(0.6151160001754761, 0, 0.6129031777381897, 0);
+GANTENGLIB["b7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["b7"]["Text"] = [[Dropdown]];
+GANTENGLIB["b7"]["BackgroundTransparency"] = 1;
+GANTENGLIB["b7"]["Position"] = UDim2.new(0.025755494832992554, 0, 0.1875, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.SelectionFrame
-GANTENGLIB["bb"] = Instance.new("Frame", GANTENGLIB["af"]);
-GANTENGLIB["bb"]["BorderSizePixel"] = 0;
-GANTENGLIB["bb"]["BackgroundColor3"] = Color3.fromRGB(45, 45, 45);
-GANTENGLIB["bb"]["AnchorPoint"] = Vector2.new(0.5, 0);
-GANTENGLIB["bb"]["Size"] = UDim2.new(0.949999988079071, 0, 0, 0);
-GANTENGLIB["bb"]["ClipsDescendants"] = true;
-GANTENGLIB["bb"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["bb"]["Position"] = UDim2.new(0.5, 0, 0.03099999949336052, 31);
-GANTENGLIB["bb"]["Name"] = [[SelectionFrame]];
+GANTENGLIB["b8"] = Instance.new("Frame", GANTENGLIB["ac"]);
+GANTENGLIB["b8"]["BorderSizePixel"] = 0;
+GANTENGLIB["b8"]["BackgroundColor3"] = Color3.fromRGB(45, 45, 45);
+GANTENGLIB["b8"]["AnchorPoint"] = Vector2.new(0.5, 0);
+GANTENGLIB["b8"]["Size"] = UDim2.new(0.949999988079071, 0, 0, 0);
+GANTENGLIB["b8"]["ClipsDescendants"] = true;
+GANTENGLIB["b8"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["b8"]["Position"] = UDim2.new(0.5, 0, 0.03099999949336052, 31);
+GANTENGLIB["b8"]["Name"] = [[SelectionFrame]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.SelectionFrame.UICorner
-GANTENGLIB["bc"] = Instance.new("UICorner", GANTENGLIB["bb"]);
-GANTENGLIB["bc"]["CornerRadius"] = UDim.new(0, 5);
+GANTENGLIB["b9"] = Instance.new("UICorner", GANTENGLIB["b8"]);
+GANTENGLIB["b9"]["CornerRadius"] = UDim.new(0, 5);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.SelectionFrame.UIGradient
-GANTENGLIB["bd"] = Instance.new("UIGradient", GANTENGLIB["bb"]);
-GANTENGLIB["bd"]["Rotation"] = 55;
-GANTENGLIB["bd"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(128, 128, 128))};
+GANTENGLIB["ba"] = Instance.new("UIGradient", GANTENGLIB["b8"]);
+GANTENGLIB["ba"]["Rotation"] = 55;
+GANTENGLIB["ba"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(128, 128, 128))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.SelectionFrame.ScrollingFrame
-GANTENGLIB["be"] = Instance.new("ScrollingFrame", GANTENGLIB["bb"]);
-GANTENGLIB["be"]["Active"] = true;
-GANTENGLIB["be"]["BorderSizePixel"] = 0;
-GANTENGLIB["be"]["CanvasSize"] = UDim2.new(0, 0, 0, 1);
-GANTENGLIB["be"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["be"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
-GANTENGLIB["be"]["BackgroundTransparency"] = 1;
-GANTENGLIB["be"]["Size"] = UDim2.new(1, 0, 1, 0);
-GANTENGLIB["be"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["be"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["be"]["ScrollBarThickness"] = 0;
+GANTENGLIB["bb"] = Instance.new("ScrollingFrame", GANTENGLIB["b8"]);
+GANTENGLIB["bb"]["Active"] = true;
+GANTENGLIB["bb"]["BorderSizePixel"] = 0;
+GANTENGLIB["bb"]["CanvasSize"] = UDim2.new(0, 0, 0, 1);
+GANTENGLIB["bb"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["bb"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
+GANTENGLIB["bb"]["BackgroundTransparency"] = 1;
+GANTENGLIB["bb"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGLIB["bb"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["bb"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["bb"]["ScrollBarThickness"] = 0;
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.Dropdown.SelectionFrame.ScrollingFrame.UIListLayout
-GANTENGLIB["bf"] = Instance.new("UIListLayout", GANTENGLIB["be"]);
-GANTENGLIB["bf"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+GANTENGLIB["bc"] = Instance.new("UIListLayout", GANTENGLIB["bb"]);
+GANTENGLIB["bc"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown
-GANTENGLIB["c0"] = Instance.new("Frame", GANTENGLIB["66"]);
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionDropdown
+GANTENGLIB["bd"] = Instance.new("TextButton", GANTENGLIB["66"]);
+GANTENGLIB["bd"]["BorderSizePixel"] = 0;
+GANTENGLIB["bd"]["AutoButtonColor"] = false;
+GANTENGLIB["bd"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
+GANTENGLIB["bd"]["TextSize"] = 14;
+GANTENGLIB["bd"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+GANTENGLIB["bd"]["TextColor3"] = Color3.fromRGB(191, 191, 191);
+GANTENGLIB["bd"]["Visible"] = false;
+GANTENGLIB["bd"]["Size"] = UDim2.new(1, 0, 0, 21);
+GANTENGLIB["bd"]["Name"] = [[OptionDropdown]];
+GANTENGLIB["bd"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["bd"]["Text"] = [[Option]];
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionDropdown.UIGradient
+GANTENGLIB["be"] = Instance.new("UIGradient", GANTENGLIB["bd"]);
+GANTENGLIB["be"]["Rotation"] = 55;
+GANTENGLIB["be"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(128, 128, 128))};
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionDropdown.UIPadding
+GANTENGLIB["bf"] = Instance.new("UIPadding", GANTENGLIB["bd"]);
+GANTENGLIB["bf"]["PaddingLeft"] = UDim.new(0, 6);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionMultiDropdown
+GANTENGLIB["c0"] = Instance.new("TextButton", GANTENGLIB["66"]);
 GANTENGLIB["c0"]["BorderSizePixel"] = 0;
-GANTENGLIB["c0"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["c0"]["BackgroundTransparency"] = 1;
-GANTENGLIB["c0"]["Size"] = UDim2.new(1, 0, 0, 39);
-GANTENGLIB["c0"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["c0"]["Position"] = UDim2.new(9.046712534654944e-08, 0, 0, 0);
-GANTENGLIB["c0"]["AutomaticSize"] = Enum.AutomaticSize.Y;
+GANTENGLIB["c0"]["AutoButtonColor"] = false;
+GANTENGLIB["c0"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
+GANTENGLIB["c0"]["TextSize"] = 14;
+GANTENGLIB["c0"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+GANTENGLIB["c0"]["TextColor3"] = Color3.fromRGB(191, 191, 191);
 GANTENGLIB["c0"]["Visible"] = false;
-GANTENGLIB["c0"]["Name"] = [[MultiDropdown]];
+GANTENGLIB["c0"]["Size"] = UDim2.new(1, 0, 0, 21);
+GANTENGLIB["c0"]["Name"] = [[OptionMultiDropdown]];
+GANTENGLIB["c0"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["c0"]["Text"] = [[Option]];
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame
-GANTENGLIB["c1"] = Instance.new("TextButton", GANTENGLIB["c0"]);
-GANTENGLIB["c1"]["BorderSizePixel"] = 0;
-GANTENGLIB["c1"]["AutoButtonColor"] = false;
-GANTENGLIB["c1"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
-GANTENGLIB["c1"]["Selectable"] = false;
-GANTENGLIB["c1"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["c1"]["Size"] = UDim2.new(0.9599999785423279, 0, 0, 32);
-GANTENGLIB["c1"]["Name"] = [[Frame]];
-GANTENGLIB["c1"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["c1"]["Text"] = [[]];
-GANTENGLIB["c1"]["Position"] = UDim2.new(0.5, 0, 0, 19);
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionMultiDropdown.UIGradient
+GANTENGLIB["c1"] = Instance.new("UIGradient", GANTENGLIB["c0"]);
+GANTENGLIB["c1"]["Rotation"] = 55;
+GANTENGLIB["c1"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(128, 128, 128))};
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.UICorner
-GANTENGLIB["c2"] = Instance.new("UICorner", GANTENGLIB["c1"]);
-GANTENGLIB["c2"]["CornerRadius"] = UDim.new(0, 5);
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionMultiDropdown.UIPadding
+GANTENGLIB["c2"] = Instance.new("UIPadding", GANTENGLIB["c0"]);
+GANTENGLIB["c2"]["PaddingLeft"] = UDim.new(0, 6);
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.UIGradient
-GANTENGLIB["c3"] = Instance.new("UIGradient", GANTENGLIB["c1"]);
-GANTENGLIB["c3"]["Rotation"] = 55;
-GANTENGLIB["c3"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(195, 195, 195))};
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionMultiDropdown.Indicator
+GANTENGLIB["c3"] = Instance.new("Frame", GANTENGLIB["c0"]);
+GANTENGLIB["c3"]["BorderSizePixel"] = 0;
+GANTENGLIB["c3"]["BackgroundColor3"] = Color3.fromRGB(22, 22, 22);
+GANTENGLIB["c3"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["c3"]["Size"] = UDim2.new(0, 17, 0, 17);
+GANTENGLIB["c3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["c3"]["Position"] = UDim2.new(0.014999999664723873, 0, 0.5, 0);
+GANTENGLIB["c3"]["Name"] = [[Indicator]];
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.Select
-GANTENGLIB["c4"] = Instance.new("TextButton", GANTENGLIB["c1"]);
-GANTENGLIB["c4"]["TextWrapped"] = true;
-GANTENGLIB["c4"]["Active"] = false;
-GANTENGLIB["c4"]["BorderSizePixel"] = 0;
-GANTENGLIB["c4"]["AutoButtonColor"] = false;
-GANTENGLIB["c4"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["c4"]["BackgroundColor3"] = Color3.fromRGB(35, 35, 35);
-GANTENGLIB["c4"]["TextSize"] = 16;
-GANTENGLIB["c4"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["c4"]["TextColor3"] = Color3.fromRGB(159, 159, 159);
-GANTENGLIB["c4"]["Selectable"] = false;
-GANTENGLIB["c4"]["AnchorPoint"] = Vector2.new(1, 0.5);
-GANTENGLIB["c4"]["Size"] = UDim2.new(0, 165, 0, 24);
-GANTENGLIB["c4"]["Name"] = [[Select]];
-GANTENGLIB["c4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["c4"]["Text"] = [[None]];
-GANTENGLIB["c4"]["Position"] = UDim2.new(0.9750000238418579, 0, 0.5, 0);
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionMultiDropdown.Indicator.UIAspectRatioConstraint
+GANTENGLIB["c4"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["c3"]);
 
--- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.Select.UICorner
-GANTENGLIB["c5"] = Instance.new("UICorner", GANTENGLIB["c4"]);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionMultiDropdown.Indicator.UICorner
+GANTENGLIB["c5"] = Instance.new("UICorner", GANTENGLIB["c3"]);
 GANTENGLIB["c5"]["CornerRadius"] = UDim.new(0, 5);
 
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionMultiDropdown.Indicator.Fill
+GANTENGLIB["c6"] = Instance.new("Frame", GANTENGLIB["c3"]);
+GANTENGLIB["c6"]["BorderSizePixel"] = 0;
+GANTENGLIB["c6"]["BackgroundColor3"] = Color3.fromRGB(206, 206, 206);
+GANTENGLIB["c6"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["c6"]["BackgroundTransparency"] = 1;
+GANTENGLIB["c6"]["Size"] = UDim2.new(0, 14, 0, 14);
+GANTENGLIB["c6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["c6"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["c6"]["Name"] = [[Fill]];
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionMultiDropdown.Indicator.Fill.UIAspectRatioConstraint
+GANTENGLIB["c7"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["c6"]);
+
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.OptionMultiDropdown.Indicator.Fill.UICorner
+GANTENGLIB["c8"] = Instance.new("UICorner", GANTENGLIB["c6"]);
+GANTENGLIB["c8"]["CornerRadius"] = UDim.new(0, 5);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown
+GANTENGLIB["c9"] = Instance.new("Frame", GANTENGLIB["66"]);
+GANTENGLIB["c9"]["BorderSizePixel"] = 0;
+GANTENGLIB["c9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["c9"]["BackgroundTransparency"] = 1;
+GANTENGLIB["c9"]["Size"] = UDim2.new(1, 0, 0, 39);
+GANTENGLIB["c9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["c9"]["Position"] = UDim2.new(9.046712534654944e-08, 0, 0, 0);
+GANTENGLIB["c9"]["AutomaticSize"] = Enum.AutomaticSize.Y;
+GANTENGLIB["c9"]["Visible"] = false;
+GANTENGLIB["c9"]["Name"] = [[MultiDropdown]];
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame
+GANTENGLIB["ca"] = Instance.new("TextButton", GANTENGLIB["c9"]);
+GANTENGLIB["ca"]["BorderSizePixel"] = 0;
+GANTENGLIB["ca"]["AutoButtonColor"] = false;
+GANTENGLIB["ca"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
+GANTENGLIB["ca"]["Selectable"] = false;
+GANTENGLIB["ca"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["ca"]["Size"] = UDim2.new(0.9599999785423279, 0, 0, 32);
+GANTENGLIB["ca"]["Name"] = [[Frame]];
+GANTENGLIB["ca"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["ca"]["Text"] = [[]];
+GANTENGLIB["ca"]["Position"] = UDim2.new(0.5, 0, 0, 19);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.UICorner
+GANTENGLIB["cb"] = Instance.new("UICorner", GANTENGLIB["ca"]);
+GANTENGLIB["cb"]["CornerRadius"] = UDim.new(0, 5);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.UIGradient
+GANTENGLIB["cc"] = Instance.new("UIGradient", GANTENGLIB["ca"]);
+GANTENGLIB["cc"]["Rotation"] = 55;
+GANTENGLIB["cc"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(195, 195, 195))};
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.Select
+GANTENGLIB["cd"] = Instance.new("TextButton", GANTENGLIB["ca"]);
+GANTENGLIB["cd"]["TextWrapped"] = true;
+GANTENGLIB["cd"]["Active"] = false;
+GANTENGLIB["cd"]["BorderSizePixel"] = 0;
+GANTENGLIB["cd"]["AutoButtonColor"] = false;
+GANTENGLIB["cd"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["cd"]["BackgroundColor3"] = Color3.fromRGB(35, 35, 35);
+GANTENGLIB["cd"]["TextSize"] = 16;
+GANTENGLIB["cd"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["cd"]["TextColor3"] = Color3.fromRGB(159, 159, 159);
+GANTENGLIB["cd"]["Selectable"] = false;
+GANTENGLIB["cd"]["AnchorPoint"] = Vector2.new(1, 0.5);
+GANTENGLIB["cd"]["Size"] = UDim2.new(0, 165, 0, 24);
+GANTENGLIB["cd"]["Name"] = [[Select]];
+GANTENGLIB["cd"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["cd"]["Text"] = [[None]];
+GANTENGLIB["cd"]["Position"] = UDim2.new(0.9750000238418579, 0, 0.5, 0);
+
+-- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.Select.UICorner
+GANTENGLIB["ce"] = Instance.new("UICorner", GANTENGLIB["cd"]);
+GANTENGLIB["ce"]["CornerRadius"] = UDim.new(0, 5);
+
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.Select.UIGradient
-GANTENGLIB["c6"] = Instance.new("UIGradient", GANTENGLIB["c4"]);
-GANTENGLIB["c6"]["Rotation"] = 55;
-GANTENGLIB["c6"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(195, 195, 195))};
+GANTENGLIB["cf"] = Instance.new("UIGradient", GANTENGLIB["cd"]);
+GANTENGLIB["cf"]["Rotation"] = 55;
+GANTENGLIB["cf"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(195, 195, 195))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.Select.UIPadding
-GANTENGLIB["c7"] = Instance.new("UIPadding", GANTENGLIB["c4"]);
-GANTENGLIB["c7"]["PaddingLeft"] = UDim.new(0, 5);
+GANTENGLIB["d0"] = Instance.new("UIPadding", GANTENGLIB["cd"]);
+GANTENGLIB["d0"]["PaddingLeft"] = UDim.new(0, 5);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.Select.ImageLabel
-GANTENGLIB["c8"] = Instance.new("ImageLabel", GANTENGLIB["c4"]);
-GANTENGLIB["c8"]["BorderSizePixel"] = 0;
-GANTENGLIB["c8"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["c8"]["ImageColor3"] = Color3.fromRGB(159, 159, 159);
-GANTENGLIB["c8"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["c8"]["Image"] = [[http://www.roblox.com/asset/?id=15390268248]];
-GANTENGLIB["c8"]["Size"] = UDim2.new(0.17544731497764587, 0, 0.6375312805175781, 0);
-GANTENGLIB["c8"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["c8"]["BackgroundTransparency"] = 1;
-GANTENGLIB["c8"]["Position"] = UDim2.new(0.8899999856948853, 0, 0.5, 0);
+GANTENGLIB["d1"] = Instance.new("ImageLabel", GANTENGLIB["cd"]);
+GANTENGLIB["d1"]["BorderSizePixel"] = 0;
+GANTENGLIB["d1"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["d1"]["ImageColor3"] = Color3.fromRGB(159, 159, 159);
+GANTENGLIB["d1"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["d1"]["Image"] = [[http://www.roblox.com/asset/?id=15390268248]];
+GANTENGLIB["d1"]["Size"] = UDim2.new(0.17544731497764587, 0, 0.6375312805175781, 0);
+GANTENGLIB["d1"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["d1"]["BackgroundTransparency"] = 1;
+GANTENGLIB["d1"]["Position"] = UDim2.new(0.8899999856948853, 0, 0.5, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.Select.ImageLabel.UIAspectRatioConstraint
-GANTENGLIB["c9"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["c8"]);
+GANTENGLIB["d2"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["d1"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.UIStroke
-GANTENGLIB["ca"] = Instance.new("UIStroke", GANTENGLIB["c1"]);
-GANTENGLIB["ca"]["Color"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["ca"]["Thickness"] = 0.8500000238418579;
-GANTENGLIB["ca"]["Transparency"] = 1;
-GANTENGLIB["ca"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+GANTENGLIB["d3"] = Instance.new("UIStroke", GANTENGLIB["ca"]);
+GANTENGLIB["d3"]["Color"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["d3"]["Thickness"] = 0.8500000238418579;
+GANTENGLIB["d3"]["Transparency"] = 1;
+GANTENGLIB["d3"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.Frame.TextLabel
-GANTENGLIB["cb"] = Instance.new("TextLabel", GANTENGLIB["c1"]);
-GANTENGLIB["cb"]["TextWrapped"] = true;
-GANTENGLIB["cb"]["BorderSizePixel"] = 0;
-GANTENGLIB["cb"]["TextScaled"] = true;
-GANTENGLIB["cb"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["cb"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["cb"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
-GANTENGLIB["cb"]["TextSize"] = 14;
-GANTENGLIB["cb"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["cb"]["Size"] = UDim2.new(0.6151160001754761, 0, 0.6129031777381897, 0);
-GANTENGLIB["cb"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["cb"]["Text"] = [[Dropdown]];
-GANTENGLIB["cb"]["BackgroundTransparency"] = 1;
-GANTENGLIB["cb"]["Position"] = UDim2.new(0.025755494832992554, 0, 0.1875, 0);
+GANTENGLIB["d4"] = Instance.new("TextLabel", GANTENGLIB["ca"]);
+GANTENGLIB["d4"]["TextWrapped"] = true;
+GANTENGLIB["d4"]["BorderSizePixel"] = 0;
+GANTENGLIB["d4"]["TextScaled"] = true;
+GANTENGLIB["d4"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["d4"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["d4"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+GANTENGLIB["d4"]["TextSize"] = 14;
+GANTENGLIB["d4"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["d4"]["Size"] = UDim2.new(0.6151160001754761, 0, 0.6129031777381897, 0);
+GANTENGLIB["d4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["d4"]["Text"] = [[Dropdown]];
+GANTENGLIB["d4"]["BackgroundTransparency"] = 1;
+GANTENGLIB["d4"]["Position"] = UDim2.new(0.025755494832992554, 0, 0.1875, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.SelectionFrame
-GANTENGLIB["cc"] = Instance.new("Frame", GANTENGLIB["c0"]);
-GANTENGLIB["cc"]["BorderSizePixel"] = 0;
-GANTENGLIB["cc"]["BackgroundColor3"] = Color3.fromRGB(45, 45, 45);
-GANTENGLIB["cc"]["AnchorPoint"] = Vector2.new(0.5, 0);
-GANTENGLIB["cc"]["Size"] = UDim2.new(0.949999988079071, 0, 0, 0);
-GANTENGLIB["cc"]["ClipsDescendants"] = true;
-GANTENGLIB["cc"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["cc"]["Position"] = UDim2.new(0.5, 0, 0.03099999949336052, 31);
-GANTENGLIB["cc"]["Name"] = [[SelectionFrame]];
+GANTENGLIB["d5"] = Instance.new("Frame", GANTENGLIB["c9"]);
+GANTENGLIB["d5"]["BorderSizePixel"] = 0;
+GANTENGLIB["d5"]["BackgroundColor3"] = Color3.fromRGB(45, 45, 45);
+GANTENGLIB["d5"]["AnchorPoint"] = Vector2.new(0.5, 0);
+GANTENGLIB["d5"]["Size"] = UDim2.new(0.949999988079071, 0, 0, 0);
+GANTENGLIB["d5"]["ClipsDescendants"] = true;
+GANTENGLIB["d5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["d5"]["Position"] = UDim2.new(0.5, 0, 0.03099999949336052, 31);
+GANTENGLIB["d5"]["Name"] = [[SelectionFrame]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.SelectionFrame.UICorner
-GANTENGLIB["cd"] = Instance.new("UICorner", GANTENGLIB["cc"]);
-GANTENGLIB["cd"]["CornerRadius"] = UDim.new(0, 5);
+GANTENGLIB["d6"] = Instance.new("UICorner", GANTENGLIB["d5"]);
+GANTENGLIB["d6"]["CornerRadius"] = UDim.new(0, 5);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.SelectionFrame.UIGradient
-GANTENGLIB["ce"] = Instance.new("UIGradient", GANTENGLIB["cc"]);
-GANTENGLIB["ce"]["Rotation"] = 55;
-GANTENGLIB["ce"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(128, 128, 128))};
+GANTENGLIB["d7"] = Instance.new("UIGradient", GANTENGLIB["d5"]);
+GANTENGLIB["d7"]["Rotation"] = 55;
+GANTENGLIB["d7"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(128, 128, 128))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.SelectionFrame.ScrollingFrame
-GANTENGLIB["cf"] = Instance.new("ScrollingFrame", GANTENGLIB["cc"]);
-GANTENGLIB["cf"]["Active"] = true;
-GANTENGLIB["cf"]["BorderSizePixel"] = 0;
-GANTENGLIB["cf"]["CanvasSize"] = UDim2.new(0, 0, 0, 1);
-GANTENGLIB["cf"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["cf"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
-GANTENGLIB["cf"]["BackgroundTransparency"] = 1;
-GANTENGLIB["cf"]["Size"] = UDim2.new(1, 0, 1, 0);
-GANTENGLIB["cf"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["cf"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["cf"]["ScrollBarThickness"] = 0;
+GANTENGLIB["d8"] = Instance.new("ScrollingFrame", GANTENGLIB["d5"]);
+GANTENGLIB["d8"]["Active"] = true;
+GANTENGLIB["d8"]["BorderSizePixel"] = 0;
+GANTENGLIB["d8"]["CanvasSize"] = UDim2.new(0, 0, 0, 1);
+GANTENGLIB["d8"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["d8"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
+GANTENGLIB["d8"]["BackgroundTransparency"] = 1;
+GANTENGLIB["d8"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGLIB["d8"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["d8"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["d8"]["ScrollBarThickness"] = 0;
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.InsideTab.MultiDropdown.SelectionFrame.ScrollingFrame.UIListLayout
-GANTENGLIB["d0"] = Instance.new("UIListLayout", GANTENGLIB["cf"]);
-GANTENGLIB["d0"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+GANTENGLIB["d9"] = Instance.new("UIListLayout", GANTENGLIB["d8"]);
+GANTENGLIB["d9"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog
-GANTENGLIB["d1"] = Instance.new("Folder", GANTENGLIB["65"]);
-GANTENGLIB["d1"]["Name"] = [[Changelog]];
+GANTENGLIB["da"] = Instance.new("Folder", GANTENGLIB["65"]);
+GANTENGLIB["da"]["Name"] = [[Changelog]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.PurpleToCyan
-GANTENGLIB["d2"] = Instance.new("Frame", GANTENGLIB["d1"]);
-GANTENGLIB["d2"]["BorderSizePixel"] = 0;
-GANTENGLIB["d2"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
-GANTENGLIB["d2"]["Size"] = UDim2.new(1, 0, 0, 44);
-GANTENGLIB["d2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["d2"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
-GANTENGLIB["d2"]["Visible"] = false;
-GANTENGLIB["d2"]["Name"] = [[PurpleToCyan]];
+GANTENGLIB["db"] = Instance.new("Frame", GANTENGLIB["da"]);
+GANTENGLIB["db"]["BorderSizePixel"] = 0;
+GANTENGLIB["db"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
+GANTENGLIB["db"]["Size"] = UDim2.new(1, 0, 0, 44);
+GANTENGLIB["db"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["db"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
+GANTENGLIB["db"]["Visible"] = false;
+GANTENGLIB["db"]["Name"] = [[PurpleToCyan]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.PurpleToCyan.UIGradient
-GANTENGLIB["d3"] = Instance.new("UIGradient", GANTENGLIB["d2"]);
-GANTENGLIB["d3"]["Rotation"] = 73;
-GANTENGLIB["d3"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(150, 0, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 154, 178))};
+GANTENGLIB["dc"] = Instance.new("UIGradient", GANTENGLIB["db"]);
+GANTENGLIB["dc"]["Rotation"] = 73;
+GANTENGLIB["dc"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(150, 0, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 154, 178))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.PurpleToCyan.UICorner
-GANTENGLIB["d4"] = Instance.new("UICorner", GANTENGLIB["d2"]);
+GANTENGLIB["dd"] = Instance.new("UICorner", GANTENGLIB["db"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.PurpleToCyan.Title
-GANTENGLIB["d5"] = Instance.new("TextLabel", GANTENGLIB["d2"]);
-GANTENGLIB["d5"]["TextWrapped"] = true;
-GANTENGLIB["d5"]["BorderSizePixel"] = 0;
-GANTENGLIB["d5"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["d5"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["d5"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["d5"]["TextSize"] = 15;
-GANTENGLIB["d5"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["d5"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["d5"]["Size"] = UDim2.new(0, 137, 0, 16);
-GANTENGLIB["d5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["d5"]["Text"] = [[Changes]];
-GANTENGLIB["d5"]["Name"] = [[Title]];
-GANTENGLIB["d5"]["BackgroundTransparency"] = 1;
-GANTENGLIB["d5"]["Position"] = UDim2.new(0, 6, 0, 11);
+GANTENGLIB["de"] = Instance.new("TextLabel", GANTENGLIB["db"]);
+GANTENGLIB["de"]["TextWrapped"] = true;
+GANTENGLIB["de"]["BorderSizePixel"] = 0;
+GANTENGLIB["de"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["de"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["de"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["de"]["TextSize"] = 15;
+GANTENGLIB["de"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["de"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["de"]["Size"] = UDim2.new(0, 137, 0, 16);
+GANTENGLIB["de"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["de"]["Text"] = [[Changes]];
+GANTENGLIB["de"]["Name"] = [[Title]];
+GANTENGLIB["de"]["BackgroundTransparency"] = 1;
+GANTENGLIB["de"]["Position"] = UDim2.new(0, 6, 0, 11);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.PurpleToCyan.Description
-GANTENGLIB["d6"] = Instance.new("TextLabel", GANTENGLIB["d2"]);
-GANTENGLIB["d6"]["TextWrapped"] = true;
-GANTENGLIB["d6"]["LineHeight"] = 0.800000011920929;
-GANTENGLIB["d6"]["BorderSizePixel"] = 0;
-GANTENGLIB["d6"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-GANTENGLIB["d6"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["d6"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["d6"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["d6"]["TextSize"] = 12;
-GANTENGLIB["d6"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["d6"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["d6"]["Size"] = UDim2.new(0, 137, 0, 24);
-GANTENGLIB["d6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["d6"]["Text"] = [[Added nothing]];
-GANTENGLIB["d6"]["Name"] = [[Description]];
-GANTENGLIB["d6"]["BackgroundTransparency"] = 1;
-GANTENGLIB["d6"]["Position"] = UDim2.new(0, 6, 0, 30);
+GANTENGLIB["df"] = Instance.new("TextLabel", GANTENGLIB["db"]);
+GANTENGLIB["df"]["TextWrapped"] = true;
+GANTENGLIB["df"]["LineHeight"] = 0.800000011920929;
+GANTENGLIB["df"]["BorderSizePixel"] = 0;
+GANTENGLIB["df"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+GANTENGLIB["df"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["df"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["df"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["df"]["TextSize"] = 12;
+GANTENGLIB["df"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["df"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["df"]["Size"] = UDim2.new(0, 137, 0, 24);
+GANTENGLIB["df"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["df"]["Text"] = [[Added nothing]];
+GANTENGLIB["df"]["Name"] = [[Description]];
+GANTENGLIB["df"]["BackgroundTransparency"] = 1;
+GANTENGLIB["df"]["Position"] = UDim2.new(0, 6, 0, 30);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.SkyblueToBlue
-GANTENGLIB["d7"] = Instance.new("Frame", GANTENGLIB["d1"]);
-GANTENGLIB["d7"]["BorderSizePixel"] = 0;
-GANTENGLIB["d7"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
-GANTENGLIB["d7"]["Size"] = UDim2.new(1, 0, 0, 44);
-GANTENGLIB["d7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["d7"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
-GANTENGLIB["d7"]["Visible"] = false;
-GANTENGLIB["d7"]["Name"] = [[SkyblueToBlue]];
+GANTENGLIB["e0"] = Instance.new("Frame", GANTENGLIB["da"]);
+GANTENGLIB["e0"]["BorderSizePixel"] = 0;
+GANTENGLIB["e0"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
+GANTENGLIB["e0"]["Size"] = UDim2.new(1, 0, 0, 44);
+GANTENGLIB["e0"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["e0"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
+GANTENGLIB["e0"]["Visible"] = false;
+GANTENGLIB["e0"]["Name"] = [[SkyblueToBlue]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.SkyblueToBlue.UIGradient
-GANTENGLIB["d8"] = Instance.new("UIGradient", GANTENGLIB["d7"]);
-GANTENGLIB["d8"]["Rotation"] = 73;
-GANTENGLIB["d8"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 188, 245)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 4, 178))};
+GANTENGLIB["e1"] = Instance.new("UIGradient", GANTENGLIB["e0"]);
+GANTENGLIB["e1"]["Rotation"] = 73;
+GANTENGLIB["e1"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 188, 245)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 4, 178))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.SkyblueToBlue.UICorner
-GANTENGLIB["d9"] = Instance.new("UICorner", GANTENGLIB["d7"]);
+GANTENGLIB["e2"] = Instance.new("UICorner", GANTENGLIB["e0"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.SkyblueToBlue.Title
-GANTENGLIB["da"] = Instance.new("TextLabel", GANTENGLIB["d7"]);
-GANTENGLIB["da"]["TextWrapped"] = true;
-GANTENGLIB["da"]["BorderSizePixel"] = 0;
-GANTENGLIB["da"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["da"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["da"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["da"]["TextSize"] = 15;
-GANTENGLIB["da"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["da"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["da"]["Size"] = UDim2.new(0, 137, 0, 16);
-GANTENGLIB["da"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["da"]["Text"] = [[Changes]];
-GANTENGLIB["da"]["Name"] = [[Title]];
-GANTENGLIB["da"]["BackgroundTransparency"] = 1;
-GANTENGLIB["da"]["Position"] = UDim2.new(0, 6, 0, 11);
+GANTENGLIB["e3"] = Instance.new("TextLabel", GANTENGLIB["e0"]);
+GANTENGLIB["e3"]["TextWrapped"] = true;
+GANTENGLIB["e3"]["BorderSizePixel"] = 0;
+GANTENGLIB["e3"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["e3"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["e3"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["e3"]["TextSize"] = 15;
+GANTENGLIB["e3"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["e3"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["e3"]["Size"] = UDim2.new(0, 137, 0, 16);
+GANTENGLIB["e3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["e3"]["Text"] = [[Changes]];
+GANTENGLIB["e3"]["Name"] = [[Title]];
+GANTENGLIB["e3"]["BackgroundTransparency"] = 1;
+GANTENGLIB["e3"]["Position"] = UDim2.new(0, 6, 0, 11);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.SkyblueToBlue.Description
-GANTENGLIB["db"] = Instance.new("TextLabel", GANTENGLIB["d7"]);
-GANTENGLIB["db"]["TextWrapped"] = true;
-GANTENGLIB["db"]["LineHeight"] = 0.800000011920929;
-GANTENGLIB["db"]["BorderSizePixel"] = 0;
-GANTENGLIB["db"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-GANTENGLIB["db"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["db"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["db"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["db"]["TextSize"] = 12;
-GANTENGLIB["db"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["db"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["db"]["Size"] = UDim2.new(0, 137, 0, 24);
-GANTENGLIB["db"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["db"]["Text"] = [[Added nothing]];
-GANTENGLIB["db"]["Name"] = [[Description]];
-GANTENGLIB["db"]["BackgroundTransparency"] = 1;
-GANTENGLIB["db"]["Position"] = UDim2.new(0, 6, 0, 30);
+GANTENGLIB["e4"] = Instance.new("TextLabel", GANTENGLIB["e0"]);
+GANTENGLIB["e4"]["TextWrapped"] = true;
+GANTENGLIB["e4"]["LineHeight"] = 0.800000011920929;
+GANTENGLIB["e4"]["BorderSizePixel"] = 0;
+GANTENGLIB["e4"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+GANTENGLIB["e4"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["e4"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["e4"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["e4"]["TextSize"] = 12;
+GANTENGLIB["e4"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["e4"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["e4"]["Size"] = UDim2.new(0, 137, 0, 24);
+GANTENGLIB["e4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["e4"]["Text"] = [[Added nothing]];
+GANTENGLIB["e4"]["Name"] = [[Description]];
+GANTENGLIB["e4"]["BackgroundTransparency"] = 1;
+GANTENGLIB["e4"]["Position"] = UDim2.new(0, 6, 0, 30);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.CyanToBlue
-GANTENGLIB["dc"] = Instance.new("Frame", GANTENGLIB["d1"]);
-GANTENGLIB["dc"]["BorderSizePixel"] = 0;
-GANTENGLIB["dc"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
-GANTENGLIB["dc"]["Size"] = UDim2.new(1, 0, 0, 44);
-GANTENGLIB["dc"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["dc"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
-GANTENGLIB["dc"]["Visible"] = false;
-GANTENGLIB["dc"]["Name"] = [[CyanToBlue]];
+GANTENGLIB["e5"] = Instance.new("Frame", GANTENGLIB["da"]);
+GANTENGLIB["e5"]["BorderSizePixel"] = 0;
+GANTENGLIB["e5"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
+GANTENGLIB["e5"]["Size"] = UDim2.new(1, 0, 0, 44);
+GANTENGLIB["e5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["e5"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
+GANTENGLIB["e5"]["Visible"] = false;
+GANTENGLIB["e5"]["Name"] = [[CyanToBlue]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.CyanToBlue.UIGradient
-GANTENGLIB["dd"] = Instance.new("UIGradient", GANTENGLIB["dc"]);
-GANTENGLIB["dd"]["Rotation"] = 73;
-GANTENGLIB["dd"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 245, 208)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 100, 221))};
+GANTENGLIB["e6"] = Instance.new("UIGradient", GANTENGLIB["e5"]);
+GANTENGLIB["e6"]["Rotation"] = 73;
+GANTENGLIB["e6"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 245, 208)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 100, 221))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.CyanToBlue.UICorner
-GANTENGLIB["de"] = Instance.new("UICorner", GANTENGLIB["dc"]);
+GANTENGLIB["e7"] = Instance.new("UICorner", GANTENGLIB["e5"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.CyanToBlue.Title
-GANTENGLIB["df"] = Instance.new("TextLabel", GANTENGLIB["dc"]);
-GANTENGLIB["df"]["TextWrapped"] = true;
-GANTENGLIB["df"]["BorderSizePixel"] = 0;
-GANTENGLIB["df"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["df"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["df"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["df"]["TextSize"] = 15;
-GANTENGLIB["df"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["df"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["df"]["Size"] = UDim2.new(0, 137, 0, 16);
-GANTENGLIB["df"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["df"]["Text"] = [[Changes]];
-GANTENGLIB["df"]["Name"] = [[Title]];
-GANTENGLIB["df"]["BackgroundTransparency"] = 1;
-GANTENGLIB["df"]["Position"] = UDim2.new(0, 6, 0, 11);
+GANTENGLIB["e8"] = Instance.new("TextLabel", GANTENGLIB["e5"]);
+GANTENGLIB["e8"]["TextWrapped"] = true;
+GANTENGLIB["e8"]["BorderSizePixel"] = 0;
+GANTENGLIB["e8"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["e8"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["e8"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["e8"]["TextSize"] = 15;
+GANTENGLIB["e8"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["e8"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["e8"]["Size"] = UDim2.new(0, 137, 0, 16);
+GANTENGLIB["e8"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["e8"]["Text"] = [[Changes]];
+GANTENGLIB["e8"]["Name"] = [[Title]];
+GANTENGLIB["e8"]["BackgroundTransparency"] = 1;
+GANTENGLIB["e8"]["Position"] = UDim2.new(0, 6, 0, 11);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.CyanToBlue.Description
-GANTENGLIB["e0"] = Instance.new("TextLabel", GANTENGLIB["dc"]);
-GANTENGLIB["e0"]["TextWrapped"] = true;
-GANTENGLIB["e0"]["LineHeight"] = 0.800000011920929;
-GANTENGLIB["e0"]["BorderSizePixel"] = 0;
-GANTENGLIB["e0"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-GANTENGLIB["e0"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["e0"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["e0"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["e0"]["TextSize"] = 12;
-GANTENGLIB["e0"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["e0"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["e0"]["Size"] = UDim2.new(0, 137, 0, 24);
-GANTENGLIB["e0"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["e0"]["Text"] = [[Added nothing]];
-GANTENGLIB["e0"]["Name"] = [[Description]];
-GANTENGLIB["e0"]["BackgroundTransparency"] = 1;
-GANTENGLIB["e0"]["Position"] = UDim2.new(0, 6, 0, 30);
+GANTENGLIB["e9"] = Instance.new("TextLabel", GANTENGLIB["e5"]);
+GANTENGLIB["e9"]["TextWrapped"] = true;
+GANTENGLIB["e9"]["LineHeight"] = 0.800000011920929;
+GANTENGLIB["e9"]["BorderSizePixel"] = 0;
+GANTENGLIB["e9"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+GANTENGLIB["e9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["e9"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["e9"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["e9"]["TextSize"] = 12;
+GANTENGLIB["e9"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["e9"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["e9"]["Size"] = UDim2.new(0, 137, 0, 24);
+GANTENGLIB["e9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["e9"]["Text"] = [[Added nothing]];
+GANTENGLIB["e9"]["Name"] = [[Description]];
+GANTENGLIB["e9"]["BackgroundTransparency"] = 1;
+GANTENGLIB["e9"]["Position"] = UDim2.new(0, 6, 0, 30);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToPink
-GANTENGLIB["e1"] = Instance.new("Frame", GANTENGLIB["d1"]);
-GANTENGLIB["e1"]["BorderSizePixel"] = 0;
-GANTENGLIB["e1"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
-GANTENGLIB["e1"]["Size"] = UDim2.new(1, 0, 0, 44);
-GANTENGLIB["e1"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["e1"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
-GANTENGLIB["e1"]["Visible"] = false;
-GANTENGLIB["e1"]["Name"] = [[RedToPink]];
+GANTENGLIB["ea"] = Instance.new("Frame", GANTENGLIB["da"]);
+GANTENGLIB["ea"]["BorderSizePixel"] = 0;
+GANTENGLIB["ea"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
+GANTENGLIB["ea"]["Size"] = UDim2.new(1, 0, 0, 44);
+GANTENGLIB["ea"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["ea"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
+GANTENGLIB["ea"]["Visible"] = false;
+GANTENGLIB["ea"]["Name"] = [[RedToPink]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToPink.UIGradient
-GANTENGLIB["e2"] = Instance.new("UIGradient", GANTENGLIB["e1"]);
-GANTENGLIB["e2"]["Rotation"] = 73;
-GANTENGLIB["e2"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 0, 5)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(226, 0, 215))};
+GANTENGLIB["eb"] = Instance.new("UIGradient", GANTENGLIB["ea"]);
+GANTENGLIB["eb"]["Rotation"] = 73;
+GANTENGLIB["eb"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 0, 5)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(226, 0, 215))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToPink.UICorner
-GANTENGLIB["e3"] = Instance.new("UICorner", GANTENGLIB["e1"]);
+GANTENGLIB["ec"] = Instance.new("UICorner", GANTENGLIB["ea"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToPink.Title
-GANTENGLIB["e4"] = Instance.new("TextLabel", GANTENGLIB["e1"]);
-GANTENGLIB["e4"]["TextWrapped"] = true;
-GANTENGLIB["e4"]["BorderSizePixel"] = 0;
-GANTENGLIB["e4"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["e4"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["e4"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["e4"]["TextSize"] = 15;
-GANTENGLIB["e4"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["e4"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["e4"]["Size"] = UDim2.new(0, 137, 0, 16);
-GANTENGLIB["e4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["e4"]["Text"] = [[Changes]];
-GANTENGLIB["e4"]["Name"] = [[Title]];
-GANTENGLIB["e4"]["BackgroundTransparency"] = 1;
-GANTENGLIB["e4"]["Position"] = UDim2.new(0, 6, 0, 11);
+GANTENGLIB["ed"] = Instance.new("TextLabel", GANTENGLIB["ea"]);
+GANTENGLIB["ed"]["TextWrapped"] = true;
+GANTENGLIB["ed"]["BorderSizePixel"] = 0;
+GANTENGLIB["ed"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["ed"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["ed"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["ed"]["TextSize"] = 15;
+GANTENGLIB["ed"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["ed"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["ed"]["Size"] = UDim2.new(0, 137, 0, 16);
+GANTENGLIB["ed"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["ed"]["Text"] = [[Changes]];
+GANTENGLIB["ed"]["Name"] = [[Title]];
+GANTENGLIB["ed"]["BackgroundTransparency"] = 1;
+GANTENGLIB["ed"]["Position"] = UDim2.new(0, 6, 0, 11);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToPink.Description
-GANTENGLIB["e5"] = Instance.new("TextLabel", GANTENGLIB["e1"]);
-GANTENGLIB["e5"]["TextWrapped"] = true;
-GANTENGLIB["e5"]["LineHeight"] = 0.800000011920929;
-GANTENGLIB["e5"]["BorderSizePixel"] = 0;
-GANTENGLIB["e5"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-GANTENGLIB["e5"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["e5"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["e5"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["e5"]["TextSize"] = 12;
-GANTENGLIB["e5"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["e5"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["e5"]["Size"] = UDim2.new(0, 137, 0, 24);
-GANTENGLIB["e5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["e5"]["Text"] = [[Added nothing]];
-GANTENGLIB["e5"]["Name"] = [[Description]];
-GANTENGLIB["e5"]["BackgroundTransparency"] = 1;
-GANTENGLIB["e5"]["Position"] = UDim2.new(0, 6, 0, 30);
+GANTENGLIB["ee"] = Instance.new("TextLabel", GANTENGLIB["ea"]);
+GANTENGLIB["ee"]["TextWrapped"] = true;
+GANTENGLIB["ee"]["LineHeight"] = 0.800000011920929;
+GANTENGLIB["ee"]["BorderSizePixel"] = 0;
+GANTENGLIB["ee"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+GANTENGLIB["ee"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["ee"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["ee"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["ee"]["TextSize"] = 12;
+GANTENGLIB["ee"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["ee"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["ee"]["Size"] = UDim2.new(0, 137, 0, 24);
+GANTENGLIB["ee"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["ee"]["Text"] = [[Added nothing]];
+GANTENGLIB["ee"]["Name"] = [[Description]];
+GANTENGLIB["ee"]["BackgroundTransparency"] = 1;
+GANTENGLIB["ee"]["Position"] = UDim2.new(0, 6, 0, 30);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToOrange
-GANTENGLIB["e6"] = Instance.new("Frame", GANTENGLIB["d1"]);
-GANTENGLIB["e6"]["BorderSizePixel"] = 0;
-GANTENGLIB["e6"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
-GANTENGLIB["e6"]["Size"] = UDim2.new(1, 0, 0, 44);
-GANTENGLIB["e6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["e6"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
-GANTENGLIB["e6"]["Visible"] = false;
-GANTENGLIB["e6"]["Name"] = [[RedToOrange]];
+GANTENGLIB["ef"] = Instance.new("Frame", GANTENGLIB["da"]);
+GANTENGLIB["ef"]["BorderSizePixel"] = 0;
+GANTENGLIB["ef"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
+GANTENGLIB["ef"]["Size"] = UDim2.new(1, 0, 0, 44);
+GANTENGLIB["ef"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["ef"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
+GANTENGLIB["ef"]["Visible"] = false;
+GANTENGLIB["ef"]["Name"] = [[RedToOrange]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToOrange.UIGradient
-GANTENGLIB["e7"] = Instance.new("UIGradient", GANTENGLIB["e6"]);
-GANTENGLIB["e7"]["Rotation"] = 73;
-GANTENGLIB["e7"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 0, 0)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(255, 239, 0))};
+GANTENGLIB["f0"] = Instance.new("UIGradient", GANTENGLIB["ef"]);
+GANTENGLIB["f0"]["Rotation"] = 73;
+GANTENGLIB["f0"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 0, 0)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(255, 239, 0))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToOrange.UICorner
-GANTENGLIB["e8"] = Instance.new("UICorner", GANTENGLIB["e6"]);
+GANTENGLIB["f1"] = Instance.new("UICorner", GANTENGLIB["ef"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToOrange.Title
-GANTENGLIB["e9"] = Instance.new("TextLabel", GANTENGLIB["e6"]);
-GANTENGLIB["e9"]["TextWrapped"] = true;
-GANTENGLIB["e9"]["BorderSizePixel"] = 0;
-GANTENGLIB["e9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["e9"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["e9"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["e9"]["TextSize"] = 15;
-GANTENGLIB["e9"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["e9"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["e9"]["Size"] = UDim2.new(0, 137, 0, 16);
-GANTENGLIB["e9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["e9"]["Text"] = [[Changes]];
-GANTENGLIB["e9"]["Name"] = [[Title]];
-GANTENGLIB["e9"]["BackgroundTransparency"] = 1;
-GANTENGLIB["e9"]["Position"] = UDim2.new(0, 6, 0, 11);
+GANTENGLIB["f2"] = Instance.new("TextLabel", GANTENGLIB["ef"]);
+GANTENGLIB["f2"]["TextWrapped"] = true;
+GANTENGLIB["f2"]["BorderSizePixel"] = 0;
+GANTENGLIB["f2"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["f2"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["f2"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["f2"]["TextSize"] = 15;
+GANTENGLIB["f2"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["f2"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["f2"]["Size"] = UDim2.new(0, 137, 0, 16);
+GANTENGLIB["f2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["f2"]["Text"] = [[Changes]];
+GANTENGLIB["f2"]["Name"] = [[Title]];
+GANTENGLIB["f2"]["BackgroundTransparency"] = 1;
+GANTENGLIB["f2"]["Position"] = UDim2.new(0, 6, 0, 11);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.RedToOrange.Description
-GANTENGLIB["ea"] = Instance.new("TextLabel", GANTENGLIB["e6"]);
-GANTENGLIB["ea"]["TextWrapped"] = true;
-GANTENGLIB["ea"]["LineHeight"] = 0.800000011920929;
-GANTENGLIB["ea"]["BorderSizePixel"] = 0;
-GANTENGLIB["ea"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-GANTENGLIB["ea"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["ea"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["ea"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["ea"]["TextSize"] = 12;
-GANTENGLIB["ea"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["ea"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["ea"]["Size"] = UDim2.new(0, 137, 0, 24);
-GANTENGLIB["ea"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["ea"]["Text"] = [[Added Nothing]];
-GANTENGLIB["ea"]["Name"] = [[Description]];
-GANTENGLIB["ea"]["BackgroundTransparency"] = 1;
-GANTENGLIB["ea"]["Position"] = UDim2.new(0, 6, 0, 30);
+GANTENGLIB["f3"] = Instance.new("TextLabel", GANTENGLIB["ef"]);
+GANTENGLIB["f3"]["TextWrapped"] = true;
+GANTENGLIB["f3"]["LineHeight"] = 0.800000011920929;
+GANTENGLIB["f3"]["BorderSizePixel"] = 0;
+GANTENGLIB["f3"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+GANTENGLIB["f3"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["f3"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["f3"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["f3"]["TextSize"] = 12;
+GANTENGLIB["f3"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["f3"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["f3"]["Size"] = UDim2.new(0, 137, 0, 24);
+GANTENGLIB["f3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["f3"]["Text"] = [[Added Nothing]];
+GANTENGLIB["f3"]["Name"] = [[Description]];
+GANTENGLIB["f3"]["BackgroundTransparency"] = 1;
+GANTENGLIB["f3"]["Position"] = UDim2.new(0, 6, 0, 30);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.BlueToPurple
-GANTENGLIB["eb"] = Instance.new("Frame", GANTENGLIB["d1"]);
-GANTENGLIB["eb"]["BorderSizePixel"] = 0;
-GANTENGLIB["eb"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
-GANTENGLIB["eb"]["Size"] = UDim2.new(1, 0, 0, 44);
-GANTENGLIB["eb"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["eb"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
-GANTENGLIB["eb"]["Visible"] = false;
-GANTENGLIB["eb"]["Name"] = [[BlueToPurple]];
+GANTENGLIB["f4"] = Instance.new("Frame", GANTENGLIB["da"]);
+GANTENGLIB["f4"]["BorderSizePixel"] = 0;
+GANTENGLIB["f4"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
+GANTENGLIB["f4"]["Size"] = UDim2.new(1, 0, 0, 44);
+GANTENGLIB["f4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["f4"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
+GANTENGLIB["f4"]["Visible"] = false;
+GANTENGLIB["f4"]["Name"] = [[BlueToPurple]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.BlueToPurple.UIGradient
-GANTENGLIB["ec"] = Instance.new("UIGradient", GANTENGLIB["eb"]);
-GANTENGLIB["ec"]["Rotation"] = 73;
-GANTENGLIB["ec"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 111, 245)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(178, 0, 178))};
+GANTENGLIB["f5"] = Instance.new("UIGradient", GANTENGLIB["f4"]);
+GANTENGLIB["f5"]["Rotation"] = 73;
+GANTENGLIB["f5"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 111, 245)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(178, 0, 178))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.BlueToPurple.UICorner
-GANTENGLIB["ed"] = Instance.new("UICorner", GANTENGLIB["eb"]);
+GANTENGLIB["f6"] = Instance.new("UICorner", GANTENGLIB["f4"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.BlueToPurple.Title
-GANTENGLIB["ee"] = Instance.new("TextLabel", GANTENGLIB["eb"]);
-GANTENGLIB["ee"]["TextWrapped"] = true;
-GANTENGLIB["ee"]["BorderSizePixel"] = 0;
-GANTENGLIB["ee"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["ee"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["ee"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["ee"]["TextSize"] = 15;
-GANTENGLIB["ee"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["ee"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["ee"]["Size"] = UDim2.new(0, 137, 0, 16);
-GANTENGLIB["ee"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["ee"]["Text"] = [[Changes]];
-GANTENGLIB["ee"]["Name"] = [[Title]];
-GANTENGLIB["ee"]["BackgroundTransparency"] = 1;
-GANTENGLIB["ee"]["Position"] = UDim2.new(0, 6, 0, 11);
+GANTENGLIB["f7"] = Instance.new("TextLabel", GANTENGLIB["f4"]);
+GANTENGLIB["f7"]["TextWrapped"] = true;
+GANTENGLIB["f7"]["BorderSizePixel"] = 0;
+GANTENGLIB["f7"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["f7"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["f7"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["f7"]["TextSize"] = 15;
+GANTENGLIB["f7"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["f7"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["f7"]["Size"] = UDim2.new(0, 137, 0, 16);
+GANTENGLIB["f7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["f7"]["Text"] = [[Changes]];
+GANTENGLIB["f7"]["Name"] = [[Title]];
+GANTENGLIB["f7"]["BackgroundTransparency"] = 1;
+GANTENGLIB["f7"]["Position"] = UDim2.new(0, 6, 0, 11);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.BlueToPurple.Description
-GANTENGLIB["ef"] = Instance.new("TextLabel", GANTENGLIB["eb"]);
-GANTENGLIB["ef"]["TextWrapped"] = true;
-GANTENGLIB["ef"]["LineHeight"] = 0.800000011920929;
-GANTENGLIB["ef"]["BorderSizePixel"] = 0;
-GANTENGLIB["ef"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-GANTENGLIB["ef"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["ef"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["ef"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["ef"]["TextSize"] = 12;
-GANTENGLIB["ef"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["ef"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["ef"]["Size"] = UDim2.new(0, 137, 0, 24);
-GANTENGLIB["ef"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["ef"]["Text"] = [[Added nothing]];
-GANTENGLIB["ef"]["Name"] = [[Description]];
-GANTENGLIB["ef"]["BackgroundTransparency"] = 1;
-GANTENGLIB["ef"]["Position"] = UDim2.new(0, 6, 0, 30);
+GANTENGLIB["f8"] = Instance.new("TextLabel", GANTENGLIB["f4"]);
+GANTENGLIB["f8"]["TextWrapped"] = true;
+GANTENGLIB["f8"]["LineHeight"] = 0.800000011920929;
+GANTENGLIB["f8"]["BorderSizePixel"] = 0;
+GANTENGLIB["f8"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+GANTENGLIB["f8"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["f8"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["f8"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["f8"]["TextSize"] = 12;
+GANTENGLIB["f8"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["f8"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["f8"]["Size"] = UDim2.new(0, 137, 0, 24);
+GANTENGLIB["f8"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["f8"]["Text"] = [[Added nothing]];
+GANTENGLIB["f8"]["Name"] = [[Description]];
+GANTENGLIB["f8"]["BackgroundTransparency"] = 1;
+GANTENGLIB["f8"]["Position"] = UDim2.new(0, 6, 0, 30);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.YellowToGreen
-GANTENGLIB["f0"] = Instance.new("Frame", GANTENGLIB["d1"]);
-GANTENGLIB["f0"]["BorderSizePixel"] = 0;
-GANTENGLIB["f0"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
-GANTENGLIB["f0"]["Size"] = UDim2.new(1, 0, 0, 44);
-GANTENGLIB["f0"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["f0"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
-GANTENGLIB["f0"]["Visible"] = false;
-GANTENGLIB["f0"]["Name"] = [[YellowToGreen]];
+GANTENGLIB["f9"] = Instance.new("Frame", GANTENGLIB["da"]);
+GANTENGLIB["f9"]["BorderSizePixel"] = 0;
+GANTENGLIB["f9"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
+GANTENGLIB["f9"]["Size"] = UDim2.new(1, 0, 0, 44);
+GANTENGLIB["f9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["f9"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
+GANTENGLIB["f9"]["Visible"] = false;
+GANTENGLIB["f9"]["Name"] = [[YellowToGreen]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.YellowToGreen.UIGradient
-GANTENGLIB["f1"] = Instance.new("UIGradient", GANTENGLIB["f0"]);
-GANTENGLIB["f1"]["Rotation"] = 73;
-GANTENGLIB["f1"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(245, 225, 0)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 204, 48))};
+GANTENGLIB["fa"] = Instance.new("UIGradient", GANTENGLIB["f9"]);
+GANTENGLIB["fa"]["Rotation"] = 73;
+GANTENGLIB["fa"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(245, 225, 0)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 204, 48))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.YellowToGreen.UICorner
-GANTENGLIB["f2"] = Instance.new("UICorner", GANTENGLIB["f0"]);
+GANTENGLIB["fb"] = Instance.new("UICorner", GANTENGLIB["f9"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.YellowToGreen.Title
-GANTENGLIB["f3"] = Instance.new("TextLabel", GANTENGLIB["f0"]);
-GANTENGLIB["f3"]["TextWrapped"] = true;
-GANTENGLIB["f3"]["BorderSizePixel"] = 0;
-GANTENGLIB["f3"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["f3"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["f3"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["f3"]["TextSize"] = 15;
-GANTENGLIB["f3"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["f3"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["f3"]["Size"] = UDim2.new(0, 137, 0, 16);
-GANTENGLIB["f3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["f3"]["Text"] = [[Changes]];
-GANTENGLIB["f3"]["Name"] = [[Title]];
-GANTENGLIB["f3"]["BackgroundTransparency"] = 1;
-GANTENGLIB["f3"]["Position"] = UDim2.new(0, 6, 0, 11);
+GANTENGLIB["fc"] = Instance.new("TextLabel", GANTENGLIB["f9"]);
+GANTENGLIB["fc"]["TextWrapped"] = true;
+GANTENGLIB["fc"]["BorderSizePixel"] = 0;
+GANTENGLIB["fc"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["fc"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["fc"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["fc"]["TextSize"] = 15;
+GANTENGLIB["fc"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["fc"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["fc"]["Size"] = UDim2.new(0, 137, 0, 16);
+GANTENGLIB["fc"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["fc"]["Text"] = [[Changes]];
+GANTENGLIB["fc"]["Name"] = [[Title]];
+GANTENGLIB["fc"]["BackgroundTransparency"] = 1;
+GANTENGLIB["fc"]["Position"] = UDim2.new(0, 6, 0, 11);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.YellowToGreen.Description
-GANTENGLIB["f4"] = Instance.new("TextLabel", GANTENGLIB["f0"]);
-GANTENGLIB["f4"]["TextWrapped"] = true;
-GANTENGLIB["f4"]["LineHeight"] = 0.800000011920929;
-GANTENGLIB["f4"]["BorderSizePixel"] = 0;
-GANTENGLIB["f4"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-GANTENGLIB["f4"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["f4"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["f4"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["f4"]["TextSize"] = 12;
-GANTENGLIB["f4"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["f4"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["f4"]["Size"] = UDim2.new(0, 137, 0, 24);
-GANTENGLIB["f4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["f4"]["Text"] = [[Added nothing]];
-GANTENGLIB["f4"]["Name"] = [[Description]];
-GANTENGLIB["f4"]["BackgroundTransparency"] = 1;
-GANTENGLIB["f4"]["Position"] = UDim2.new(0, 6, 0, 30);
+GANTENGLIB["fd"] = Instance.new("TextLabel", GANTENGLIB["f9"]);
+GANTENGLIB["fd"]["TextWrapped"] = true;
+GANTENGLIB["fd"]["LineHeight"] = 0.800000011920929;
+GANTENGLIB["fd"]["BorderSizePixel"] = 0;
+GANTENGLIB["fd"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+GANTENGLIB["fd"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["fd"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["fd"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["fd"]["TextSize"] = 12;
+GANTENGLIB["fd"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["fd"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["fd"]["Size"] = UDim2.new(0, 137, 0, 24);
+GANTENGLIB["fd"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["fd"]["Text"] = [[Added nothing]];
+GANTENGLIB["fd"]["Name"] = [[Description]];
+GANTENGLIB["fd"]["BackgroundTransparency"] = 1;
+GANTENGLIB["fd"]["Position"] = UDim2.new(0, 6, 0, 30);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.LimeToGreen
-GANTENGLIB["f5"] = Instance.new("Frame", GANTENGLIB["d1"]);
-GANTENGLIB["f5"]["BorderSizePixel"] = 0;
-GANTENGLIB["f5"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
-GANTENGLIB["f5"]["Size"] = UDim2.new(1, 0, 0, 44);
-GANTENGLIB["f5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["f5"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
-GANTENGLIB["f5"]["Visible"] = false;
-GANTENGLIB["f5"]["Name"] = [[LimeToGreen]];
+GANTENGLIB["fe"] = Instance.new("Frame", GANTENGLIB["da"]);
+GANTENGLIB["fe"]["BorderSizePixel"] = 0;
+GANTENGLIB["fe"]["BackgroundColor3"] = Color3.fromRGB(246, 246, 246);
+GANTENGLIB["fe"]["Size"] = UDim2.new(1, 0, 0, 44);
+GANTENGLIB["fe"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["fe"]["Position"] = UDim2.new(-0.05555564537644386, 0, 0, 0);
+GANTENGLIB["fe"]["Visible"] = false;
+GANTENGLIB["fe"]["Name"] = [[LimeToGreen]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.LimeToGreen.UIGradient
-GANTENGLIB["f6"] = Instance.new("UIGradient", GANTENGLIB["f5"]);
-GANTENGLIB["f6"]["Rotation"] = 73;
-GANTENGLIB["f6"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 245, 176)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 178, 39))};
+GANTENGLIB["ff"] = Instance.new("UIGradient", GANTENGLIB["fe"]);
+GANTENGLIB["ff"]["Rotation"] = 73;
+GANTENGLIB["ff"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 245, 176)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 178, 39))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.LimeToGreen.UICorner
-GANTENGLIB["f7"] = Instance.new("UICorner", GANTENGLIB["f5"]);
+GANTENGLIB["100"] = Instance.new("UICorner", GANTENGLIB["fe"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.LimeToGreen.Title
-GANTENGLIB["f8"] = Instance.new("TextLabel", GANTENGLIB["f5"]);
-GANTENGLIB["f8"]["TextWrapped"] = true;
-GANTENGLIB["f8"]["BorderSizePixel"] = 0;
-GANTENGLIB["f8"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["f8"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["f8"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["f8"]["TextSize"] = 15;
-GANTENGLIB["f8"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["f8"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["f8"]["Size"] = UDim2.new(0, 137, 0, 16);
-GANTENGLIB["f8"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["f8"]["Text"] = [[Changes]];
-GANTENGLIB["f8"]["Name"] = [[Title]];
-GANTENGLIB["f8"]["BackgroundTransparency"] = 1;
-GANTENGLIB["f8"]["Position"] = UDim2.new(0, 6, 0, 11);
+GANTENGLIB["101"] = Instance.new("TextLabel", GANTENGLIB["fe"]);
+GANTENGLIB["101"]["TextWrapped"] = true;
+GANTENGLIB["101"]["BorderSizePixel"] = 0;
+GANTENGLIB["101"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["101"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["101"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["101"]["TextSize"] = 15;
+GANTENGLIB["101"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["101"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["101"]["Size"] = UDim2.new(0, 137, 0, 16);
+GANTENGLIB["101"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["101"]["Text"] = [[Changes]];
+GANTENGLIB["101"]["Name"] = [[Title]];
+GANTENGLIB["101"]["BackgroundTransparency"] = 1;
+GANTENGLIB["101"]["Position"] = UDim2.new(0, 6, 0, 11);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.Changelog.LimeToGreen.Description
-GANTENGLIB["f9"] = Instance.new("TextLabel", GANTENGLIB["f5"]);
-GANTENGLIB["f9"]["TextWrapped"] = true;
-GANTENGLIB["f9"]["LineHeight"] = 0.800000011920929;
-GANTENGLIB["f9"]["BorderSizePixel"] = 0;
-GANTENGLIB["f9"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-GANTENGLIB["f9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["f9"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["f9"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["f9"]["TextSize"] = 12;
-GANTENGLIB["f9"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["f9"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["f9"]["Size"] = UDim2.new(0, 137, 0, 24);
-GANTENGLIB["f9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["f9"]["Text"] = [[Added nothing]];
-GANTENGLIB["f9"]["Name"] = [[Description]];
-GANTENGLIB["f9"]["BackgroundTransparency"] = 1;
-GANTENGLIB["f9"]["Position"] = UDim2.new(0, 6, 0, 30);
+GANTENGLIB["102"] = Instance.new("TextLabel", GANTENGLIB["fe"]);
+GANTENGLIB["102"]["TextWrapped"] = true;
+GANTENGLIB["102"]["LineHeight"] = 0.800000011920929;
+GANTENGLIB["102"]["BorderSizePixel"] = 0;
+GANTENGLIB["102"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+GANTENGLIB["102"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["102"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["102"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["102"]["TextSize"] = 12;
+GANTENGLIB["102"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["102"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["102"]["Size"] = UDim2.new(0, 137, 0, 24);
+GANTENGLIB["102"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["102"]["Text"] = [[Added nothing]];
+GANTENGLIB["102"]["Name"] = [[Description]];
+GANTENGLIB["102"]["BackgroundTransparency"] = 1;
+GANTENGLIB["102"]["Position"] = UDim2.new(0, 6, 0, 30);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame
-GANTENGLIB["fa"] = Instance.new("Frame", GANTENGLIB["65"]);
-GANTENGLIB["fa"]["BorderSizePixel"] = 0;
-GANTENGLIB["fa"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["fa"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["fa"]["BackgroundTransparency"] = 1;
-GANTENGLIB["fa"]["Size"] = UDim2.new(0.98591548204422, 0, 0.17563045024871826, 0);
-GANTENGLIB["fa"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["fa"]["Position"] = UDim2.new(0.5, 0, 0.08781522512435913, 0);
-GANTENGLIB["fa"]["Visible"] = false;
-GANTENGLIB["fa"]["Name"] = [[ButtonFrame]];
+GANTENGLIB["103"] = Instance.new("Frame", GANTENGLIB["65"]);
+GANTENGLIB["103"]["BorderSizePixel"] = 0;
+GANTENGLIB["103"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["103"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["103"]["BackgroundTransparency"] = 1;
+GANTENGLIB["103"]["Size"] = UDim2.new(0.98591548204422, 0, 0.17563045024871826, 0);
+GANTENGLIB["103"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["103"]["Position"] = UDim2.new(0.5, 0, 0.08781522512435913, 0);
+GANTENGLIB["103"]["Visible"] = false;
+GANTENGLIB["103"]["Name"] = [[ButtonFrame]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame
-GANTENGLIB["fb"] = Instance.new("TextButton", GANTENGLIB["fa"]);
-GANTENGLIB["fb"]["Active"] = false;
-GANTENGLIB["fb"]["BorderSizePixel"] = 0;
-GANTENGLIB["fb"]["AutoButtonColor"] = false;
-GANTENGLIB["fb"]["BackgroundColor3"] = Color3.fromRGB(39, 39, 39);
-GANTENGLIB["fb"]["Selectable"] = false;
-GANTENGLIB["fb"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["fb"]["Size"] = UDim2.new(0, 126, 0, 32);
-GANTENGLIB["fb"]["Name"] = [[ButtonFrame]];
-GANTENGLIB["fb"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["fb"]["Text"] = [[]];
-GANTENGLIB["fb"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["104"] = Instance.new("TextButton", GANTENGLIB["103"]);
+GANTENGLIB["104"]["Active"] = false;
+GANTENGLIB["104"]["BorderSizePixel"] = 0;
+GANTENGLIB["104"]["AutoButtonColor"] = false;
+GANTENGLIB["104"]["BackgroundColor3"] = Color3.fromRGB(39, 39, 39);
+GANTENGLIB["104"]["Selectable"] = false;
+GANTENGLIB["104"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["104"]["Size"] = UDim2.new(0, 126, 0, 32);
+GANTENGLIB["104"]["Name"] = [[ButtonFrame]];
+GANTENGLIB["104"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["104"]["Text"] = [[]];
+GANTENGLIB["104"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.TextButton
-GANTENGLIB["fc"] = Instance.new("TextLabel", GANTENGLIB["fb"]);
-GANTENGLIB["fc"]["TextWrapped"] = true;
-GANTENGLIB["fc"]["BorderSizePixel"] = 0;
-GANTENGLIB["fc"]["TextScaled"] = true;
-GANTENGLIB["fc"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["fc"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["fc"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
-GANTENGLIB["fc"]["Selectable"] = true;
-GANTENGLIB["fc"]["TextSize"] = 14;
-GANTENGLIB["fc"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["fc"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["fc"]["Size"] = UDim2.new(0.6571428775787354, 0, 0.5483871102333069, 0);
-GANTENGLIB["fc"]["Active"] = true;
-GANTENGLIB["fc"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["fc"]["Text"] = [[Autofarm]];
-GANTENGLIB["fc"]["Name"] = [[TextButton]];
-GANTENGLIB["fc"]["BackgroundTransparency"] = 1;
-GANTENGLIB["fc"]["Position"] = UDim2.new(0.5799999833106995, 0, 0.5, 0);
+GANTENGLIB["105"] = Instance.new("TextLabel", GANTENGLIB["104"]);
+GANTENGLIB["105"]["TextWrapped"] = true;
+GANTENGLIB["105"]["BorderSizePixel"] = 0;
+GANTENGLIB["105"]["TextScaled"] = true;
+GANTENGLIB["105"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["105"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["105"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+GANTENGLIB["105"]["Selectable"] = true;
+GANTENGLIB["105"]["TextSize"] = 14;
+GANTENGLIB["105"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["105"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["105"]["Size"] = UDim2.new(0.6571428775787354, 0, 0.5483871102333069, 0);
+GANTENGLIB["105"]["Active"] = true;
+GANTENGLIB["105"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["105"]["Text"] = [[Autofarm]];
+GANTENGLIB["105"]["Name"] = [[TextButton]];
+GANTENGLIB["105"]["BackgroundTransparency"] = 1;
+GANTENGLIB["105"]["Position"] = UDim2.new(0.5799999833106995, 0, 0.5, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.ImageFrame
-GANTENGLIB["fd"] = Instance.new("Frame", GANTENGLIB["fb"]);
-GANTENGLIB["fd"]["BorderSizePixel"] = 0;
-GANTENGLIB["fd"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["fd"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["fd"]["Size"] = UDim2.new(0.16428571939468384, 0, 0.7419354915618896, 0);
-GANTENGLIB["fd"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["fd"]["Position"] = UDim2.new(0.11999999731779099, 0, 0.5, 0);
-GANTENGLIB["fd"]["Name"] = [[ImageFrame]];
+GANTENGLIB["106"] = Instance.new("Frame", GANTENGLIB["104"]);
+GANTENGLIB["106"]["BorderSizePixel"] = 0;
+GANTENGLIB["106"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["106"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["106"]["Size"] = UDim2.new(0.16428571939468384, 0, 0.7419354915618896, 0);
+GANTENGLIB["106"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["106"]["Position"] = UDim2.new(0.11999999731779099, 0, 0.5, 0);
+GANTENGLIB["106"]["Name"] = [[ImageFrame]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.ImageFrame.UICorner
-GANTENGLIB["fe"] = Instance.new("UICorner", GANTENGLIB["fd"]);
-GANTENGLIB["fe"]["CornerRadius"] = UDim.new(0, 3);
+GANTENGLIB["107"] = Instance.new("UICorner", GANTENGLIB["106"]);
+GANTENGLIB["107"]["CornerRadius"] = UDim.new(0, 3);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.ImageFrame.UIAspectRatioConstraint
-GANTENGLIB["ff"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["fd"]);
+GANTENGLIB["108"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["106"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.ImageFrame.UIGradient
-GANTENGLIB["100"] = Instance.new("UIGradient", GANTENGLIB["fd"]);
-GANTENGLIB["100"]["Rotation"] = 42;
-GANTENGLIB["100"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(107, 107, 107))};
+GANTENGLIB["109"] = Instance.new("UIGradient", GANTENGLIB["106"]);
+GANTENGLIB["109"]["Rotation"] = 42;
+GANTENGLIB["109"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(107, 107, 107))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.ImageFrame.ImageLabel
-GANTENGLIB["101"] = Instance.new("ImageLabel", GANTENGLIB["fd"]);
-GANTENGLIB["101"]["BorderSizePixel"] = 0;
-GANTENGLIB["101"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["101"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["101"]["Image"] = [[rbxassetid://14122651741]];
-GANTENGLIB["101"]["Size"] = UDim2.new(0.8999999761581421, 0, 0.8999999761581421, 0);
-GANTENGLIB["101"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["101"]["BackgroundTransparency"] = 1;
-GANTENGLIB["101"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["10a"] = Instance.new("ImageLabel", GANTENGLIB["106"]);
+GANTENGLIB["10a"]["BorderSizePixel"] = 0;
+GANTENGLIB["10a"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["10a"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["10a"]["Image"] = [[rbxassetid://14122651741]];
+GANTENGLIB["10a"]["Size"] = UDim2.new(0.8999999761581421, 0, 0.8999999761581421, 0);
+GANTENGLIB["10a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["10a"]["BackgroundTransparency"] = 1;
+GANTENGLIB["10a"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.ImageFrame.ImageLabel.UICorner
-GANTENGLIB["102"] = Instance.new("UICorner", GANTENGLIB["101"]);
+GANTENGLIB["10b"] = Instance.new("UICorner", GANTENGLIB["10a"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.UICorner
-GANTENGLIB["103"] = Instance.new("UICorner", GANTENGLIB["fb"]);
+GANTENGLIB["10c"] = Instance.new("UICorner", GANTENGLIB["104"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.UIAspectRatioConstraint
-GANTENGLIB["104"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["fb"]);
-GANTENGLIB["104"]["AspectRatio"] = 3.996608257293701;
+GANTENGLIB["10d"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["104"]);
+GANTENGLIB["10d"]["AspectRatio"] = 3.996608257293701;
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ButtonFrame.ButtonFrame.UIGradient
-GANTENGLIB["105"] = Instance.new("UIGradient", GANTENGLIB["fb"]);
-GANTENGLIB["105"]["Rotation"] = 55;
-GANTENGLIB["105"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(173, 173, 173))};
+GANTENGLIB["10e"] = Instance.new("UIGradient", GANTENGLIB["104"]);
+GANTENGLIB["10e"]["Rotation"] = 55;
+GANTENGLIB["10e"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(173, 173, 173))};
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ScrollingTab
-GANTENGLIB["106"] = Instance.new("ScrollingFrame", GANTENGLIB["65"]);
-GANTENGLIB["106"]["Active"] = true;
-GANTENGLIB["106"]["BorderSizePixel"] = 0;
-GANTENGLIB["106"]["TopImage"] = [[rbxasset://textures/ui/Scroll/scroll-middle.png]];
-GANTENGLIB["106"]["ScrollBarImageTransparency"] = 0.5;
-GANTENGLIB["106"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["106"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
-GANTENGLIB["106"]["BackgroundTransparency"] = 1;
-GANTENGLIB["106"]["Size"] = UDim2.new(1, 0, 1, 0);
-GANTENGLIB["106"]["ScrollBarImageColor3"] = Color3.fromRGB(151, 151, 151);
-GANTENGLIB["106"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["106"]["ScrollBarThickness"] = 6;
-GANTENGLIB["106"]["Visible"] = false;
-GANTENGLIB["106"]["Name"] = [[ScrollingTab]];
-GANTENGLIB["106"]["BottomImage"] = [[rbxasset://textures/ui/Scroll/scroll-middle.png]];
+GANTENGLIB["10f"] = Instance.new("ScrollingFrame", GANTENGLIB["65"]);
+GANTENGLIB["10f"]["Active"] = true;
+GANTENGLIB["10f"]["BorderSizePixel"] = 0;
+GANTENGLIB["10f"]["TopImage"] = [[rbxasset://textures/ui/Scroll/scroll-middle.png]];
+GANTENGLIB["10f"]["ScrollBarImageTransparency"] = 0.5;
+GANTENGLIB["10f"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["10f"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
+GANTENGLIB["10f"]["BackgroundTransparency"] = 1;
+GANTENGLIB["10f"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGLIB["10f"]["ScrollBarImageColor3"] = Color3.fromRGB(151, 151, 151);
+GANTENGLIB["10f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["10f"]["ScrollBarThickness"] = 6;
+GANTENGLIB["10f"]["Visible"] = false;
+GANTENGLIB["10f"]["Name"] = [[ScrollingTab]];
+GANTENGLIB["10f"]["BottomImage"] = [[rbxasset://textures/ui/Scroll/scroll-middle.png]];
 
 -- GantengLib.DropShadowHolder.MainFrame.PremadeLibs.ScrollingTab.UIListLayout
-GANTENGLIB["107"] = Instance.new("UIListLayout", GANTENGLIB["106"]);
-GANTENGLIB["107"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+GANTENGLIB["110"] = Instance.new("UIListLayout", GANTENGLIB["10f"]);
+GANTENGLIB["110"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro
-GANTENGLIB["108"] = Instance.new("Frame", GANTENGLIB["3"]);
-GANTENGLIB["108"]["BorderSizePixel"] = 0;
-GANTENGLIB["108"]["BackgroundColor3"] = Color3.fromRGB(11, 11, 11);
-GANTENGLIB["108"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["108"]["Size"] = UDim2.new(1, 0, 1, 0);
-GANTENGLIB["108"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["108"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
-GANTENGLIB["108"]["Name"] = [[Intro]];
+GANTENGLIB["111"] = Instance.new("Frame", GANTENGLIB["3"]);
+GANTENGLIB["111"]["BorderSizePixel"] = 0;
+GANTENGLIB["111"]["BackgroundColor3"] = Color3.fromRGB(11, 11, 11);
+GANTENGLIB["111"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["111"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGLIB["111"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["111"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["111"]["Name"] = [[Intro]];
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.UICorner
-GANTENGLIB["109"] = Instance.new("UICorner", GANTENGLIB["108"]);
+GANTENGLIB["112"] = Instance.new("UICorner", GANTENGLIB["111"]);
 
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.UIGradient
-GANTENGLIB["10a"] = Instance.new("UIGradient", GANTENGLIB["108"]);
-GANTENGLIB["10a"]["Rotation"] = 55;
-GANTENGLIB["10a"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(122, 122, 122))};
+GANTENGLIB["113"] = Instance.new("UIGradient", GANTENGLIB["111"]);
+GANTENGLIB["113"]["Rotation"] = 55;
+GANTENGLIB["113"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(122, 122, 122))};
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.Title
-GANTENGLIB["10b"] = Instance.new("TextLabel", GANTENGLIB["108"]);
-GANTENGLIB["10b"]["TextWrapped"] = true;
-GANTENGLIB["10b"]["BorderSizePixel"] = 0;
-GANTENGLIB["10b"]["TextScaled"] = true;
-GANTENGLIB["10b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["10b"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["10b"]["TextSize"] = 14;
-GANTENGLIB["10b"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["10b"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["10b"]["Size"] = UDim2.new(0.4320269227027893, 0, 0.0993243008852005, 0);
-GANTENGLIB["10b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["10b"]["Text"] = [[Ganteng Hub]];
-GANTENGLIB["10b"]["Name"] = [[Title]];
-GANTENGLIB["10b"]["BackgroundTransparency"] = 1;
-GANTENGLIB["10b"]["Position"] = UDim2.new(0.49952688813209534, 0, 0.4314188063144684, 0);
+GANTENGLIB["114"] = Instance.new("TextLabel", GANTENGLIB["111"]);
+GANTENGLIB["114"]["TextWrapped"] = true;
+GANTENGLIB["114"]["BorderSizePixel"] = 0;
+GANTENGLIB["114"]["TextScaled"] = true;
+GANTENGLIB["114"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["114"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["114"]["TextSize"] = 14;
+GANTENGLIB["114"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["114"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["114"]["Size"] = UDim2.new(0.4320269227027893, 0, 0.0993243008852005, 0);
+GANTENGLIB["114"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["114"]["Text"] = [[Ganteng Hub]];
+GANTENGLIB["114"]["Name"] = [[Title]];
+GANTENGLIB["114"]["BackgroundTransparency"] = 1;
+GANTENGLIB["114"]["Position"] = UDim2.new(0.49952688813209534, 0, 0.4314188063144684, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.ProgressBar
-GANTENGLIB["10c"] = Instance.new("Frame", GANTENGLIB["108"]);
-GANTENGLIB["10c"]["BorderSizePixel"] = 0;
-GANTENGLIB["10c"]["BackgroundColor3"] = Color3.fromRGB(35, 35, 35);
-GANTENGLIB["10c"]["Size"] = UDim2.new(0.4169960618019104, 0, 0.0439189188182354, 0);
-GANTENGLIB["10c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["10c"]["Position"] = UDim2.new(0.2905140221118927, 0, 0.5081080794334412, 0);
-GANTENGLIB["10c"]["Name"] = [[ProgressBar]];
+GANTENGLIB["115"] = Instance.new("Frame", GANTENGLIB["111"]);
+GANTENGLIB["115"]["BorderSizePixel"] = 0;
+GANTENGLIB["115"]["BackgroundColor3"] = Color3.fromRGB(35, 35, 35);
+GANTENGLIB["115"]["Size"] = UDim2.new(0.4169960618019104, 0, 0.0439189188182354, 0);
+GANTENGLIB["115"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["115"]["Position"] = UDim2.new(0.2905140221118927, 0, 0.5081080794334412, 0);
+GANTENGLIB["115"]["Name"] = [[ProgressBar]];
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.ProgressBar.UICorner
-GANTENGLIB["10d"] = Instance.new("UICorner", GANTENGLIB["10c"]);
-GANTENGLIB["10d"]["CornerRadius"] = UDim.new(100, 0);
+GANTENGLIB["116"] = Instance.new("UICorner", GANTENGLIB["115"]);
+GANTENGLIB["116"]["CornerRadius"] = UDim.new(100, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.ProgressBar.UIGradient
-GANTENGLIB["10e"] = Instance.new("UIGradient", GANTENGLIB["10c"]);
-GANTENGLIB["10e"]["Rotation"] = 55;
-GANTENGLIB["10e"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(178, 178, 178))};
+GANTENGLIB["117"] = Instance.new("UIGradient", GANTENGLIB["115"]);
+GANTENGLIB["117"]["Rotation"] = 55;
+GANTENGLIB["117"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(178, 178, 178))};
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.ProgressBar.Fill
-GANTENGLIB["10f"] = Instance.new("Frame", GANTENGLIB["10c"]);
-GANTENGLIB["10f"]["BorderSizePixel"] = 0;
-GANTENGLIB["10f"]["BackgroundColor3"] = Color3.fromRGB(98, 98, 98);
-GANTENGLIB["10f"]["Size"] = UDim2.new(0, 0, 1, 0);
-GANTENGLIB["10f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["10f"]["Name"] = [[Fill]];
+GANTENGLIB["118"] = Instance.new("Frame", GANTENGLIB["115"]);
+GANTENGLIB["118"]["BorderSizePixel"] = 0;
+GANTENGLIB["118"]["BackgroundColor3"] = Color3.fromRGB(98, 98, 98);
+GANTENGLIB["118"]["Size"] = UDim2.new(0, 0, 1, 0);
+GANTENGLIB["118"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["118"]["Name"] = [[Fill]];
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.ProgressBar.Fill.UICorner
-GANTENGLIB["110"] = Instance.new("UICorner", GANTENGLIB["10f"]);
-GANTENGLIB["110"]["CornerRadius"] = UDim.new(100, 0);
+GANTENGLIB["119"] = Instance.new("UICorner", GANTENGLIB["118"]);
+GANTENGLIB["119"]["CornerRadius"] = UDim.new(100, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.ProgressBar.Fill.UIGradient
-GANTENGLIB["111"] = Instance.new("UIGradient", GANTENGLIB["10f"]);
-GANTENGLIB["111"]["Rotation"] = 55;
-GANTENGLIB["111"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(178, 178, 178))};
+GANTENGLIB["11a"] = Instance.new("UIGradient", GANTENGLIB["118"]);
+GANTENGLIB["11a"]["Rotation"] = 55;
+GANTENGLIB["11a"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(178, 178, 178))};
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.Description
-GANTENGLIB["112"] = Instance.new("TextLabel", GANTENGLIB["108"]);
-GANTENGLIB["112"]["TextWrapped"] = true;
-GANTENGLIB["112"]["BorderSizePixel"] = 0;
-GANTENGLIB["112"]["TextScaled"] = true;
-GANTENGLIB["112"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["112"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Light, Enum.FontStyle.Italic);
-GANTENGLIB["112"]["TextSize"] = 14;
-GANTENGLIB["112"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["112"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["112"]["Size"] = UDim2.new(0.4320269227027893, 0, 0.04864872992038727, 0);
-GANTENGLIB["112"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["112"]["Text"] = [[We are on the way, please wait...]];
-GANTENGLIB["112"]["Name"] = [[Description]];
-GANTENGLIB["112"]["BackgroundTransparency"] = 1;
-GANTENGLIB["112"]["Position"] = UDim2.new(0.49952688813209534, 0, 0.605405330657959, 0);
+GANTENGLIB["11b"] = Instance.new("TextLabel", GANTENGLIB["111"]);
+GANTENGLIB["11b"]["TextWrapped"] = true;
+GANTENGLIB["11b"]["BorderSizePixel"] = 0;
+GANTENGLIB["11b"]["TextScaled"] = true;
+GANTENGLIB["11b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["11b"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Light, Enum.FontStyle.Italic);
+GANTENGLIB["11b"]["TextSize"] = 14;
+GANTENGLIB["11b"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["11b"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["11b"]["Size"] = UDim2.new(0.4320269227027893, 0, 0.04864872992038727, 0);
+GANTENGLIB["11b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["11b"]["Text"] = [[We are on the way, please wait...]];
+GANTENGLIB["11b"]["Name"] = [[Description]];
+GANTENGLIB["11b"]["BackgroundTransparency"] = 1;
+GANTENGLIB["11b"]["Position"] = UDim2.new(0.49952688813209534, 0, 0.605405330657959, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.Intro.PercentProgress
-GANTENGLIB["113"] = Instance.new("TextLabel", GANTENGLIB["108"]);
-GANTENGLIB["113"]["TextWrapped"] = true;
-GANTENGLIB["113"]["BorderSizePixel"] = 0;
-GANTENGLIB["113"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["113"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["113"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["113"]["TextSize"] = 15;
-GANTENGLIB["113"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["113"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["113"]["Size"] = UDim2.new(0.10597319155931473, 0, 0.04864872992038727, 0);
-GANTENGLIB["113"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["113"]["Text"] = [[0%]];
-GANTENGLIB["113"]["Name"] = [[PercentProgress]];
-GANTENGLIB["113"]["BackgroundTransparency"] = 1;
-GANTENGLIB["113"]["Position"] = UDim2.new(0.7685270309448242, 0, 0.5277026295661926, 0);
+GANTENGLIB["11c"] = Instance.new("TextLabel", GANTENGLIB["111"]);
+GANTENGLIB["11c"]["TextWrapped"] = true;
+GANTENGLIB["11c"]["BorderSizePixel"] = 0;
+GANTENGLIB["11c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["11c"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["11c"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["11c"]["TextSize"] = 15;
+GANTENGLIB["11c"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["11c"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["11c"]["Size"] = UDim2.new(0.10597319155931473, 0, 0.04864872992038727, 0);
+GANTENGLIB["11c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["11c"]["Text"] = [[0%]];
+GANTENGLIB["11c"]["Name"] = [[PercentProgress]];
+GANTENGLIB["11c"]["BackgroundTransparency"] = 1;
+GANTENGLIB["11c"]["Position"] = UDim2.new(0.7685270309448242, 0, 0.5277026295661926, 0);
 
 -- GantengLib.DropShadowHolder.MainFrame.Warning
-GANTENGLIB["114"] = Instance.new("Frame", GANTENGLIB["3"]);
-GANTENGLIB["114"]["BorderSizePixel"] = 0;
-GANTENGLIB["114"]["BackgroundColor3"] = Color3.fromRGB(11, 11, 11);
-GANTENGLIB["114"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["114"]["Size"] = UDim2.new(1, 0, 1, 0);
-GANTENGLIB["114"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["114"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
-GANTENGLIB["114"]["Visible"] = false;
-GANTENGLIB["114"]["Name"] = [[Warning]];
+GANTENGLIB["11d"] = Instance.new("Frame", GANTENGLIB["3"]);
+GANTENGLIB["11d"]["BorderSizePixel"] = 0;
+GANTENGLIB["11d"]["BackgroundColor3"] = Color3.fromRGB(11, 11, 11);
+GANTENGLIB["11d"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["11d"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGLIB["11d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["11d"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["11d"]["Visible"] = false;
+GANTENGLIB["11d"]["Name"] = [[Warning]];
 
 -- GantengLib.DropShadowHolder.MainFrame.Warning.UICorner
-GANTENGLIB["115"] = Instance.new("UICorner", GANTENGLIB["114"]);
-
-
--- GantengLib.DropShadowHolder.MainFrame.Warning.UIGradient
-GANTENGLIB["116"] = Instance.new("UIGradient", GANTENGLIB["114"]);
-GANTENGLIB["116"]["Rotation"] = 55;
-GANTENGLIB["116"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(122, 122, 122))};
-
--- GantengLib.DropShadowHolder.MainFrame.Warning.Title
-GANTENGLIB["117"] = Instance.new("TextLabel", GANTENGLIB["114"]);
-GANTENGLIB["117"]["TextWrapped"] = true;
-GANTENGLIB["117"]["BorderSizePixel"] = 0;
-GANTENGLIB["117"]["TextScaled"] = true;
-GANTENGLIB["117"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["117"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["117"]["TextSize"] = 14;
-GANTENGLIB["117"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["117"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["117"]["Size"] = UDim2.new(0.4320269227027893, 0, 0.0993243008852005, 0);
-GANTENGLIB["117"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["117"]["Text"] = [[Warning!]];
-GANTENGLIB["117"]["Name"] = [[Title]];
-GANTENGLIB["117"]["BackgroundTransparency"] = 1;
-GANTENGLIB["117"]["Position"] = UDim2.new(0.4999999701976776, 0, 0.38810813426971436, 0);
-
--- GantengLib.DropShadowHolder.MainFrame.Warning.Description
-GANTENGLIB["118"] = Instance.new("TextLabel", GANTENGLIB["114"]);
-GANTENGLIB["118"]["TextWrapped"] = true;
-GANTENGLIB["118"]["BorderSizePixel"] = 0;
-GANTENGLIB["118"]["TextScaled"] = true;
-GANTENGLIB["118"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["118"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Light, Enum.FontStyle.Italic);
-GANTENGLIB["118"]["TextSize"] = 14;
-GANTENGLIB["118"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["118"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["118"]["Size"] = UDim2.new(0.5966656804084778, 0, 0.14590030908584595, 0);
-GANTENGLIB["118"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["118"]["Text"] = [[You are about to close Ganteng Hub, and you will need to re-execute Ganteng Hub to use it again. Are you sure?]];
-GANTENGLIB["118"]["Name"] = [[Description]];
-GANTENGLIB["118"]["BackgroundTransparency"] = 1;
-GANTENGLIB["118"]["Position"] = UDim2.new(0.49884232878685, 0, 0.5114604234695435, 0);
-
--- GantengLib.DropShadowHolder.MainFrame.Warning.Yes
-GANTENGLIB["119"] = Instance.new("TextButton", GANTENGLIB["114"]);
-GANTENGLIB["119"]["BorderSizePixel"] = 0;
-GANTENGLIB["119"]["AutoButtonColor"] = false;
-GANTENGLIB["119"]["BackgroundColor3"] = Color3.fromRGB(36, 36, 36);
-GANTENGLIB["119"]["TextSize"] = 22;
-GANTENGLIB["119"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["119"]["TextColor3"] = Color3.fromRGB(212, 212, 212);
-GANTENGLIB["119"]["Size"] = UDim2.new(0.20948617160320282, 0, 0.10810811072587967, 0);
-GANTENGLIB["119"]["Name"] = [[Yes]];
-GANTENGLIB["119"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["119"]["Text"] = [[Yes]];
-GANTENGLIB["119"]["Position"] = UDim2.new(0.27470362186431885, 0, 0.6216219067573547, 0);
-
--- GantengLib.DropShadowHolder.MainFrame.Warning.Yes.UICorner
-GANTENGLIB["11a"] = Instance.new("UICorner", GANTENGLIB["119"]);
-
-
--- GantengLib.DropShadowHolder.MainFrame.Warning.Yes.UIGradient
-GANTENGLIB["11b"] = Instance.new("UIGradient", GANTENGLIB["119"]);
-GANTENGLIB["11b"]["Rotation"] = 55;
-GANTENGLIB["11b"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(122, 122, 122))};
-
--- GantengLib.DropShadowHolder.MainFrame.Warning.Yes.UIStroke
-GANTENGLIB["11c"] = Instance.new("UIStroke", GANTENGLIB["119"]);
-GANTENGLIB["11c"]["Color"] = Color3.fromRGB(142, 142, 142);
-GANTENGLIB["11c"]["Transparency"] = 1;
-GANTENGLIB["11c"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
-
--- GantengLib.DropShadowHolder.MainFrame.Warning.No
-GANTENGLIB["11d"] = Instance.new("TextButton", GANTENGLIB["114"]);
-GANTENGLIB["11d"]["BorderSizePixel"] = 0;
-GANTENGLIB["11d"]["AutoButtonColor"] = false;
-GANTENGLIB["11d"]["BackgroundColor3"] = Color3.fromRGB(36, 36, 36);
-GANTENGLIB["11d"]["TextSize"] = 22;
-GANTENGLIB["11d"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["11d"]["TextColor3"] = Color3.fromRGB(212, 212, 212);
-GANTENGLIB["11d"]["Size"] = UDim2.new(0.20948617160320282, 0, 0.10810811072587967, 0);
-GANTENGLIB["11d"]["Name"] = [[No]];
-GANTENGLIB["11d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["11d"]["Text"] = [[No]];
-GANTENGLIB["11d"]["Position"] = UDim2.new(0.5098814964294434, 0, 0.6216219067573547, 0);
-
--- GantengLib.DropShadowHolder.MainFrame.Warning.No.UICorner
 GANTENGLIB["11e"] = Instance.new("UICorner", GANTENGLIB["11d"]);
 
 
--- GantengLib.DropShadowHolder.MainFrame.Warning.No.UIGradient
+-- GantengLib.DropShadowHolder.MainFrame.Warning.UIGradient
 GANTENGLIB["11f"] = Instance.new("UIGradient", GANTENGLIB["11d"]);
 GANTENGLIB["11f"]["Rotation"] = 55;
 GANTENGLIB["11f"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(122, 122, 122))};
 
+-- GantengLib.DropShadowHolder.MainFrame.Warning.Title
+GANTENGLIB["120"] = Instance.new("TextLabel", GANTENGLIB["11d"]);
+GANTENGLIB["120"]["TextWrapped"] = true;
+GANTENGLIB["120"]["BorderSizePixel"] = 0;
+GANTENGLIB["120"]["TextScaled"] = true;
+GANTENGLIB["120"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["120"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["120"]["TextSize"] = 14;
+GANTENGLIB["120"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["120"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["120"]["Size"] = UDim2.new(0.4320269227027893, 0, 0.0993243008852005, 0);
+GANTENGLIB["120"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["120"]["Text"] = [[Warning!]];
+GANTENGLIB["120"]["Name"] = [[Title]];
+GANTENGLIB["120"]["BackgroundTransparency"] = 1;
+GANTENGLIB["120"]["Position"] = UDim2.new(0.4999999701976776, 0, 0.38810813426971436, 0);
+
+-- GantengLib.DropShadowHolder.MainFrame.Warning.Description
+GANTENGLIB["121"] = Instance.new("TextLabel", GANTENGLIB["11d"]);
+GANTENGLIB["121"]["TextWrapped"] = true;
+GANTENGLIB["121"]["BorderSizePixel"] = 0;
+GANTENGLIB["121"]["TextScaled"] = true;
+GANTENGLIB["121"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["121"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Light, Enum.FontStyle.Italic);
+GANTENGLIB["121"]["TextSize"] = 14;
+GANTENGLIB["121"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["121"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["121"]["Size"] = UDim2.new(0.5966656804084778, 0, 0.14590030908584595, 0);
+GANTENGLIB["121"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["121"]["Text"] = [[You are about to close Ganteng Hub, and you will need to re-execute Ganteng Hub to use it again. Are you sure?]];
+GANTENGLIB["121"]["Name"] = [[Description]];
+GANTENGLIB["121"]["BackgroundTransparency"] = 1;
+GANTENGLIB["121"]["Position"] = UDim2.new(0.49884232878685, 0, 0.5114604234695435, 0);
+
+-- GantengLib.DropShadowHolder.MainFrame.Warning.Yes
+GANTENGLIB["122"] = Instance.new("TextButton", GANTENGLIB["11d"]);
+GANTENGLIB["122"]["BorderSizePixel"] = 0;
+GANTENGLIB["122"]["AutoButtonColor"] = false;
+GANTENGLIB["122"]["BackgroundColor3"] = Color3.fromRGB(36, 36, 36);
+GANTENGLIB["122"]["TextSize"] = 22;
+GANTENGLIB["122"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["122"]["TextColor3"] = Color3.fromRGB(212, 212, 212);
+GANTENGLIB["122"]["Size"] = UDim2.new(0.20948617160320282, 0, 0.10810811072587967, 0);
+GANTENGLIB["122"]["Name"] = [[Yes]];
+GANTENGLIB["122"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["122"]["Text"] = [[Yes]];
+GANTENGLIB["122"]["Position"] = UDim2.new(0.27470362186431885, 0, 0.6216219067573547, 0);
+
+-- GantengLib.DropShadowHolder.MainFrame.Warning.Yes.UICorner
+GANTENGLIB["123"] = Instance.new("UICorner", GANTENGLIB["122"]);
+
+
+-- GantengLib.DropShadowHolder.MainFrame.Warning.Yes.UIGradient
+GANTENGLIB["124"] = Instance.new("UIGradient", GANTENGLIB["122"]);
+GANTENGLIB["124"]["Rotation"] = 55;
+GANTENGLIB["124"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(122, 122, 122))};
+
+-- GantengLib.DropShadowHolder.MainFrame.Warning.Yes.UIStroke
+GANTENGLIB["125"] = Instance.new("UIStroke", GANTENGLIB["122"]);
+GANTENGLIB["125"]["Color"] = Color3.fromRGB(142, 142, 142);
+GANTENGLIB["125"]["Transparency"] = 1;
+GANTENGLIB["125"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+
+-- GantengLib.DropShadowHolder.MainFrame.Warning.No
+GANTENGLIB["126"] = Instance.new("TextButton", GANTENGLIB["11d"]);
+GANTENGLIB["126"]["BorderSizePixel"] = 0;
+GANTENGLIB["126"]["AutoButtonColor"] = false;
+GANTENGLIB["126"]["BackgroundColor3"] = Color3.fromRGB(36, 36, 36);
+GANTENGLIB["126"]["TextSize"] = 22;
+GANTENGLIB["126"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["126"]["TextColor3"] = Color3.fromRGB(212, 212, 212);
+GANTENGLIB["126"]["Size"] = UDim2.new(0.20948617160320282, 0, 0.10810811072587967, 0);
+GANTENGLIB["126"]["Name"] = [[No]];
+GANTENGLIB["126"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["126"]["Text"] = [[No]];
+GANTENGLIB["126"]["Position"] = UDim2.new(0.5098814964294434, 0, 0.6216219067573547, 0);
+
+-- GantengLib.DropShadowHolder.MainFrame.Warning.No.UICorner
+GANTENGLIB["127"] = Instance.new("UICorner", GANTENGLIB["126"]);
+
+
+-- GantengLib.DropShadowHolder.MainFrame.Warning.No.UIGradient
+GANTENGLIB["128"] = Instance.new("UIGradient", GANTENGLIB["126"]);
+GANTENGLIB["128"]["Rotation"] = 55;
+GANTENGLIB["128"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(122, 122, 122))};
+
 -- GantengLib.DropShadowHolder.MainFrame.Warning.No.UIStroke
-GANTENGLIB["120"] = Instance.new("UIStroke", GANTENGLIB["11d"]);
-GANTENGLIB["120"]["Color"] = Color3.fromRGB(142, 142, 142);
-GANTENGLIB["120"]["Transparency"] = 1;
-GANTENGLIB["120"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+GANTENGLIB["129"] = Instance.new("UIStroke", GANTENGLIB["126"]);
+GANTENGLIB["129"]["Color"] = Color3.fromRGB(142, 142, 142);
+GANTENGLIB["129"]["Transparency"] = 1;
+GANTENGLIB["129"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
 
 -- GantengLib.DropShadowHolder.DropShadow
-GANTENGLIB["121"] = Instance.new("ImageLabel", GANTENGLIB["2"]);
-GANTENGLIB["121"]["ZIndex"] = 0;
-GANTENGLIB["121"]["BorderSizePixel"] = 0;
-GANTENGLIB["121"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
-GANTENGLIB["121"]["ScaleType"] = Enum.ScaleType.Slice;
-GANTENGLIB["121"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["121"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["121"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["121"]["Image"] = [[rbxassetid://6014261993]];
-GANTENGLIB["121"]["Size"] = UDim2.new(1.0928853750228882, 0, 1.1587837934494019, 0);
-GANTENGLIB["121"]["Name"] = [[DropShadow]];
-GANTENGLIB["121"]["BackgroundTransparency"] = 1;
-GANTENGLIB["121"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["12a"] = Instance.new("ImageLabel", GANTENGLIB["2"]);
+GANTENGLIB["12a"]["ZIndex"] = 0;
+GANTENGLIB["12a"]["BorderSizePixel"] = 0;
+GANTENGLIB["12a"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
+GANTENGLIB["12a"]["ScaleType"] = Enum.ScaleType.Slice;
+GANTENGLIB["12a"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["12a"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["12a"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["12a"]["Image"] = [[rbxassetid://6014261993]];
+GANTENGLIB["12a"]["Size"] = UDim2.new(1.0928853750228882, 0, 1.1587837934494019, 0);
+GANTENGLIB["12a"]["Name"] = [[DropShadow]];
+GANTENGLIB["12a"]["BackgroundTransparency"] = 1;
+GANTENGLIB["12a"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
 -- GantengLib.DropShadowHolder.DropShadow.UIAspectRatioConstraint
-GANTENGLIB["122"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["121"]);
-GANTENGLIB["122"]["AspectRatio"] = 1.6122448444366455;
+GANTENGLIB["12b"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["12a"]);
+GANTENGLIB["12b"]["AspectRatio"] = 1.6122448444366455;
 
 -- GantengLib.DropShadowHolder.StopAllTween
-GANTENGLIB["123"] = Instance.new("Frame", GANTENGLIB["2"]);
-GANTENGLIB["123"]["BorderSizePixel"] = 0;
-GANTENGLIB["123"]["BackgroundColor3"] = Color3.fromRGB(30, 30, 30);
-GANTENGLIB["123"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["123"]["Size"] = UDim2.new(0.3498023748397827, 0, 0.32782354950904846, 0);
-GANTENGLIB["123"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["123"]["Position"] = UDim2.new(1.013833999633789, 0, 0.8294563293457031, 0);
-GANTENGLIB["123"]["Visible"] = false;
-GANTENGLIB["123"]["Name"] = [[StopAllTween]];
+GANTENGLIB["12c"] = Instance.new("Frame", GANTENGLIB["2"]);
+GANTENGLIB["12c"]["BorderSizePixel"] = 0;
+GANTENGLIB["12c"]["BackgroundColor3"] = Color3.fromRGB(30, 30, 30);
+GANTENGLIB["12c"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["12c"]["Size"] = UDim2.new(0.3498023748397827, 0, 0.32782354950904846, 0);
+GANTENGLIB["12c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["12c"]["Position"] = UDim2.new(1.013833999633789, 0, 0.8294563293457031, 0);
+GANTENGLIB["12c"]["Visible"] = false;
+GANTENGLIB["12c"]["Name"] = [[StopAllTween]];
 
 -- GantengLib.DropShadowHolder.StopAllTween.UICorner
-GANTENGLIB["124"] = Instance.new("UICorner", GANTENGLIB["123"]);
+GANTENGLIB["12d"] = Instance.new("UICorner", GANTENGLIB["12c"]);
 
 
 -- GantengLib.DropShadowHolder.StopAllTween.UIStroke
-GANTENGLIB["125"] = Instance.new("UIStroke", GANTENGLIB["123"]);
-GANTENGLIB["125"]["Color"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["125"]["Transparency"] = 0.6200000047683716;
-GANTENGLIB["125"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+GANTENGLIB["12e"] = Instance.new("UIStroke", GANTENGLIB["12c"]);
+GANTENGLIB["12e"]["Color"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["12e"]["Transparency"] = 0.6200000047683716;
+GANTENGLIB["12e"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
 
 -- GantengLib.DropShadowHolder.StopAllTween.UIGradient
-GANTENGLIB["126"] = Instance.new("UIGradient", GANTENGLIB["123"]);
-GANTENGLIB["126"]["Rotation"] = 55;
-GANTENGLIB["126"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(107, 107, 107))};
+GANTENGLIB["12f"] = Instance.new("UIGradient", GANTENGLIB["12c"]);
+GANTENGLIB["12f"]["Rotation"] = 55;
+GANTENGLIB["12f"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(107, 107, 107))};
 
 -- GantengLib.DropShadowHolder.StopAllTween.Title
-GANTENGLIB["127"] = Instance.new("TextLabel", GANTENGLIB["123"]);
-GANTENGLIB["127"]["TextWrapped"] = true;
-GANTENGLIB["127"]["BorderSizePixel"] = 0;
-GANTENGLIB["127"]["TextScaled"] = true;
-GANTENGLIB["127"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["127"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Italic);
-GANTENGLIB["127"]["TextSize"] = 14;
-GANTENGLIB["127"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["127"]["Size"] = UDim2.new(0.8950846791267395, 0, 0.46589037775993347, 0);
-GANTENGLIB["127"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["127"]["Text"] = [[Errors might occur while tweening. If you encounter issues during tweening, you can use this button.]];
-GANTENGLIB["127"]["Name"] = [[Title]];
-GANTENGLIB["127"]["BackgroundTransparency"] = 1;
-GANTENGLIB["127"]["Position"] = UDim2.new(0.051350221037864685, 0, 0.4681670665740967, 0);
+GANTENGLIB["130"] = Instance.new("TextLabel", GANTENGLIB["12c"]);
+GANTENGLIB["130"]["TextWrapped"] = true;
+GANTENGLIB["130"]["BorderSizePixel"] = 0;
+GANTENGLIB["130"]["TextScaled"] = true;
+GANTENGLIB["130"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["130"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Italic);
+GANTENGLIB["130"]["TextSize"] = 14;
+GANTENGLIB["130"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["130"]["Size"] = UDim2.new(0.8950846791267395, 0, 0.46589037775993347, 0);
+GANTENGLIB["130"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["130"]["Text"] = [[Errors might occur while tweening. If you encounter issues during tweening, you can use this button.]];
+GANTENGLIB["130"]["Name"] = [[Title]];
+GANTENGLIB["130"]["BackgroundTransparency"] = 1;
+GANTENGLIB["130"]["Position"] = UDim2.new(0.051350221037864685, 0, 0.4681670665740967, 0);
 
 -- GantengLib.DropShadowHolder.StopAllTween.ButtonFrame
-GANTENGLIB["128"] = Instance.new("Frame", GANTENGLIB["123"]);
-GANTENGLIB["128"]["BorderSizePixel"] = 0;
-GANTENGLIB["128"]["BackgroundColor3"] = Color3.fromRGB(49, 49, 49);
-GANTENGLIB["128"]["Size"] = UDim2.new(0.9120000004768372, 0, 0.36000001430511475, 0);
-GANTENGLIB["128"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["128"]["Position"] = UDim2.new(0.04005078598856926, 0, 0.08326026052236557, 0);
-GANTENGLIB["128"]["Name"] = [[ButtonFrame]];
+GANTENGLIB["131"] = Instance.new("Frame", GANTENGLIB["12c"]);
+GANTENGLIB["131"]["BorderSizePixel"] = 0;
+GANTENGLIB["131"]["BackgroundColor3"] = Color3.fromRGB(49, 49, 49);
+GANTENGLIB["131"]["Size"] = UDim2.new(0.9120000004768372, 0, 0.36000001430511475, 0);
+GANTENGLIB["131"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["131"]["Position"] = UDim2.new(0.04005078598856926, 0, 0.08326026052236557, 0);
+GANTENGLIB["131"]["Name"] = [[ButtonFrame]];
 
 -- GantengLib.DropShadowHolder.StopAllTween.ButtonFrame.UIGradient
-GANTENGLIB["129"] = Instance.new("UIGradient", GANTENGLIB["128"]);
-GANTENGLIB["129"]["Rotation"] = 55;
-GANTENGLIB["129"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(173, 173, 173))};
+GANTENGLIB["132"] = Instance.new("UIGradient", GANTENGLIB["131"]);
+GANTENGLIB["132"]["Rotation"] = 55;
+GANTENGLIB["132"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(173, 173, 173))};
 
 -- GantengLib.DropShadowHolder.StopAllTween.ButtonFrame.UICorner
-GANTENGLIB["12a"] = Instance.new("UICorner", GANTENGLIB["128"]);
+GANTENGLIB["133"] = Instance.new("UICorner", GANTENGLIB["131"]);
 
 
 -- GantengLib.DropShadowHolder.StopAllTween.ButtonFrame.RealButton
-GANTENGLIB["12b"] = Instance.new("TextButton", GANTENGLIB["128"]);
-GANTENGLIB["12b"]["TextWrapped"] = true;
-GANTENGLIB["12b"]["BorderSizePixel"] = 0;
-GANTENGLIB["12b"]["BackgroundColor3"] = Color3.fromRGB(26, 26, 26);
-GANTENGLIB["12b"]["TextSize"] = 19;
-GANTENGLIB["12b"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["12b"]["TextColor3"] = Color3.fromRGB(189, 189, 189);
-GANTENGLIB["12b"]["Size"] = UDim2.new(1, 0, 1, 0);
-GANTENGLIB["12b"]["Name"] = [[RealButton]];
-GANTENGLIB["12b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["12b"]["Text"] = [[Stop All Tween]];
-GANTENGLIB["12b"]["BackgroundTransparency"] = 1;
+GANTENGLIB["134"] = Instance.new("TextButton", GANTENGLIB["131"]);
+GANTENGLIB["134"]["TextWrapped"] = true;
+GANTENGLIB["134"]["BorderSizePixel"] = 0;
+GANTENGLIB["134"]["BackgroundColor3"] = Color3.fromRGB(26, 26, 26);
+GANTENGLIB["134"]["TextSize"] = 19;
+GANTENGLIB["134"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["134"]["TextColor3"] = Color3.fromRGB(189, 189, 189);
+GANTENGLIB["134"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGLIB["134"]["Name"] = [[RealButton]];
+GANTENGLIB["134"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["134"]["Text"] = [[Stop All Tween]];
+GANTENGLIB["134"]["BackgroundTransparency"] = 1;
 
 -- GantengLib.DropShadowHolder.StopAllTween.DropShadowHolder
-GANTENGLIB["12c"] = Instance.new("Frame", GANTENGLIB["123"]);
-GANTENGLIB["12c"]["ZIndex"] = 0;
-GANTENGLIB["12c"]["BorderSizePixel"] = 0;
-GANTENGLIB["12c"]["BackgroundTransparency"] = 1;
-GANTENGLIB["12c"]["Size"] = UDim2.new(1, 0, 1, 0);
-GANTENGLIB["12c"]["Name"] = [[DropShadowHolder]];
+GANTENGLIB["135"] = Instance.new("Frame", GANTENGLIB["12c"]);
+GANTENGLIB["135"]["ZIndex"] = 0;
+GANTENGLIB["135"]["BorderSizePixel"] = 0;
+GANTENGLIB["135"]["BackgroundTransparency"] = 1;
+GANTENGLIB["135"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGLIB["135"]["Name"] = [[DropShadowHolder]];
 
 -- GantengLib.DropShadowHolder.StopAllTween.DropShadowHolder.DropShadow
-GANTENGLIB["12d"] = Instance.new("ImageLabel", GANTENGLIB["12c"]);
-GANTENGLIB["12d"]["ZIndex"] = 0;
-GANTENGLIB["12d"]["BorderSizePixel"] = 0;
-GANTENGLIB["12d"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
-GANTENGLIB["12d"]["ScaleType"] = Enum.ScaleType.Slice;
-GANTENGLIB["12d"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["12d"]["ImageTransparency"] = 0.5;
-GANTENGLIB["12d"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["12d"]["Image"] = [[rbxassetid://6014261993]];
-GANTENGLIB["12d"]["Size"] = UDim2.new(1, 47, 1, 47);
-GANTENGLIB["12d"]["Name"] = [[DropShadow]];
-GANTENGLIB["12d"]["BackgroundTransparency"] = 1;
-GANTENGLIB["12d"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["136"] = Instance.new("ImageLabel", GANTENGLIB["135"]);
+GANTENGLIB["136"]["ZIndex"] = 0;
+GANTENGLIB["136"]["BorderSizePixel"] = 0;
+GANTENGLIB["136"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
+GANTENGLIB["136"]["ScaleType"] = Enum.ScaleType.Slice;
+GANTENGLIB["136"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["136"]["ImageTransparency"] = 0.5;
+GANTENGLIB["136"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["136"]["Image"] = [[rbxassetid://6014261993]];
+GANTENGLIB["136"]["Size"] = UDim2.new(1, 47, 1, 47);
+GANTENGLIB["136"]["Name"] = [[DropShadow]];
+GANTENGLIB["136"]["BackgroundTransparency"] = 1;
+GANTENGLIB["136"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
 -- GantengLib.InfoFrame
-GANTENGLIB["12e"] = Instance.new("Frame", GANTENGLIB["1"]);
-GANTENGLIB["12e"]["BorderSizePixel"] = 0;
-GANTENGLIB["12e"]["BackgroundColor3"] = Color3.fromRGB(43, 43, 43);
-GANTENGLIB["12e"]["AnchorPoint"] = Vector2.new(0, 1);
-GANTENGLIB["12e"]["Size"] = UDim2.new(0, 141, 0, 49);
-GANTENGLIB["12e"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["12e"]["Position"] = UDim2.new(0, 0, -0.30000001192092896, 0);
-GANTENGLIB["12e"]["AutomaticSize"] = Enum.AutomaticSize.XY;
-GANTENGLIB["12e"]["Name"] = [[InfoFrame]];
+GANTENGLIB["137"] = Instance.new("Frame", GANTENGLIB["1"]);
+GANTENGLIB["137"]["BorderSizePixel"] = 0;
+GANTENGLIB["137"]["BackgroundColor3"] = Color3.fromRGB(43, 43, 43);
+GANTENGLIB["137"]["AnchorPoint"] = Vector2.new(0, 1);
+GANTENGLIB["137"]["Size"] = UDim2.new(0, 141, 0, 49);
+GANTENGLIB["137"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["137"]["Position"] = UDim2.new(0, 0, -0.30000001192092896, 0);
+GANTENGLIB["137"]["AutomaticSize"] = Enum.AutomaticSize.XY;
+GANTENGLIB["137"]["Name"] = [[InfoFrame]];
 
 -- GantengLib.InfoFrame.UICorner
-GANTENGLIB["12f"] = Instance.new("UICorner", GANTENGLIB["12e"]);
+GANTENGLIB["138"] = Instance.new("UICorner", GANTENGLIB["137"]);
 
 
 -- GantengLib.InfoFrame.UIGradient
-GANTENGLIB["130"] = Instance.new("UIGradient", GANTENGLIB["12e"]);
-GANTENGLIB["130"]["Rotation"] = 55;
-GANTENGLIB["130"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(169, 169, 169))};
+GANTENGLIB["139"] = Instance.new("UIGradient", GANTENGLIB["137"]);
+GANTENGLIB["139"]["Rotation"] = 55;
+GANTENGLIB["139"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(169, 169, 169))};
 
 -- GantengLib.InfoFrame.Title
-GANTENGLIB["131"] = Instance.new("TextLabel", GANTENGLIB["12e"]);
-GANTENGLIB["131"]["BorderSizePixel"] = 0;
-GANTENGLIB["131"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["131"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["131"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-GANTENGLIB["131"]["TextSize"] = 14;
-GANTENGLIB["131"]["TextColor3"] = Color3.fromRGB(204, 204, 204);
-GANTENGLIB["131"]["AutomaticSize"] = Enum.AutomaticSize.X;
-GANTENGLIB["131"]["Size"] = UDim2.new(0, 133, 0, 14);
-GANTENGLIB["131"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["131"]["Text"] = [[Title]];
-GANTENGLIB["131"]["Name"] = [[Title]];
-GANTENGLIB["131"]["BackgroundTransparency"] = 1;
-GANTENGLIB["131"]["Position"] = UDim2.new(0, 8, 0, 3);
+GANTENGLIB["13a"] = Instance.new("TextLabel", GANTENGLIB["137"]);
+GANTENGLIB["13a"]["BorderSizePixel"] = 0;
+GANTENGLIB["13a"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["13a"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["13a"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGLIB["13a"]["TextSize"] = 14;
+GANTENGLIB["13a"]["TextColor3"] = Color3.fromRGB(204, 204, 204);
+GANTENGLIB["13a"]["AutomaticSize"] = Enum.AutomaticSize.X;
+GANTENGLIB["13a"]["Size"] = UDim2.new(0, 133, 0, 14);
+GANTENGLIB["13a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["13a"]["Text"] = [[Title]];
+GANTENGLIB["13a"]["Name"] = [[Title]];
+GANTENGLIB["13a"]["BackgroundTransparency"] = 1;
+GANTENGLIB["13a"]["Position"] = UDim2.new(0, 8, 0, 3);
 
 -- GantengLib.InfoFrame.Frame
-GANTENGLIB["132"] = Instance.new("Frame", GANTENGLIB["12e"]);
-GANTENGLIB["132"]["BorderSizePixel"] = 0;
-GANTENGLIB["132"]["BackgroundColor3"] = Color3.fromRGB(187, 187, 187);
-GANTENGLIB["132"]["AnchorPoint"] = Vector2.new(0, 0.5);
-GANTENGLIB["132"]["Size"] = UDim2.new(0.8999999761581421, 0, 0, 2);
-GANTENGLIB["132"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["132"]["Position"] = UDim2.new(0, 7, 0, 20);
+GANTENGLIB["13b"] = Instance.new("Frame", GANTENGLIB["137"]);
+GANTENGLIB["13b"]["BorderSizePixel"] = 0;
+GANTENGLIB["13b"]["BackgroundColor3"] = Color3.fromRGB(187, 187, 187);
+GANTENGLIB["13b"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGLIB["13b"]["Size"] = UDim2.new(0.8999999761581421, 0, 0, 2);
+GANTENGLIB["13b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["13b"]["Position"] = UDim2.new(0, 7, 0, 20);
 
 -- GantengLib.InfoFrame.Description
-GANTENGLIB["133"] = Instance.new("TextLabel", GANTENGLIB["12e"]);
-GANTENGLIB["133"]["BorderSizePixel"] = 0;
-GANTENGLIB["133"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-GANTENGLIB["133"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["133"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-GANTENGLIB["133"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-GANTENGLIB["133"]["TextSize"] = 12;
-GANTENGLIB["133"]["TextColor3"] = Color3.fromRGB(204, 204, 204);
-GANTENGLIB["133"]["AutomaticSize"] = Enum.AutomaticSize.XY;
-GANTENGLIB["133"]["Size"] = UDim2.new(0, 133, 0, 28);
-GANTENGLIB["133"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["133"]["Text"] = [[This is a description.]];
-GANTENGLIB["133"]["Name"] = [[Description]];
-GANTENGLIB["133"]["BackgroundTransparency"] = 1;
-GANTENGLIB["133"]["Position"] = UDim2.new(0, 8, 0, 21);
+GANTENGLIB["13c"] = Instance.new("TextLabel", GANTENGLIB["137"]);
+GANTENGLIB["13c"]["BorderSizePixel"] = 0;
+GANTENGLIB["13c"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+GANTENGLIB["13c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["13c"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGLIB["13c"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+GANTENGLIB["13c"]["TextSize"] = 12;
+GANTENGLIB["13c"]["TextColor3"] = Color3.fromRGB(204, 204, 204);
+GANTENGLIB["13c"]["AutomaticSize"] = Enum.AutomaticSize.XY;
+GANTENGLIB["13c"]["Size"] = UDim2.new(0, 133, 0, 28);
+GANTENGLIB["13c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["13c"]["Text"] = [[This is a description.]];
+GANTENGLIB["13c"]["Name"] = [[Description]];
+GANTENGLIB["13c"]["BackgroundTransparency"] = 1;
+GANTENGLIB["13c"]["Position"] = UDim2.new(0, 8, 0, 21);
 
 -- GantengLib.InfoFrame.DropShadowHolder
-GANTENGLIB["134"] = Instance.new("Frame", GANTENGLIB["12e"]);
-GANTENGLIB["134"]["ZIndex"] = 0;
-GANTENGLIB["134"]["BorderSizePixel"] = 0;
-GANTENGLIB["134"]["BackgroundTransparency"] = 1;
-GANTENGLIB["134"]["Size"] = UDim2.new(0, 141, 0, 49);
-GANTENGLIB["134"]["Name"] = [[DropShadowHolder]];
+GANTENGLIB["13d"] = Instance.new("Frame", GANTENGLIB["137"]);
+GANTENGLIB["13d"]["ZIndex"] = 0;
+GANTENGLIB["13d"]["BorderSizePixel"] = 0;
+GANTENGLIB["13d"]["BackgroundTransparency"] = 1;
+GANTENGLIB["13d"]["Size"] = UDim2.new(0, 141, 0, 49);
+GANTENGLIB["13d"]["Name"] = [[DropShadowHolder]];
 
 -- GantengLib.InfoFrame.DropShadowHolder.DropShadow
-GANTENGLIB["135"] = Instance.new("ImageLabel", GANTENGLIB["134"]);
-GANTENGLIB["135"]["ZIndex"] = 0;
-GANTENGLIB["135"]["BorderSizePixel"] = 0;
-GANTENGLIB["135"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
-GANTENGLIB["135"]["ScaleType"] = Enum.ScaleType.Slice;
-GANTENGLIB["135"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["135"]["ImageTransparency"] = 0.5;
-GANTENGLIB["135"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["135"]["Image"] = [[rbxassetid://6014261993]];
-GANTENGLIB["135"]["Size"] = UDim2.new(1, 47, 1, 47);
-GANTENGLIB["135"]["Name"] = [[DropShadow]];
-GANTENGLIB["135"]["BackgroundTransparency"] = 1;
-GANTENGLIB["135"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["13e"] = Instance.new("ImageLabel", GANTENGLIB["13d"]);
+GANTENGLIB["13e"]["ZIndex"] = 0;
+GANTENGLIB["13e"]["BorderSizePixel"] = 0;
+GANTENGLIB["13e"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
+GANTENGLIB["13e"]["ScaleType"] = Enum.ScaleType.Slice;
+GANTENGLIB["13e"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["13e"]["ImageTransparency"] = 0.5;
+GANTENGLIB["13e"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["13e"]["Image"] = [[rbxassetid://6014261993]];
+GANTENGLIB["13e"]["Size"] = UDim2.new(1, 47, 1, 47);
+GANTENGLIB["13e"]["Name"] = [[DropShadow]];
+GANTENGLIB["13e"]["BackgroundTransparency"] = 1;
+GANTENGLIB["13e"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
 -- GantengLib.Library
-GANTENGLIB["136"] = Instance.new("ModuleScript", GANTENGLIB["1"]);
-GANTENGLIB["136"]["Name"] = [[Library]];
+GANTENGLIB["13f"] = Instance.new("ModuleScript", GANTENGLIB["1"]);
+GANTENGLIB["13f"]["Name"] = [[Library]];
 
 -- GantengLib.Icon
-GANTENGLIB["137"] = Instance.new("ImageLabel", GANTENGLIB["1"]);
-GANTENGLIB["137"]["BorderSizePixel"] = 0;
-GANTENGLIB["137"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["137"]["Visible"] = false;
-GANTENGLIB["137"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["137"]["Image"] = [[rbxassetid://15006559003]];
-GANTENGLIB["137"]["Size"] = UDim2.new(0, 54, 0, 54);
-GANTENGLIB["137"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["137"]["Name"] = [[Icon]];
-GANTENGLIB["137"]["Position"] = UDim2.new(0.18727155029773712, 0, 0.16202445328235626, 0);
+GANTENGLIB["140"] = Instance.new("ImageLabel", GANTENGLIB["1"]);
+GANTENGLIB["140"]["BorderSizePixel"] = 0;
+GANTENGLIB["140"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["140"]["Visible"] = false;
+GANTENGLIB["140"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["140"]["Image"] = [[rbxassetid://15006559003]];
+GANTENGLIB["140"]["Size"] = UDim2.new(0, 54, 0, 54);
+GANTENGLIB["140"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["140"]["Name"] = [[Icon]];
+GANTENGLIB["140"]["Position"] = UDim2.new(0.18727155029773712, 0, 0.16202445328235626, 0);
 
 -- GantengLib.Icon.UIAspectRatioConstraint
-GANTENGLIB["138"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["137"]);
+GANTENGLIB["141"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["140"]);
 
 
 -- GantengLib.Icon.UICorner
-GANTENGLIB["139"] = Instance.new("UICorner", GANTENGLIB["137"]);
+GANTENGLIB["142"] = Instance.new("UICorner", GANTENGLIB["140"]);
 
 
 -- GantengLib.Icon.DropShadowHolder
-GANTENGLIB["13a"] = Instance.new("Frame", GANTENGLIB["137"]);
-GANTENGLIB["13a"]["ZIndex"] = 0;
-GANTENGLIB["13a"]["BorderSizePixel"] = 0;
-GANTENGLIB["13a"]["BackgroundTransparency"] = 1;
-GANTENGLIB["13a"]["Size"] = UDim2.new(1, 0, 1, 0);
-GANTENGLIB["13a"]["Name"] = [[DropShadowHolder]];
+GANTENGLIB["143"] = Instance.new("Frame", GANTENGLIB["140"]);
+GANTENGLIB["143"]["ZIndex"] = 0;
+GANTENGLIB["143"]["BorderSizePixel"] = 0;
+GANTENGLIB["143"]["BackgroundTransparency"] = 1;
+GANTENGLIB["143"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGLIB["143"]["Name"] = [[DropShadowHolder]];
 
 -- GantengLib.Icon.DropShadowHolder.DropShadow
-GANTENGLIB["13b"] = Instance.new("ImageLabel", GANTENGLIB["13a"]);
-GANTENGLIB["13b"]["ZIndex"] = 0;
-GANTENGLIB["13b"]["BorderSizePixel"] = 0;
-GANTENGLIB["13b"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
-GANTENGLIB["13b"]["ScaleType"] = Enum.ScaleType.Slice;
-GANTENGLIB["13b"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["13b"]["ImageTransparency"] = 0.5;
-GANTENGLIB["13b"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["13b"]["Image"] = [[rbxassetid://6014261993]];
-GANTENGLIB["13b"]["Size"] = UDim2.new(1, 47, 1, 47);
-GANTENGLIB["13b"]["Name"] = [[DropShadow]];
-GANTENGLIB["13b"]["BackgroundTransparency"] = 1;
-GANTENGLIB["13b"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["144"] = Instance.new("ImageLabel", GANTENGLIB["143"]);
+GANTENGLIB["144"]["ZIndex"] = 0;
+GANTENGLIB["144"]["BorderSizePixel"] = 0;
+GANTENGLIB["144"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
+GANTENGLIB["144"]["ScaleType"] = Enum.ScaleType.Slice;
+GANTENGLIB["144"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["144"]["ImageTransparency"] = 0.5;
+GANTENGLIB["144"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["144"]["Image"] = [[rbxassetid://6014261993]];
+GANTENGLIB["144"]["Size"] = UDim2.new(1, 47, 1, 47);
+GANTENGLIB["144"]["Name"] = [[DropShadow]];
+GANTENGLIB["144"]["BackgroundTransparency"] = 1;
+GANTENGLIB["144"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
 -- GantengLib.Icon.Icon
-GANTENGLIB["13c"] = Instance.new("ImageButton", GANTENGLIB["137"]);
-GANTENGLIB["13c"]["Active"] = false;
-GANTENGLIB["13c"]["BorderSizePixel"] = 0;
-GANTENGLIB["13c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-GANTENGLIB["13c"]["Selectable"] = false;
-GANTENGLIB["13c"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
-GANTENGLIB["13c"]["Image"] = [[rbxassetid://15006559003]];
-GANTENGLIB["13c"]["Size"] = UDim2.new(1, 0, 1, 0);
-GANTENGLIB["13c"]["Name"] = [[Icon]];
-GANTENGLIB["13c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-GANTENGLIB["13c"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+GANTENGLIB["145"] = Instance.new("ImageButton", GANTENGLIB["140"]);
+GANTENGLIB["145"]["Active"] = false;
+GANTENGLIB["145"]["BorderSizePixel"] = 0;
+GANTENGLIB["145"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGLIB["145"]["Selectable"] = false;
+GANTENGLIB["145"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGLIB["145"]["Image"] = [[rbxassetid://15006559003]];
+GANTENGLIB["145"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGLIB["145"]["Name"] = [[Icon]];
+GANTENGLIB["145"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGLIB["145"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
 -- GantengLib.Icon.Icon.UICorner
-GANTENGLIB["13d"] = Instance.new("UICorner", GANTENGLIB["13c"]);
+GANTENGLIB["146"] = Instance.new("UICorner", GANTENGLIB["145"]);
 
 
 -- GantengLib.Icon.Icon.UIStroke
-GANTENGLIB["13e"] = Instance.new("UIStroke", GANTENGLIB["13c"]);
-GANTENGLIB["13e"]["Color"] = Color3.fromRGB(136, 136, 136);
+GANTENGLIB["147"] = Instance.new("UIStroke", GANTENGLIB["145"]);
+GANTENGLIB["147"]["Color"] = Color3.fromRGB(136, 136, 136);
 
 -- Require GANTENGLIB wrapper
 local GANTENGLIB_REQUIRE = require;
@@ -2843,9 +2906,9 @@ local function require(Module:ModuleScript)
 	return GANTENGLIB_REQUIRE(Module);
 end
 
-GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
+GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 	Closure = function()
-		local script = GANTENGLIB["136"];
+		local script = GANTENGLIB["13f"];
 		local LIBRARY = {}
 
 
@@ -2893,8 +2956,11 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 		local Maxxed = false
 		local namehub
 
-		-- ENV EMULATION
-		if game:GetService("RunService"):IsStudio() then
+		-- ENV EMULATION AND DEBUGGING PURPOSES
+		if game:GetService("RunService"):IsStudio() then -- this runs when environment running on Roblox Studio
+
+
+
 			function writefile(a)
 				print("WRITEFILE: "..a)
 			end
@@ -2902,8 +2968,13 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 				print("ISFILE: "..tostring(a))
 				return false
 			end
+		else -- This does run when environment running on Normal Roblox
+			local function print(...)
+				return ...
+			end
 		end
-		--
+		-- ENV EMULATION AND DEBUGGING PURPOSES
+
 
 		local config 
 
@@ -3791,146 +3862,146 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 				return self
 			end
 
-			--function TAB:AddKeybind(name, desc, tbl, callback)
-			--	local defaultkey = tbl.defaultkey
+			function TAB:AddKeybind(name, desc, tbl, callback)
+				local defaultkey = tbl.defaultkey
 
-			--	if config.Objects[nametab][name] then
-			--		if config.Objects[nametab][name]:find("MouseButton") and type(config.Objects[nametab][name]) == "string" then
-			--			defaultkey = Enum.UserInputType[config.Objects[nametab][name]]
-			--		elseif not config.Objects[nametab][name]:find("MouseButton") and type(config.Objects[nametab][name]) == "string" then
-			--			defaultkey = Enum.KeyCode[config.Objects[nametab][name]]
-			--		end
-			--	end
+				if config.Objects[nametab][name] then
+					if config.Objects[nametab][name]:find("MouseButton") and type(config.Objects[nametab][name]) == "string" then
+						defaultkey = Enum.UserInputType[config.Objects[nametab][name]]
+					elseif not config.Objects[nametab][name]:find("MouseButton") and type(config.Objects[nametab][name]) == "string" then
+						defaultkey = Enum.KeyCode[config.Objects[nametab][name]]
+					end
+				end
 
-			--	local triggerwhilebinding = tbl.triggerwhilebinding
-			--	local newKey = ReservedTabs.Keybind:Clone()
-			--	local key
-
-
-
-			--	local listening = false
-			--	local event
-
-			--	key = defaultkey or nil
-			--	self.CurrentKey = key
-
-			--	newKey.Name = name
-			--	newKey.Parent = newTab
-			--	newKey.Visible = true
-
-			--	config.Objects[nametab][name] = defaultkey.Name
-
-			--	if self.CurrentKey == Enum then
-			--		config.Objects[nametab][name] = Enum.KeyCode[config.Objects[nametab][name]] or defaultkey.Name
-			--	end
+				local triggerwhilebinding = tbl.triggerwhilebinding
+				local newKey = ReservedTabs.Keybind:Clone()
+				local key
 
 
 
+				local listening = false
+				local event
+
+				key = defaultkey or nil
+				self.CurrentKey = key
+
+				newKey.Name = name
+				newKey.Parent = newTab
+				newKey.Visible = true
+
+				config.Objects[nametab][name] = defaultkey.Name
+
+				if self.CurrentKey == Enum then
+					config.Objects[nametab][name] = Enum.KeyCode[config.Objects[nametab][name]] or defaultkey.Name
+				end
 
 
-			--	newKey.Frame.TextLabel.Text = name
-
-			--	local match = string.match(defaultkey.Name, "MouseButton(%d+)")
-			--	newKey.Frame.Bind.Text = (match and "MB" .. match) or defaultkey.Name or "None"
-
-			--	newKey.Frame.Bind.MouseButton1Click:Connect(function()
-			--		if listening == false then
-			--			listening = true
-			--			Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-			--			event = UserInputService.InputBegan:Connect(function(input)
-			--				if input.UserInputType == Enum.UserInputType.Keyboard then
-
-			--					newKey.Frame.Bind.Text = input.KeyCode.Name
-			--					Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-			--					listening = false
-			--					event:Disconnect()
-			--					self.CurrentKey = input.KeyCode  -- Store the current key in the object
-			--					config.Objects[nametab][name] = input.KeyCode.Name
-			--					if triggerwhilebinding == true then
-			--						TaskThreads[name] = task.spawn(function()
-			--							callback(input)
-			--							SaveConfig()
-			--						end)
-			--					end
-			--				elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
-			--					input.UserInputType == Enum.UserInputType.MouseButton2 or
-			--					input.UserInputType == Enum.UserInputType.MouseButton3 then
-
-			--					local match = input.UserInputType.Name:match("MouseButton(%d+)")
-			--					newKey.Frame.Bind.Text = (match and "MB" .. match) or input.UserInputType.Name
-
-			--					Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-			--					listening = false
-			--					event:Disconnect()
-			--					self.CurrentKey = input.UserInputType  -- Store the current key in the object
-			--					config.Objects[nametab][name] = input.KeyCode.Name
-			--					if triggerwhilebinding == true then
-			--						TaskThreads[name] = task.spawn(function()
-			--							callback(input)
-			--							SaveConfig()
-			--						end)
-			--					end
-			--				end
-			--			end)
-			--		end
-			--	end)
-
-			--	UserInputService.InputBegan:Connect(function(input)
-			--		if listening == false then
-			--			if input.UserInputType == Enum.UserInputType.Keyboard then
-			--				if input.KeyCode == TAB.CurrentKey then
-
-			--					TaskThreads[name] = task.spawn(function()
-			--						callback(input)
-			--						SaveConfig()
-			--					end)
-			--				end
-			--			elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
-			--				input.UserInputType == Enum.UserInputType.MouseButton2 or
-			--				input.UserInputType == Enum.UserInputType.MouseButton3 then
-			--				if input.UserInputType == TAB.CurrentKey then
-			--					TaskThreads[name] = task.spawn(function()
-			--						callback(input)
-			--						SaveConfig()
-			--					end)
-			--				end
-			--			end
-			--		end
-			--	end)
 
 
-			--	newKey.Frame.MouseEnter:Connect(function()
-			--		Tween(newKey.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-			--	end)
 
-			--	newKey.Frame.MouseLeave:Connect(function()
-			--		Tween(newKey.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
+				newKey.Frame.TextLabel.Text = name
 
-			--	end)
+				local match = string.match(defaultkey.Name, "MouseButton(%d+)")
+				newKey.Frame.Bind.Text = (match and "MB" .. match) or defaultkey.Name or "None"
+
+				newKey.Frame.Bind.MouseButton1Click:Connect(function()
+					if listening == false then
+						listening = true
+						Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+						event = UserInputService.InputBegan:Connect(function(input)
+							if input.UserInputType == Enum.UserInputType.Keyboard then
+
+								newKey.Frame.Bind.Text = input.KeyCode.Name
+								Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+								listening = false
+								event:Disconnect()
+								self.CurrentKey = input.KeyCode  -- Store the current key in the object
+								config.Objects[nametab][name] = input.KeyCode.Name
+								if triggerwhilebinding == true then
+									TaskThreads[name] = task.spawn(function()
+										callback(input)
+										SaveConfig()
+									end)
+								end
+							elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
+								input.UserInputType == Enum.UserInputType.MouseButton2 or
+								input.UserInputType == Enum.UserInputType.MouseButton3 then
+
+								local match = input.UserInputType.Name:match("MouseButton(%d+)")
+								newKey.Frame.Bind.Text = (match and "MB" .. match) or input.UserInputType.Name
+
+								Tween(newKey.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+								listening = false
+								event:Disconnect()
+								self.CurrentKey = input.UserInputType  -- Store the current key in the object
+								config.Objects[nametab][name] = input.KeyCode.Name
+								if triggerwhilebinding == true then
+									TaskThreads[name] = task.spawn(function()
+										callback(input)
+										SaveConfig()
+									end)
+								end
+							end
+						end)
+					end
+				end)
+
+				UserInputService.InputBegan:Connect(function(input)
+					if listening == false then
+						if input.UserInputType == Enum.UserInputType.Keyboard then
+							if input.KeyCode == TAB.CurrentKey then
+
+								TaskThreads[name] = task.spawn(function()
+									callback(input)
+									SaveConfig()
+								end)
+							end
+						elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
+							input.UserInputType == Enum.UserInputType.MouseButton2 or
+							input.UserInputType == Enum.UserInputType.MouseButton3 then
+							if input.UserInputType == TAB.CurrentKey then
+								TaskThreads[name] = task.spawn(function()
+									callback(input)
+									SaveConfig()
+								end)
+							end
+						end
+					end
+				end)
 
 
-			--	local Event
+				newKey.Frame.MouseEnter:Connect(function()
+					Tween(newKey.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+				end)
 
-			--	newKey.Frame.MouseEnter:Connect(function(x,y)
-			--		if ShowInfo == true then
-			--			InfoFrame.Visible = true
+				newKey.Frame.MouseLeave:Connect(function()
+					Tween(newKey.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(20,20,20)})
 
-			--			InfoFrame.Title.Text = name
-			--			InfoFrame.Description.Text = desc
-			--			InfoFrame.Position = UDim2.fromOffset(x,y)
+				end)
 
-			--			Event = newKey.Frame.MouseMoved:Connect(function(x,y)
-			--				Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
-			--			end)
-			--		end
-			--	end)
-			--	newKey.Frame.MouseLeave:Connect(function()
-			--		if ShowInfo == true then
-			--			InfoFrame.Visible = false
-			--			Event:Disconnect()
-			--		end
-			--	end)
-			--end
+
+				local Event
+
+				newKey.Frame.MouseEnter:Connect(function(x,y)
+					if ShowInfo == true then
+						InfoFrame.Visible = true
+
+						InfoFrame.Title.Text = name
+						InfoFrame.Description.Text = desc
+						InfoFrame.Position = UDim2.fromOffset(x,y)
+
+						Event = newKey.Frame.MouseMoved:Connect(function(x,y)
+							Tween(InfoFrame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(x,y)})
+						end)
+					end
+				end)
+				newKey.Frame.MouseLeave:Connect(function()
+					if ShowInfo == true then
+						InfoFrame.Visible = false
+						Event:Disconnect()
+					end
+				end)
+			end
 
 			function TAB:AddSlider(name, desc, tbl, callback)
 				local self = setmetatable({}, TAB)
@@ -4290,10 +4361,15 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 				local list = tbl.list
 				local default
 
-				local selected
+				local selected = {}
 
 				if config.Objects[nametab][name] then
-					default = table.concat(config.Objects[nametab][name], ", ")
+					if #config.Objects[nametab][name] > 0 then
+						default = table.concat(config.Objects[nametab][name], ", ")
+					else
+						default = "None [MULTI]"
+					end
+
 					selected = config.Objects[nametab][name]
 
 
@@ -4305,16 +4381,19 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 
 				else
 					if tbl.default then
-						default = table.concat(tbl.default, ", ")
+						if #tbl.default > 0 then
+							default = table.concat(tbl.default, ", ")
+						else
+							default = "None [MULTI]"
+						end
 					elseif not tbl.default then
-						default = "None"
+						default = "None [MULTI]"
 					end
 
 					config.Objects[nametab][name] = default
 
 
-					if default ~= "None" then
-						selected = {}
+					if default ~= "None [MUTLI]" then
 						TaskThreads[name] = task.spawn(function()
 							task.wait(1)
 							callback(selected)
@@ -4334,18 +4413,18 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 
 				local function Toggle()
 					if opened == false then
-						opened = true
+						opened = not opened
 						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
 						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 90) })
 					elseif opened == true then
-						opened = false
+						opened = not opened
 						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
 						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 0) })
 					end
 				end
 
 				for i,v in ipairs(list) do
-					local newOption = ReservedTabs.OptionDropdown:Clone()
+					local newOption = ReservedTabs.OptionMultiDropdown:Clone()
 					local buttonSelected = false
 
 
@@ -4359,17 +4438,25 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 
 						task.spawn(function()
 							if buttonSelected then
+								Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
 								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(44,44,44)})
 								table.insert(selected, v)
 
 							elseif not buttonSelected then
+								Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 1})
 								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
 								table.remove(selected, table.find(selected, v))
 							end
 						end)
 
 						--Toggle()
-						newDropdown.Frame.Select.Text = table.concat(selected, ", ")
+
+
+						if #selected > 0 then
+							newDropdown.Frame.Select.Text = table.concat(selected, ", ")
+						else
+							newDropdown.Frame.Select.Text = "None [MULTI]"
+						end
 						config.Objects[nametab][name] = selected
 						TaskThreads[name] = task.spawn(function()
 							callback(selected)
@@ -4424,7 +4511,9 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 				function self:Add(tbl)
 					if typeof(tbl) == "table" then
 						for i,v in pairs(tbl) do
-							local newOption = ReservedTabs.OptionDropdown:Clone()
+							local newOption = ReservedTabs.OptionMultiDropdown:Clone()
+							local buttonSelected = false
+
 
 							newOption.Name = v
 							newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
@@ -4432,24 +4521,38 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 							newOption.Visible = true
 
 							newOption.MouseButton1Click:Connect(function()
-								Toggle()
-								newDropdown.Frame.Select.Text = v
+								buttonSelected = not buttonSelected
 
+								task.spawn(function()
+									if buttonSelected then
+										Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
+										Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(44,44,44)})
+										table.insert(selected, v)
+
+									elseif not buttonSelected then
+										Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 1})
+										Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+										table.remove(selected, table.find(selected, v))
+									end
+								end)
+
+								--Toggle()
+								if #selected > 0 then
+									newDropdown.Frame.Select.Text = table.concat(selected, ", ")
+								else
+									newDropdown.Frame.Select.Text = "None [MULTI]"
+								end
+								config.Objects[nametab][name] = selected
 								TaskThreads[name] = task.spawn(function()
-									callback(v)
+									callback(selected)
 									SaveConfig()
 								end)
-							end)
-
-							newOption.MouseEnter:Connect(function()
-								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(37,37,37)})
-							end)
-							newOption.MouseLeave:Connect(function()
-								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
 							end)
 						end
 					elseif typeof(tbl) == "string" or typeof(tbl) == "number" then
 						local newOption = ReservedTabs.OptionDropdown:Clone()
+						local buttonSelected = false
+						local stringTbl = tostring(tbl)
 
 						newOption.Name = tbl or tostring(tbl)
 						newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
@@ -4457,20 +4560,28 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 						newOption.Visible = true
 
 						newOption.MouseButton1Click:Connect(function()
-							Toggle()
-							newDropdown.Frame.Select.Text = tbl
+							buttonSelected = not buttonSelected
 
+							task.spawn(function()
+								if buttonSelected then
+									Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
+									Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(44,44,44)})
+									table.insert(selected, stringTbl)
+
+								elseif not buttonSelected then
+									Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 1})
+									Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+									table.remove(selected, table.find(selected, stringTbl))
+								end
+							end)
+
+							--Toggle()
+							newDropdown.Frame.Select.Text = table.concat(selected, ", ")
+							config.Objects[nametab][name] = selected
 							TaskThreads[name] = task.spawn(function()
-								callback(tbl)
+								callback(selected)
 								SaveConfig()
 							end)
-						end)
-
-						newOption.MouseEnter:Connect(function()
-							Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(37,37,37)})
-						end)
-						newOption.MouseLeave:Connect(function()
-							Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
 						end)
 					end
 				end
@@ -4486,4 +4597,4 @@ GANTENGLIB_MODULES[GANTENGLIB["136"]] = {
 	end;
 };
 
-return require(GANTENGLIB["136"]);
+return require(GANTENGLIB["13f"]);

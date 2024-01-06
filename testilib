@@ -2928,7 +2928,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 		local RunService = game:GetService("RunService")
 
 		-- ENV EMULATION AND DEBUGGING PURPOSES
-		local debugging = true
+		local debugging = false
 
 		local JSONCONFIG = [[{"Objects":{"Shop":[],"Main":[],"Teleport":[],"Misc":[],"Info":{"testi togel false":true,"sat":false,"testi config peler":5,"testi multidd":["value 1","value 5","value 3"],"testi dd":"None","testibox":"","testi togel true":true},"Item":[]},"Name":"Ganteng Hub"}]]
 

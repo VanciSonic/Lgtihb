@@ -1,12 +1,19 @@
-																																--[[
-	==============================================
-	|    Ganteng Hub UI LIBRARY		     |
-	|    Author: SonicTuru, Chillz, Isnahamzah   |
-	|					     |
-	|    This belongs to Ganteng hub Developers. |
-	==============================================
-																																]]
+																															--[[
+	// Ganteng Hub UI LIBRARY \\
+	Author: SonicTuru, Chillz, Isnahamzah
+	This belongs to Ganteng hub Developers.
+	
+	
+	// Credits \\
+	- Chillz
+	- SonicTuru
+	- Isnahamzah
 
+	"fixing one bug already making my brain hurts" - Chillz
+																															]]
+
+	
+--// Source \\
 
 -- Instances: 327 | Scripts: 0 | Modules: 1
 local GANTENGLIB = {};
@@ -2918,6 +2925,46 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 		local TweenService = game:GetService("TweenService")
 		local HttpService = game:GetService("HttpService")
 		local LocalPlayer = Players.LocalPlayer
+		local RunService = game:GetService("RunService")
+
+		-- ENV EMULATION AND DEBUGGING PURPOSES
+		local debugging = false
+
+		local JSONCONFIG = [[{"Objects":{"Shop":[],"Main":[],"Teleport":[],"Misc":[],"Info":{"testi togel false":true,"sat":false,"testi config peler":5,"testi multidd":["value 1","value 5","value 3"],"testi dd":"None","testibox":"","testi togel true":true},"Item":[]},"Name":"Ganteng Hub"}]]
+
+		local function IsStudio()
+			if debugging then
+				return false
+			else
+				return game:GetService("RunService"):IsStudio()
+			end
+		end
+		if debugging then -- this runs when debugging "true"
+
+			function writefile(a,b)
+				print("WRITEFILE: "..a..", "..b)
+			end
+			function isfile(a)
+
+				if type(JSONCONFIG) == "string" then
+					print("ISFILE: "..a..", true")
+					return true
+				else
+					print("ISFILE: "..a..", false")
+				end
+			end
+
+			function readfile(a)
+				if isfile(a) then
+					print("READFILE: "..a)
+					return JSONCONFIG
+				end
+			end
+		else -- This does run when no debugging
+			--nothing lol
+		end
+		-- ENV EMULATION AND DEBUGGING PURPOSES
+
 
 		-- Variable Shortcuts
 		local Mainframe = script.Parent.DropShadowHolder.MainFrame
@@ -2938,7 +2985,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 		local SAT = Gui.DropShadowHolder.StopAllTween
 		-- Variables
 		local SavingConfig = false
-		if not game:GetService("RunService"):IsStudio() then
+		if not IsStudio() then
 			if isfile("GHAutosave") then
 				if readfile("GHAutosave") == "true" then
 					Topbar.ToggleInfo.Toggle.Filler.Transparency = 0
@@ -2956,30 +3003,10 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 		local Maxxed = false
 		local namehub
 
-		-- ENV EMULATION AND DEBUGGING PURPOSES
-		if game:GetService("RunService"):IsStudio() then -- this runs when environment running on Roblox Studio
-
-
-
-			function writefile(a)
-				print("WRITEFILE: "..a)
-			end
-			function isfile(a)
-				print("ISFILE: "..tostring(a))
-				return false
-			end
-		else -- This does run when environment running on Normal Roblox
-			local function print(...)
-				return ...
-			end
-		end
-		-- ENV EMULATION AND DEBUGGING PURPOSES
-
-
 		local config 
 
 		local function SaveConfig()
-			if SavingConfig == true and not game:GetService("RunService"):IsStudio() then
+			if SavingConfig == true then
 				writefile(namehub..".json",HttpService:JSONEncode(config))
 			end
 		end
@@ -3008,7 +3035,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 			local self = setmetatable({}, LIBRARY)
 			namehub = name
 			-- config setting save
-			if isfile(namehub..".json") and not game:GetService("RunService"):IsStudio() then
+			if isfile(namehub..".json") and not IsStudio() then
 				local success, results = pcall(function()
 					config = HttpService:JSONDecode(readfile(namehub..".json"))
 				end)
@@ -3439,7 +3466,11 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 
 			for _, title in ipairs(order) do
 				local desc = list[title]
-				print('Added "' .. title .. ':' .. desc .. '".')
+
+				if debugging then
+					print('Added "' .. title .. ':' .. desc .. '".')
+				end
+
 				local newCg = getRandomIndex(title, desc):Clone()
 
 				newCg.Name = title
@@ -4363,6 +4394,64 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 
 				local selected = {}
 
+				local function AddOption(name, state)
+					local newOption = ReservedTabs.OptionMultiDropdown:Clone()
+					local buttonSelected = state or false
+
+
+					newOption.Name = name
+					newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
+					newOption.Text = name
+					newOption.Visible = true
+
+					-- change its visual when state is true, read it urself (default visual is false, yk)
+					if state then
+						newOption.Indicator.Fill.BackgroundTransparency = 0
+						newOption.BackgroundColor3 = Color3.fromRGB(44,44,44)
+					end
+
+
+					newOption.MouseButton1Click:Connect(function()
+						buttonSelected = not buttonSelected
+
+						task.spawn(function()
+							if buttonSelected then
+								Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
+								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(44,44,44)})
+								table.insert(selected, name)
+
+							elseif not buttonSelected then
+								Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 1})
+								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+								table.remove(selected, table.find(selected, name))
+							end
+						end)
+
+						--Toggle()
+
+
+						if #selected > 0 then
+							newDropdown.Frame.Select.Text = table.concat(selected, ", ")
+						else
+							newDropdown.Frame.Select.Text = "None [MULTI]"
+						end
+						config.Objects[nametab][name] = selected
+						TaskThreads[name] = task.spawn(function()
+							callback(selected)
+							SaveConfig()
+						end)
+					end)
+
+			--[[newOption.MouseEnter:Connect(function()
+				Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(37,37,37)})
+			end)
+			newOption.MouseLeave:Connect(function()
+				Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
+			end)]]
+				end
+
+
+
 				if config.Objects[nametab][name] then
 					if #config.Objects[nametab][name] > 0 then
 						default = table.concat(config.Objects[nametab][name], ", ")
@@ -4424,52 +4513,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 				end
 
 				for i,v in ipairs(list) do
-					local newOption = ReservedTabs.OptionMultiDropdown:Clone()
-					local buttonSelected = false
-
-
-					newOption.Name = v
-					newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
-					newOption.Text = v
-					newOption.Visible = true
-
-					newOption.MouseButton1Click:Connect(function()
-						buttonSelected = not buttonSelected
-
-						task.spawn(function()
-							if buttonSelected then
-								Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
-								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(44,44,44)})
-								table.insert(selected, v)
-
-							elseif not buttonSelected then
-								Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 1})
-								Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-								table.remove(selected, table.find(selected, v))
-							end
-						end)
-
-						--Toggle()
-
-
-						if #selected > 0 then
-							newDropdown.Frame.Select.Text = table.concat(selected, ", ")
-						else
-							newDropdown.Frame.Select.Text = "None [MULTI]"
-						end
-						config.Objects[nametab][name] = selected
-						TaskThreads[name] = task.spawn(function()
-							callback(selected)
-							SaveConfig()
-						end)
-					end)
-
-			--[[newOption.MouseEnter:Connect(function()
-				Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(37,37,37)})
-			end)
-			newOption.MouseLeave:Connect(function()
-				Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-			end)]]
+					AddOption(v, table.find(selected, v))
 				end
 
 				newDropdown.Frame.Select.MouseButton1Click:Connect(function()
@@ -4508,81 +4552,13 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 					end
 				end 
 
-				function self:Add(tbl)
+				function self:Add(tbl, tblstate)
 					if typeof(tbl) == "table" then
 						for i,v in pairs(tbl) do
-							local newOption = ReservedTabs.OptionMultiDropdown:Clone()
-							local buttonSelected = false
-
-
-							newOption.Name = v
-							newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
-							newOption.Text = v
-							newOption.Visible = true
-
-							newOption.MouseButton1Click:Connect(function()
-								buttonSelected = not buttonSelected
-
-								task.spawn(function()
-									if buttonSelected then
-										Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
-										Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(44,44,44)})
-										table.insert(selected, v)
-
-									elseif not buttonSelected then
-										Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 1})
-										Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-										table.remove(selected, table.find(selected, v))
-									end
-								end)
-
-								--Toggle()
-								if #selected > 0 then
-									newDropdown.Frame.Select.Text = table.concat(selected, ", ")
-								else
-									newDropdown.Frame.Select.Text = "None [MULTI]"
-								end
-								config.Objects[nametab][name] = selected
-								TaskThreads[name] = task.spawn(function()
-									callback(selected)
-									SaveConfig()
-								end)
-							end)
+							AddOption(v, tblstate[i] or false)
 						end
 					elseif typeof(tbl) == "string" or typeof(tbl) == "number" then
-						local newOption = ReservedTabs.OptionDropdown:Clone()
-						local buttonSelected = false
-						local stringTbl = tostring(tbl)
-
-						newOption.Name = tbl or tostring(tbl)
-						newOption.Parent = newDropdown.SelectionFrame.ScrollingFrame
-						newOption.Text = tbl or tostring(tbl)
-						newOption.Visible = true
-
-						newOption.MouseButton1Click:Connect(function()
-							buttonSelected = not buttonSelected
-
-							task.spawn(function()
-								if buttonSelected then
-									Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 0})
-									Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(44,44,44)})
-									table.insert(selected, stringTbl)
-
-								elseif not buttonSelected then
-									Tween(newOption.Indicator.Fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundTransparency = 1})
-									Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-									table.remove(selected, table.find(selected, stringTbl))
-								end
-							end)
-
-							--Toggle()
-							newDropdown.Frame.Select.Text = table.concat(selected, ", ")
-							config.Objects[nametab][name] = selected
-							TaskThreads[name] = task.spawn(function()
-								callback(selected)
-								SaveConfig()
-							end)
-						end)
+						AddOption(tbl, tblstate or false)
 					end
 				end
 				return self

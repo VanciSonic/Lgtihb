@@ -12,7 +12,7 @@
 	"fixing one bug already making my brain hurts" - Chillz
 																															]]
 
-	
+
 --// Source \\
 
 -- Instances: 327 | Scripts: 0 | Modules: 1
@@ -2929,8 +2929,8 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 
 		-- ENV EMULATION AND DEBUGGING PURPOSES
 		local debugging = false
+		local JSONCONFIG = [[{"Objects":{"Shop":[],"Main":[],"Teleport":[],"Misc":[],"Info":{"testi togel false":false,"sat":false,"testi config peler":5,"testi multidd":["value 1","value 2","value 4","value 5"],"testi dd":"None","testibox":"","testi togel true":true},"Item":[]},"Name":"Ganteng Hub"}]]
 
-		local JSONCONFIG = [[{"Objects":{"Shop":[],"Main":[],"Teleport":[],"Misc":[],"Info":{"testi togel false":true,"sat":false,"testi config peler":5,"testi multidd":["value 1","value 5","value 3"],"testi dd":"None","testibox":"","testi togel true":true},"Item":[]},"Name":"Ganteng Hub"}]]
 
 		local function IsStudio()
 			if debugging then
@@ -2960,8 +2960,6 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 					return JSONCONFIG
 				end
 			end
-		else -- This does run when no debugging
-			--nothing lol
 		end
 		-- ENV EMULATION AND DEBUGGING PURPOSES
 
@@ -4386,14 +4384,58 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 
 			function TAB:AddMultiDropdown(name, desc, tbl, callback)
 				local self = setmetatable({}, TAB)
-
 				local newDropdown = ReservedTabs.MultiDropdown:Clone()
 
+				local ItemName = name -- this for alternative name since AddOption have argument #1 called 'name'
+
 				local list = tbl.list
-				local default
+				local selectedString
+				local selected = tbl.default or {}
 
-				local selected = {}
+				local function UpdateSelectedString()
+					if #selected > 0 then
+						selectedString = table.concat(selected, ", ")
+						newDropdown.Frame.Select.Text = selectedString
+					else
+						selectedString = "None [MULTI]"
+						newDropdown.Frame.Select.Text = selectedString
+					end
+				end
+				-- json stuffs
+				if config.Objects[nametab][name] then
+					selected = config.Objects[nametab][name]
+					UpdateSelectedString()
 
+					TaskThreads[name] = task.spawn(function()
+						task.wait(1)
+						callback(selected)
+						SaveConfig()
+					end)
+				end
+
+
+				-- setup
+				local opened = false
+
+				newDropdown.Name = name
+				newDropdown.Visible = true
+				newDropdown.Parent = newTab
+				newDropdown.Frame.TextLabel.Text = name
+				UpdateSelectedString()
+
+				local function Toggle()
+					if opened == false then
+						opened = not opened
+						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
+						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 90) })
+					elseif opened == true then
+						opened = not opened
+						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
+						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 0) })
+					end
+				end
+
+				-- AddOptions
 				local function AddOption(name, state)
 					local newOption = ReservedTabs.OptionMultiDropdown:Clone()
 					local buttonSelected = state or false
@@ -4427,99 +4469,28 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 							end
 						end)
 
-						--Toggle()
+						config.Objects[nametab][ItemName] = selected
 
-
-						if #selected > 0 then
-							newDropdown.Frame.Select.Text = table.concat(selected, ", ")
-						else
-							newDropdown.Frame.Select.Text = "None [MULTI]"
-						end
-						config.Objects[nametab][name] = selected
+						UpdateSelectedString()
 						TaskThreads[name] = task.spawn(function()
 							callback(selected)
 							SaveConfig()
 						end)
 					end)
-
-			--[[newOption.MouseEnter:Connect(function()
-				Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(37,37,37)})
-			end)
-			newOption.MouseLeave:Connect(function()
-				Tween(newOption, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { BackgroundColor3 = Color3.fromRGB(30,30,30)})
-			end)]]
 				end
 
 
 
-				if config.Objects[nametab][name] then
-					if #config.Objects[nametab][name] > 0 then
-						if type(config.Objects[nametab][name]) == "string" then
-							default = config.Objects[nametab][name]
-						elseif type(config.Objects[nametab][name]) == "table" then
-							default = table.concat(config.Objects[nametab][name], ", ")
-						end
-					else
-						default = "None [MULTI]"
+				-- for load the options
+				for i, option in ipairs(list) do
+					local bool = false
+					if table.find(selected, option) then
+						bool = true
 					end
-
-					selected = config.Objects[nametab][name]
-
-
-					TaskThreads[name] = task.spawn(function()
-						task.wait(1)
-						callback(config.Objects[nametab][name])
-						SaveConfig()
-					end)
-
-				else
-					if tbl.default then
-						if #tbl.default > 0 then
-							default = table.concat(tbl.default, ", ")
-						else
-							default = "None [MULTI]"
-						end
-					elseif not tbl.default then
-						default = "None [MULTI]"
-					end
-
-					config.Objects[nametab][name] = default
-
-
-					if default ~= "None [MUTLI]" then
-						TaskThreads[name] = task.spawn(function()
-							task.wait(1)
-							callback(selected)
-							SaveConfig()
-						end)
-					end
-
+					AddOption(option, bool)
 				end
 
-				local opened = false
-
-				newDropdown.Name = name
-				newDropdown.Visible = true
-				newDropdown.Parent = newTab
-				newDropdown.Frame.TextLabel.Text = name
-				newDropdown.Frame.Select.Text = default
-
-				local function Toggle()
-					if opened == false then
-						opened = not opened
-						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0})
-						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 90) })
-					elseif opened == true then
-						opened = not opened
-						Tween(newDropdown.Frame.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1})
-						Tween(newDropdown.SelectionFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(0.9, 0,0, 0) })
-					end
-				end
-
-				for i,v in ipairs(list) do
-					AddOption(v, table.find(selected, v))
-				end
-
+				-- UI handlers
 				newDropdown.Frame.Select.MouseButton1Click:Connect(function()
 					Toggle()
 				end)
@@ -4545,9 +4516,9 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 						Event:Disconnect()
 					end
 				end)
+				--
 
-
-				-- sesuai request sonic :batusenyum:
+				-- clear and add
 				function self:Clear()
 					for _, options in pairs(newDropdown.SelectionFrame.ScrollingFrame:GetChildren()) do
 						if options:IsA("TextButton") then

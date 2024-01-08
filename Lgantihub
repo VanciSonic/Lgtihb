@@ -4454,7 +4454,11 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 
 				if config.Objects[nametab][name] then
 					if #config.Objects[nametab][name] > 0 then
-						default = table.concat(config.Objects[nametab][name], ", ")
+						if type(config.Objects[nametab][name]) == "string" then
+							default = config.Objects[nametab][name]
+						elseif type(config.Objects[nametab][name]) == "table" then
+							default = table.concat(config.Objects[nametab][name], ", ")
+						end
 					else
 						default = "None [MULTI]"
 					end

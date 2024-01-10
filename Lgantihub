@@ -3048,9 +3048,9 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 						delfile(namehub..".json")
 					end
 					if config.ForceReset == true then
-						if config.ForceReset == false and ForceReset then
+						if config.ForceReset == false and ForceReset == true then
 							reset()
-						elseif config.ForceReset and not ForceReset then
+						elseif config.ForceReset == true and ForceReset == false then
 							config.ForceReset = ForceReset
 						end
 					else

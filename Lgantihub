@@ -9,7 +9,7 @@
 	- SonicTuru
 	- Isnahamzah
 
-	"fixing one bug already making my brain hurts" - Chillz
+	"fixing one bug already make my brain hurts" - Chillz
 																															]]
 
 
@@ -2918,6 +2918,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 		local script = GANTENGLIB["13f"];
 		local LIBRARY = {}
 
+		local ForceReset = true
 
 		-- Services
 		local UserInputService = game:GetService("UserInputService")
@@ -3032,19 +3033,42 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 		function LIBRARY:Init(name, image, requiredLoading, Username, socials)
 			local self = setmetatable({}, LIBRARY)
 			namehub = name
+
 			-- config setting save
 			if isfile(namehub..".json") and not IsStudio() then
 				local success, results = pcall(function()
 					config = HttpService:JSONDecode(readfile(namehub..".json"))
+					
+					-- BUAT BOCIL2 YANG KOMPLEN MULTIDROPDOWN BILEK:
+					local function reset()
+						warn("Ganteng Hub currently doing bulk reset to all user, this will resets your saved settings.")
+						config = {}
+						config.Objects = {}
+						config.ForceReset = ForceReset
+						delfile(namehub..".json")
+					end
+					if config.ForceReset == true then
+						if config.ForceReset == false and ForceReset then
+							reset()
+						elseif config.ForceReset and not ForceReset then
+							config.ForceReset = ForceReset
+						end
+					else
+						reset()
+					end
+
+					
 				end)
 				if not success then
 					warn("Error while reading config file Ganteng Hub.json, using default settings.")
 					config = {}
 					config.Objects = {}
+					config.ForceReset = ForceReset
 				end
 			else
 				config = {}
 				config.Objects = {}
+				config.ForceReset = ForceReset
 			end
 
 			config.Name = name

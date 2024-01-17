@@ -2918,7 +2918,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 		local script = GANTENGLIB["13f"];
 		local LIBRARY = {}
 
-		local ForceReset = false
+		local ForceReset = true
 
 		-- Services
 		local UserInputService = game:GetService("UserInputService")

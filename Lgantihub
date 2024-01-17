@@ -2918,7 +2918,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 		local script = GANTENGLIB["13f"];
 		local LIBRARY = {}
 
-		local ForceReset = true
+		local ForceReset = false
 
 		-- Services
 		local UserInputService = game:GetService("UserInputService")
@@ -3038,7 +3038,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 			if isfile(namehub..".json") and not IsStudio() then
 				local success, results = pcall(function()
 					config = HttpService:JSONDecode(readfile(namehub..".json"))
-					
+
 					-- BUAT BOCIL2 YANG KOMPLEN MULTIDROPDOWN BILEK:
 					local function reset()
 						warn("Ganteng Hub currently doing bulk reset to all user, this will resets your saved settings.")
@@ -3057,7 +3057,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 						reset()
 					end
 
-					
+
 				end)
 				if not success then
 					warn("Error while reading config file Ganteng Hub.json, using default settings.")
@@ -3855,6 +3855,7 @@ GANTENGLIB_MODULES[GANTENGLIB["13f"]] = {
 				newTextbox.Parent = newTab
 				newTextbox.Name = name
 				newTextbox.Visible = true
+				newTextbox.Frame.Textbox.Active = true
 
 				newTextbox.Frame.Textbox.PlaceholderText = placeholdertext or ""
 				newTextbox.Frame.Textbox.Text = defaulttext or ""

@@ -1538,7 +1538,7 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 			end)
 
 			local index = 1
-			function SELF:AddChangelogs(list)
+			function SELF:AddChangelog(list)
 				local order = {}
 
 				for title, desc in pairs(list) do

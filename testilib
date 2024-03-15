@@ -5,21 +5,21 @@
 	
 	
 	// Credits \\
-	- Chillz
-	- SonicTuru
-	- Isnahamzah
+	- Isnahamzah (CEO)
+	- SonicTuru (Ganteng Hub: Blox Fruit Developer)
+	- Chillz (UI Developer)
 
-	"fixing one bug already making my brain hurts" - Chillz
+	"bug udah ilang tuhhhhhh" - Chillz
 																															]]
 
 
 --// Source \\
 
--- Instances: 134 | Scripts: 0 | Modules: 2
+-- Instances: 132 | Scripts: 0 | Modules: 1
 local GANTENGLIB = {};
 
--- GantengHubUI
-GANTENGLIB["1"] = Instance.new("ScreenGui");
+-- StarterGui.GantengHubUI
+GANTENGLIB["1"] = Instance.new("ScreenGui")
 if game:GetService("RunService"):IsStudio() then
 	GANTENGLIB["1"].Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 else
@@ -31,7 +31,7 @@ GANTENGLIB["1"]["Name"] = [[GantengHubUI]];
 GANTENGLIB["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
 GANTENGLIB["1"]["ResetOnSpawn"] = false;
 
--- GantengHubUI.MainFrame
+-- StarterGui.GantengHubUI.MainFrame
 GANTENGLIB["2"] = Instance.new("Frame", GANTENGLIB["1"]);
 GANTENGLIB["2"]["BorderSizePixel"] = 0;
 GANTENGLIB["2"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -44,7 +44,7 @@ GANTENGLIB["2"]["Position"] = UDim2.new(0.5244791507720947, 0, 0.512995958328247
 GANTENGLIB["2"]["Visible"] = false;
 GANTENGLIB["2"]["Name"] = [[MainFrame]];
 
--- GantengHubUI.MainFrame.SideFrame
+-- StarterGui.GantengHubUI.MainFrame.SideFrame
 GANTENGLIB["3"] = Instance.new("Frame", GANTENGLIB["2"]);
 GANTENGLIB["3"]["BorderSizePixel"] = 0;
 GANTENGLIB["3"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -53,7 +53,7 @@ GANTENGLIB["3"]["Size"] = UDim2.new(0.038927141577005386, 117, 1, 0);
 GANTENGLIB["3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["3"]["Name"] = [[SideFrame]];
 
--- GantengHubUI.MainFrame.SideFrame.TextLabel
+-- StarterGui.GantengHubUI.MainFrame.SideFrame.TextLabel
 GANTENGLIB["4"] = Instance.new("TextLabel", GANTENGLIB["3"]);
 GANTENGLIB["4"]["BorderSizePixel"] = 0;
 GANTENGLIB["4"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -66,7 +66,7 @@ GANTENGLIB["4"]["Text"] = [[Ganteng Hub]];
 GANTENGLIB["4"]["BackgroundTransparency"] = 1;
 GANTENGLIB["4"]["Position"] = UDim2.new(0, 0, 0.022222215309739113, 0);
 
--- GantengHubUI.MainFrame.SideFrame.SideTabButtons
+-- StarterGui.GantengHubUI.MainFrame.SideFrame.SideTabButtons
 GANTENGLIB["5"] = Instance.new("Frame", GANTENGLIB["3"]);
 GANTENGLIB["5"]["BorderSizePixel"] = 0;
 GANTENGLIB["5"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -76,7 +76,7 @@ GANTENGLIB["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["5"]["Position"] = UDim2.new(0, 0, 0.19629636406898499, 0);
 GANTENGLIB["5"]["Name"] = [[SideTabButtons]];
 
--- GantengHubUI.MainFrame.SideFrame.SideTabButtons.ScrollingFrame
+-- StarterGui.GantengHubUI.MainFrame.SideFrame.SideTabButtons.ScrollingFrame
 GANTENGLIB["6"] = Instance.new("ScrollingFrame", GANTENGLIB["5"]);
 GANTENGLIB["6"]["Active"] = true;
 GANTENGLIB["6"]["BorderSizePixel"] = 0;
@@ -91,16 +91,16 @@ GANTENGLIB["6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["6"]["ScrollBarThickness"] = 4;
 GANTENGLIB["6"]["BottomImage"] = [[rbxasset://textures/ui/Scroll/scroll-middle.png]];
 
--- GantengHubUI.MainFrame.SideFrame.SideTabButtons.ScrollingFrame.UIListLayout
+-- StarterGui.GantengHubUI.MainFrame.SideFrame.SideTabButtons.ScrollingFrame.UIListLayout
 GANTENGLIB["7"] = Instance.new("UIListLayout", GANTENGLIB["6"]);
 GANTENGLIB["7"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Center;
 GANTENGLIB["7"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
--- GantengHubUI.MainFrame.SideFrame.UICorner
+-- StarterGui.GantengHubUI.MainFrame.SideFrame.UICorner
 GANTENGLIB["8"] = Instance.new("UICorner", GANTENGLIB["3"]);
 GANTENGLIB["8"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.MainFrame.SideFrame.StopAllTween
+-- StarterGui.GantengHubUI.MainFrame.SideFrame.StopAllTween
 GANTENGLIB["9"] = Instance.new("TextButton", GANTENGLIB["3"]);
 GANTENGLIB["9"]["Active"] = false;
 GANTENGLIB["9"]["BorderSizePixel"] = 0;
@@ -116,11 +116,11 @@ GANTENGLIB["9"]["Text"] = [[Stop All Tween]];
 GANTENGLIB["9"]["Position"] = UDim2.new(0.035048358142375946, 0, 0.9112733602523804, 0);
 GANTENGLIB["9"]["BackgroundTransparency"] = 0.3499999940395355;
 
--- GantengHubUI.MainFrame.SideFrame.StopAllTween.UICorner
+-- StarterGui.GantengHubUI.MainFrame.SideFrame.StopAllTween.UICorner
 GANTENGLIB["a"] = Instance.new("UICorner", GANTENGLIB["9"]);
 GANTENGLIB["a"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.MainFrame.TopFrame
+-- StarterGui.GantengHubUI.MainFrame.TopFrame
 GANTENGLIB["b"] = Instance.new("Frame", GANTENGLIB["2"]);
 GANTENGLIB["b"]["BorderSizePixel"] = 0;
 GANTENGLIB["b"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -130,7 +130,7 @@ GANTENGLIB["b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["b"]["Position"] = UDim2.new(0.2639690637588501, 0, 0, 0);
 GANTENGLIB["b"]["Name"] = [[TopFrame]];
 
--- GantengHubUI.MainFrame.TopFrame.Exit
+-- StarterGui.GantengHubUI.MainFrame.TopFrame.Exit
 GANTENGLIB["c"] = Instance.new("TextButton", GANTENGLIB["b"]);
 GANTENGLIB["c"]["BorderSizePixel"] = 0;
 GANTENGLIB["c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -145,7 +145,7 @@ GANTENGLIB["c"]["Text"] = [[X]];
 GANTENGLIB["c"]["Position"] = UDim2.new(1, 0, 0, 0);
 GANTENGLIB["c"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.MainFrame.TopFrame.Close
+-- StarterGui.GantengHubUI.MainFrame.TopFrame.Close
 GANTENGLIB["d"] = Instance.new("TextButton", GANTENGLIB["b"]);
 GANTENGLIB["d"]["BorderSizePixel"] = 0;
 GANTENGLIB["d"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -160,7 +160,7 @@ GANTENGLIB["d"]["Text"] = [[-]];
 GANTENGLIB["d"]["Position"] = UDim2.new(0.9057592153549194, 0, 0, 0);
 GANTENGLIB["d"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.MainFrame.TopFrame.Back
+-- StarterGui.GantengHubUI.MainFrame.TopFrame.Back
 GANTENGLIB["e"] = Instance.new("TextButton", GANTENGLIB["b"]);
 GANTENGLIB["e"]["BorderSizePixel"] = 0;
 GANTENGLIB["e"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -176,7 +176,7 @@ GANTENGLIB["e"]["Text"] = [[ ]];
 GANTENGLIB["e"]["Position"] = UDim2.new(0.23036673665046692, 0, 0, 0);
 GANTENGLIB["e"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.MainFrame.TopFrame.Back.TextLabel
+-- StarterGui.GantengHubUI.MainFrame.TopFrame.Back.TextLabel
 GANTENGLIB["f"] = Instance.new("TextLabel", GANTENGLIB["e"]);
 GANTENGLIB["f"]["BorderSizePixel"] = 0;
 GANTENGLIB["f"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -189,7 +189,7 @@ GANTENGLIB["f"]["Text"] = [[Back]];
 GANTENGLIB["f"]["BackgroundTransparency"] = 1;
 GANTENGLIB["f"]["Position"] = UDim2.new(0.06806311756372452, 0, 0, 0);
 
--- GantengHubUI.MainFrame.TopFrame.Back.Text
+-- StarterGui.GantengHubUI.MainFrame.TopFrame.Back.Text
 GANTENGLIB["10"] = Instance.new("TextLabel", GANTENGLIB["e"]);
 GANTENGLIB["10"]["BorderSizePixel"] = 0;
 GANTENGLIB["10"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -205,11 +205,11 @@ GANTENGLIB["10"]["Name"] = [[Text]];
 GANTENGLIB["10"]["BackgroundTransparency"] = 1;
 GANTENGLIB["10"]["Position"] = UDim2.new(0.41746607422828674, 0, 0, 0);
 
--- GantengHubUI.MainFrame.TopFrame.UICorner
+-- StarterGui.GantengHubUI.MainFrame.TopFrame.UICorner
 GANTENGLIB["11"] = Instance.new("UICorner", GANTENGLIB["b"]);
 GANTENGLIB["11"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.MainFrame.TopFrame.CurrentTab
+-- StarterGui.GantengHubUI.MainFrame.TopFrame.CurrentTab
 GANTENGLIB["12"] = Instance.new("TextLabel", GANTENGLIB["b"]);
 GANTENGLIB["12"]["BorderSizePixel"] = 0;
 GANTENGLIB["12"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -224,7 +224,7 @@ GANTENGLIB["12"]["Name"] = [[CurrentTab]];
 GANTENGLIB["12"]["BackgroundTransparency"] = 1;
 GANTENGLIB["12"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
--- GantengHubUI.MainFrame.Tabs
+-- StarterGui.GantengHubUI.MainFrame.Tabs
 GANTENGLIB["13"] = Instance.new("Frame", GANTENGLIB["2"]);
 GANTENGLIB["13"]["BorderSizePixel"] = 0;
 GANTENGLIB["13"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -234,7 +234,7 @@ GANTENGLIB["13"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["13"]["Position"] = UDim2.new(0.2639691233634949, 0, 0.1304347813129425, 0);
 GANTENGLIB["13"]["Name"] = [[Tabs]];
 
--- GantengHubUI.MainFrame.Tabs.Landing
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing
 GANTENGLIB["14"] = Instance.new("Frame", GANTENGLIB["13"]);
 GANTENGLIB["14"]["Active"] = true;
 GANTENGLIB["14"]["BorderSizePixel"] = 0;
@@ -248,7 +248,7 @@ GANTENGLIB["14"]["Position"] = UDim2.new(0, 0, 0.019999822601675987, 0);
 GANTENGLIB["14"]["Name"] = [[Landing]];
 GANTENGLIB["14"]["SelectionGroup"] = true;
 
--- GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame
 GANTENGLIB["15"] = Instance.new("Frame", GANTENGLIB["14"]);
 GANTENGLIB["15"]["BorderSizePixel"] = 0;
 GANTENGLIB["15"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -258,7 +258,7 @@ GANTENGLIB["15"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["15"]["Position"] = UDim2.new(0.04450273886322975, 0, 0.021258503198623657, 0);
 GANTENGLIB["15"]["Name"] = [[WelcomeFrame]];
 
--- GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.Title
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.Title
 GANTENGLIB["16"] = Instance.new("TextLabel", GANTENGLIB["15"]);
 GANTENGLIB["16"]["BorderSizePixel"] = 0;
 GANTENGLIB["16"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -273,11 +273,11 @@ GANTENGLIB["16"]["Name"] = [[Title]];
 GANTENGLIB["16"]["BackgroundTransparency"] = 1;
 GANTENGLIB["16"]["Position"] = UDim2.new(0.31577372550964355, 0, 0.14677730202674866, 0);
 
--- GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.UICorner
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.UICorner
 GANTENGLIB["17"] = Instance.new("UICorner", GANTENGLIB["15"]);
 GANTENGLIB["17"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.Icon
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.Icon
 GANTENGLIB["18"] = Instance.new("ImageLabel", GANTENGLIB["15"]);
 GANTENGLIB["18"]["BorderSizePixel"] = 0;
 GANTENGLIB["18"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -289,11 +289,11 @@ GANTENGLIB["18"]["Name"] = [[Icon]];
 GANTENGLIB["18"]["BackgroundTransparency"] = 1;
 GANTENGLIB["18"]["Position"] = UDim2.new(0.03957205265760422, 0, 0.10676126927137375, 0);
 
--- GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.Icon.UIAspectRatioConstraint
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.Icon.UIAspectRatioConstraint
 GANTENGLIB["19"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["18"]);
 GANTENGLIB["19"]["AspectRatio"] = 0.9999999403953552;
 
--- GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.Description
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.WelcomeFrame.Description
 GANTENGLIB["1a"] = Instance.new("TextLabel", GANTENGLIB["15"]);
 GANTENGLIB["1a"]["BorderSizePixel"] = 0;
 GANTENGLIB["1a"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -308,7 +308,7 @@ GANTENGLIB["1a"]["Name"] = [[Description]];
 GANTENGLIB["1a"]["BackgroundTransparency"] = 1;
 GANTENGLIB["1a"]["Position"] = UDim2.new(0.3157740533351898, 0, 0.4848555326461792, 0);
 
--- GantengHubUI.MainFrame.Tabs.Landing.InfoFrame
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.InfoFrame
 GANTENGLIB["1b"] = Instance.new("Frame", GANTENGLIB["14"]);
 GANTENGLIB["1b"]["BorderSizePixel"] = 0;
 GANTENGLIB["1b"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -318,7 +318,7 @@ GANTENGLIB["1b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["1b"]["Position"] = UDim2.new(0.0445028580725193, 0, 0.31887754797935486, 0);
 GANTENGLIB["1b"]["Name"] = [[InfoFrame]];
 
--- GantengHubUI.MainFrame.Tabs.Landing.InfoFrame.Title
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.InfoFrame.Title
 GANTENGLIB["1c"] = Instance.new("TextLabel", GANTENGLIB["1b"]);
 GANTENGLIB["1c"]["BorderSizePixel"] = 0;
 GANTENGLIB["1c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -332,11 +332,11 @@ GANTENGLIB["1c"]["Name"] = [[Title]];
 GANTENGLIB["1c"]["BackgroundTransparency"] = 1;
 GANTENGLIB["1c"]["Position"] = UDim2.new(0, 0, 0.03799999877810478, 0);
 
--- GantengHubUI.MainFrame.Tabs.Landing.InfoFrame.UICorner
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.InfoFrame.UICorner
 GANTENGLIB["1d"] = Instance.new("UICorner", GANTENGLIB["1b"]);
 GANTENGLIB["1d"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.MainFrame.Tabs.Landing.InfoFrame.Description
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.InfoFrame.Description
 GANTENGLIB["1e"] = Instance.new("TextLabel", GANTENGLIB["1b"]);
 GANTENGLIB["1e"]["TextWrapped"] = true;
 GANTENGLIB["1e"]["BorderSizePixel"] = 0;
@@ -352,7 +352,7 @@ GANTENGLIB["1e"]["Name"] = [[Description]];
 GANTENGLIB["1e"]["BackgroundTransparency"] = 1;
 GANTENGLIB["1e"]["Position"] = UDim2.new(0.03102242574095726, 0, 0.19510573148727417, 0);
 
--- GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame
 GANTENGLIB["1f"] = Instance.new("Frame", GANTENGLIB["14"]);
 GANTENGLIB["1f"]["BorderSizePixel"] = 0;
 GANTENGLIB["1f"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -362,7 +362,7 @@ GANTENGLIB["1f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["1f"]["Position"] = UDim2.new(0.5890054106712341, 0, 0.31887754797935486, 0);
 GANTENGLIB["1f"]["Name"] = [[ChangelogsFrame]];
 
--- GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame.Title
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame.Title
 GANTENGLIB["20"] = Instance.new("TextLabel", GANTENGLIB["1f"]);
 GANTENGLIB["20"]["BorderSizePixel"] = 0;
 GANTENGLIB["20"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -376,11 +376,11 @@ GANTENGLIB["20"]["Name"] = [[Title]];
 GANTENGLIB["20"]["BackgroundTransparency"] = 1;
 GANTENGLIB["20"]["Position"] = UDim2.new(0, 0, 0.03125230222940445, 0);
 
--- GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame.UICorner
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame.UICorner
 GANTENGLIB["21"] = Instance.new("UICorner", GANTENGLIB["1f"]);
 GANTENGLIB["21"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame.ScrollingFrame
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame.ScrollingFrame
 GANTENGLIB["22"] = Instance.new("ScrollingFrame", GANTENGLIB["1f"]);
 GANTENGLIB["22"]["Active"] = true;
 GANTENGLIB["22"]["BorderSizePixel"] = 0;
@@ -396,13 +396,13 @@ GANTENGLIB["22"]["ScrollBarThickness"] = 4;
 GANTENGLIB["22"]["Position"] = UDim2.new(0, 0, 0.1889999657869339, 0);
 GANTENGLIB["22"]["BottomImage"] = [[rbxasset://textures/ui/Scroll/scroll-middle.png]];
 
--- GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame.ScrollingFrame.UIListLayout
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.ChangelogsFrame.ScrollingFrame.UIListLayout
 GANTENGLIB["23"] = Instance.new("UIListLayout", GANTENGLIB["22"]);
 GANTENGLIB["23"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Center;
 GANTENGLIB["23"]["Padding"] = UDim.new(0, 5);
 GANTENGLIB["23"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
--- GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame
 GANTENGLIB["24"] = Instance.new("Frame", GANTENGLIB["14"]);
 GANTENGLIB["24"]["BorderSizePixel"] = 0;
 GANTENGLIB["24"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -412,18 +412,18 @@ GANTENGLIB["24"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["24"]["Position"] = UDim2.new(0.5890054106712341, 0, 0.021258503198623657, 0);
 GANTENGLIB["24"]["Name"] = [[SocialsFrame]];
 
--- GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.UICorner
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.UICorner
 GANTENGLIB["25"] = Instance.new("UICorner", GANTENGLIB["24"]);
 GANTENGLIB["25"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.UIListLayout
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.UIListLayout
 GANTENGLIB["26"] = Instance.new("UIListLayout", GANTENGLIB["24"]);
 GANTENGLIB["26"]["VerticalAlignment"] = Enum.VerticalAlignment.Center;
 GANTENGLIB["26"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Center;
 GANTENGLIB["26"]["Padding"] = UDim.new(0, 4);
 GANTENGLIB["26"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
--- GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.Youtube
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.Youtube
 GANTENGLIB["27"] = Instance.new("TextButton", GANTENGLIB["24"]);
 GANTENGLIB["27"]["Active"] = false;
 GANTENGLIB["27"]["BorderSizePixel"] = 0;
@@ -439,11 +439,11 @@ GANTENGLIB["27"]["Text"] = [[Youtube]];
 GANTENGLIB["27"]["Position"] = UDim2.new(0.03504819795489311, 0, 0.0924326702952385, 0);
 GANTENGLIB["27"]["BackgroundTransparency"] = 0.3499999940395355;
 
--- GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.Youtube.UICorner
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.Youtube.UICorner
 GANTENGLIB["28"] = Instance.new("UICorner", GANTENGLIB["27"]);
 GANTENGLIB["28"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.Discord
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.Discord
 GANTENGLIB["29"] = Instance.new("TextButton", GANTENGLIB["24"]);
 GANTENGLIB["29"]["Active"] = false;
 GANTENGLIB["29"]["BorderSizePixel"] = 0;
@@ -459,19 +459,19 @@ GANTENGLIB["29"]["Text"] = [[Discord]];
 GANTENGLIB["29"]["Position"] = UDim2.new(0.03504819795489311, 0, 0.0924326702952385, 0);
 GANTENGLIB["29"]["BackgroundTransparency"] = 0.3499999940395355;
 
--- GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.Discord.UICorner
+-- StarterGui.GantengHubUI.MainFrame.Tabs.Landing.SocialsFrame.Discord.UICorner
 GANTENGLIB["2a"] = Instance.new("UICorner", GANTENGLIB["29"]);
 GANTENGLIB["2a"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.MainFrame.UICorner
+-- StarterGui.GantengHubUI.MainFrame.UICorner
 GANTENGLIB["2b"] = Instance.new("UICorner", GANTENGLIB["2"]);
 GANTENGLIB["2b"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved
+-- StarterGui.GantengHubUI.Reserved
 GANTENGLIB["2c"] = Instance.new("Folder", GANTENGLIB["1"]);
 GANTENGLIB["2c"]["Name"] = [[Reserved]];
 
--- GantengHubUI.Reserved.TapEffect
+-- StarterGui.GantengHubUI.Reserved.TapEffect
 GANTENGLIB["2d"] = Instance.new("ImageLabel", GANTENGLIB["2c"]);
 GANTENGLIB["2d"]["BorderSizePixel"] = 0;
 GANTENGLIB["2d"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -483,15 +483,15 @@ GANTENGLIB["2d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["2d"]["Name"] = [[TapEffect]];
 GANTENGLIB["2d"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.Reserved.TapEffect.UICorner
+-- StarterGui.GantengHubUI.Reserved.TapEffect.UICorner
 GANTENGLIB["2e"] = Instance.new("UICorner", GANTENGLIB["2d"]);
 GANTENGLIB["2e"]["CornerRadius"] = UDim.new(100, 100);
 
--- GantengHubUI.Reserved.TapEffect.UIAspectRatioConstraint
+-- StarterGui.GantengHubUI.Reserved.TapEffect.UIAspectRatioConstraint
 GANTENGLIB["2f"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["2d"]);
 
 
--- GantengHubUI.Reserved.Toggle
+-- StarterGui.GantengHubUI.Reserved.Toggle
 GANTENGLIB["30"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["30"]["BorderSizePixel"] = 0;
 GANTENGLIB["30"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -504,7 +504,7 @@ GANTENGLIB["30"]["Position"] = UDim2.new(0.5, 0, 0.07116156816482544, 0);
 GANTENGLIB["30"]["Visible"] = false;
 GANTENGLIB["30"]["Name"] = [[Toggle]];
 
--- GantengHubUI.Reserved.Toggle.TextLabel
+-- StarterGui.GantengHubUI.Reserved.Toggle.TextLabel
 GANTENGLIB["31"] = Instance.new("TextLabel", GANTENGLIB["30"]);
 GANTENGLIB["31"]["BorderSizePixel"] = 0;
 GANTENGLIB["31"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -518,7 +518,7 @@ GANTENGLIB["31"]["Text"] = [[Toggle]];
 GANTENGLIB["31"]["BackgroundTransparency"] = 1;
 GANTENGLIB["31"]["Position"] = UDim2.new(0.02692425064742565, 0, 0, 0);
 
--- GantengHubUI.Reserved.Toggle.Button
+-- StarterGui.GantengHubUI.Reserved.Toggle.Button
 GANTENGLIB["32"] = Instance.new("TextButton", GANTENGLIB["30"]);
 GANTENGLIB["32"]["BorderSizePixel"] = 0;
 GANTENGLIB["32"]["AutoButtonColor"] = false;
@@ -532,7 +532,7 @@ GANTENGLIB["32"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["32"]["Text"] = [[]];
 GANTENGLIB["32"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.Reserved.Toggle.Background
+-- StarterGui.GantengHubUI.Reserved.Toggle.Background
 GANTENGLIB["33"] = Instance.new("Frame", GANTENGLIB["30"]);
 GANTENGLIB["33"]["BorderSizePixel"] = 0;
 GANTENGLIB["33"]["BackgroundColor3"] = Color3.fromRGB(132, 132, 132);
@@ -543,7 +543,7 @@ GANTENGLIB["33"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["33"]["Position"] = UDim2.new(0.9138492941856384, 0, 0.5, 0);
 GANTENGLIB["33"]["Name"] = [[Background]];
 
--- GantengHubUI.Reserved.Toggle.Background.Switch
+-- StarterGui.GantengHubUI.Reserved.Toggle.Background.Switch
 GANTENGLIB["34"] = Instance.new("Frame", GANTENGLIB["33"]);
 GANTENGLIB["34"]["BorderSizePixel"] = 0;
 GANTENGLIB["34"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -554,23 +554,23 @@ GANTENGLIB["34"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["34"]["Position"] = UDim2.new(0.25, 0, 0.5, 0);
 GANTENGLIB["34"]["Name"] = [[Switch]];
 
--- GantengHubUI.Reserved.Toggle.Background.Switch.UICorner
+-- StarterGui.GantengHubUI.Reserved.Toggle.Background.Switch.UICorner
 GANTENGLIB["35"] = Instance.new("UICorner", GANTENGLIB["34"]);
 GANTENGLIB["35"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Toggle.Background.UICorner
+-- StarterGui.GantengHubUI.Reserved.Toggle.Background.UICorner
 GANTENGLIB["36"] = Instance.new("UICorner", GANTENGLIB["33"]);
 GANTENGLIB["36"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Toggle.UIAspectRatioConstraint
+-- StarterGui.GantengHubUI.Reserved.Toggle.UIAspectRatioConstraint
 GANTENGLIB["37"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["30"]);
 GANTENGLIB["37"]["AspectRatio"] = 11.254955291748047;
 
--- GantengHubUI.Reserved.Toggle.UICorner
+-- StarterGui.GantengHubUI.Reserved.Toggle.UICorner
 GANTENGLIB["38"] = Instance.new("UICorner", GANTENGLIB["30"]);
 GANTENGLIB["38"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Title
+-- StarterGui.GantengHubUI.Reserved.Title
 GANTENGLIB["39"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["39"]["BorderSizePixel"] = 0;
 GANTENGLIB["39"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -583,7 +583,7 @@ GANTENGLIB["39"]["Position"] = UDim2.new(0.5, 0, 0.07116156816482544, 0);
 GANTENGLIB["39"]["Visible"] = false;
 GANTENGLIB["39"]["Name"] = [[Title]];
 
--- GantengHubUI.Reserved.Title.TextLabel
+-- StarterGui.GantengHubUI.Reserved.Title.TextLabel
 GANTENGLIB["3a"] = Instance.new("TextLabel", GANTENGLIB["39"]);
 GANTENGLIB["3a"]["BorderSizePixel"] = 0;
 GANTENGLIB["3a"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -596,11 +596,11 @@ GANTENGLIB["3a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["3a"]["BackgroundTransparency"] = 1;
 GANTENGLIB["3a"]["Position"] = UDim2.new(0.02692425064742565, 0, 0, 0);
 
--- GantengHubUI.Reserved.Title.TextLabel.UICorner
+-- StarterGui.GantengHubUI.Reserved.Title.TextLabel.UICorner
 GANTENGLIB["3b"] = Instance.new("UICorner", GANTENGLIB["3a"]);
 GANTENGLIB["3b"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Title.Button
+-- StarterGui.GantengHubUI.Reserved.Title.Button
 GANTENGLIB["3c"] = Instance.new("TextButton", GANTENGLIB["39"]);
 GANTENGLIB["3c"]["BorderSizePixel"] = 0;
 GANTENGLIB["3c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -613,23 +613,23 @@ GANTENGLIB["3c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["3c"]["Text"] = [[]];
 GANTENGLIB["3c"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.Reserved.Title.Button.UICorner
+-- StarterGui.GantengHubUI.Reserved.Title.Button.UICorner
 GANTENGLIB["3d"] = Instance.new("UICorner", GANTENGLIB["3c"]);
 GANTENGLIB["3d"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Title.UIAspectRatioConstraint
+-- StarterGui.GantengHubUI.Reserved.Title.UIAspectRatioConstraint
 GANTENGLIB["3e"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["39"]);
 GANTENGLIB["3e"]["AspectRatio"] = 11.254955291748047;
 
--- GantengHubUI.Reserved.Title.UIAspectRatioConstraint.UICorner
+-- StarterGui.GantengHubUI.Reserved.Title.UIAspectRatioConstraint.UICorner
 GANTENGLIB["3f"] = Instance.new("UICorner", GANTENGLIB["3e"]);
 GANTENGLIB["3f"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Title.UICorner
+-- StarterGui.GantengHubUI.Reserved.Title.UICorner
 GANTENGLIB["40"] = Instance.new("UICorner", GANTENGLIB["39"]);
 GANTENGLIB["40"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Textbox
+-- StarterGui.GantengHubUI.Reserved.Textbox
 GANTENGLIB["41"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["41"]["BorderSizePixel"] = 0;
 GANTENGLIB["41"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -642,7 +642,7 @@ GANTENGLIB["41"]["Position"] = UDim2.new(0.5, 0, 0.07116156816482544, 0);
 GANTENGLIB["41"]["Visible"] = false;
 GANTENGLIB["41"]["Name"] = [[Textbox]];
 
--- GantengHubUI.Reserved.Textbox.TextLabel
+-- StarterGui.GantengHubUI.Reserved.Textbox.TextLabel
 GANTENGLIB["42"] = Instance.new("TextLabel", GANTENGLIB["41"]);
 GANTENGLIB["42"]["BorderSizePixel"] = 0;
 GANTENGLIB["42"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -656,7 +656,7 @@ GANTENGLIB["42"]["Text"] = [[Textbox]];
 GANTENGLIB["42"]["BackgroundTransparency"] = 1;
 GANTENGLIB["42"]["Position"] = UDim2.new(0.02692425064742565, 0, 0, 0);
 
--- GantengHubUI.Reserved.Textbox.Button
+-- StarterGui.GantengHubUI.Reserved.Textbox.Button
 GANTENGLIB["43"] = Instance.new("TextButton", GANTENGLIB["41"]);
 GANTENGLIB["43"]["BorderSizePixel"] = 0;
 GANTENGLIB["43"]["AutoButtonColor"] = false;
@@ -670,7 +670,7 @@ GANTENGLIB["43"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["43"]["Text"] = [[]];
 GANTENGLIB["43"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.Reserved.Textbox.Textbox
+-- StarterGui.GantengHubUI.Reserved.Textbox.Textbox
 GANTENGLIB["44"] = Instance.new("TextBox", GANTENGLIB["41"]);
 GANTENGLIB["44"]["BorderSizePixel"] = 0;
 GANTENGLIB["44"]["TextWrapped"] = true;
@@ -688,15 +688,15 @@ GANTENGLIB["44"]["Text"] = [[]];
 GANTENGLIB["44"]["Position"] = UDim2.new(0.8895905017852783, 0, 0.5, 0);
 GANTENGLIB["44"]["Name"] = [[Textbox]];
 
--- GantengHubUI.Reserved.Textbox.Textbox.UICorner
+-- StarterGui.GantengHubUI.Reserved.Textbox.Textbox.UICorner
 GANTENGLIB["45"] = Instance.new("UICorner", GANTENGLIB["44"]);
 GANTENGLIB["45"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Textbox.UICorner
+-- StarterGui.GantengHubUI.Reserved.Textbox.UICorner
 GANTENGLIB["46"] = Instance.new("UICorner", GANTENGLIB["41"]);
 GANTENGLIB["46"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Slider
+-- StarterGui.GantengHubUI.Reserved.Slider
 GANTENGLIB["47"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["47"]["BorderSizePixel"] = 0;
 GANTENGLIB["47"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -709,7 +709,7 @@ GANTENGLIB["47"]["Position"] = UDim2.new(0.5, 0, 0.8821160197257996, 0);
 GANTENGLIB["47"]["Visible"] = false;
 GANTENGLIB["47"]["Name"] = [[Slider]];
 
--- GantengHubUI.Reserved.Slider.TextLabel
+-- StarterGui.GantengHubUI.Reserved.Slider.TextLabel
 GANTENGLIB["48"] = Instance.new("TextLabel", GANTENGLIB["47"]);
 GANTENGLIB["48"]["BorderSizePixel"] = 0;
 GANTENGLIB["48"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -723,7 +723,7 @@ GANTENGLIB["48"]["Text"] = [[Slider]];
 GANTENGLIB["48"]["BackgroundTransparency"] = 1;
 GANTENGLIB["48"]["Position"] = UDim2.new(0.02692425064742565, 0, 0, 0);
 
--- GantengHubUI.Reserved.Slider.Button
+-- StarterGui.GantengHubUI.Reserved.Slider.Button
 GANTENGLIB["49"] = Instance.new("TextButton", GANTENGLIB["47"]);
 GANTENGLIB["49"]["BorderSizePixel"] = 0;
 GANTENGLIB["49"]["AutoButtonColor"] = false;
@@ -737,11 +737,11 @@ GANTENGLIB["49"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["49"]["Text"] = [[]];
 GANTENGLIB["49"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.Reserved.Slider.UICorner
+-- StarterGui.GantengHubUI.Reserved.Slider.UICorner
 GANTENGLIB["4a"] = Instance.new("UICorner", GANTENGLIB["47"]);
 GANTENGLIB["4a"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Slider.Textbox
+-- StarterGui.GantengHubUI.Reserved.Slider.Textbox
 GANTENGLIB["4b"] = Instance.new("TextBox", GANTENGLIB["47"]);
 GANTENGLIB["4b"]["BorderSizePixel"] = 0;
 GANTENGLIB["4b"]["TextWrapped"] = true;
@@ -759,11 +759,11 @@ GANTENGLIB["4b"]["Text"] = [[]];
 GANTENGLIB["4b"]["Position"] = UDim2.new(0, 330, 0, 17);
 GANTENGLIB["4b"]["Name"] = [[Textbox]];
 
--- GantengHubUI.Reserved.Slider.Textbox.UICorner
+-- StarterGui.GantengHubUI.Reserved.Slider.Textbox.UICorner
 GANTENGLIB["4c"] = Instance.new("UICorner", GANTENGLIB["4b"]);
 GANTENGLIB["4c"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Slider.Background
+-- StarterGui.GantengHubUI.Reserved.Slider.Background
 GANTENGLIB["4d"] = Instance.new("Frame", GANTENGLIB["47"]);
 GANTENGLIB["4d"]["BorderSizePixel"] = 0;
 GANTENGLIB["4d"]["BackgroundColor3"] = Color3.fromRGB(43, 43, 43);
@@ -772,11 +772,11 @@ GANTENGLIB["4d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["4d"]["Position"] = UDim2.new(0, 9, 0, 35);
 GANTENGLIB["4d"]["Name"] = [[Background]];
 
--- GantengHubUI.Reserved.Slider.Background.UICorner
+-- StarterGui.GantengHubUI.Reserved.Slider.Background.UICorner
 GANTENGLIB["4e"] = Instance.new("UICorner", GANTENGLIB["4d"]);
 GANTENGLIB["4e"]["CornerRadius"] = UDim.new(0, 100);
 
--- GantengHubUI.Reserved.Slider.Background.Fill
+-- StarterGui.GantengHubUI.Reserved.Slider.Background.Fill
 GANTENGLIB["4f"] = Instance.new("Frame", GANTENGLIB["4d"]);
 GANTENGLIB["4f"]["BorderSizePixel"] = 0;
 GANTENGLIB["4f"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -785,11 +785,11 @@ GANTENGLIB["4f"]["Size"] = UDim2.new(1, 0, 1, 0);
 GANTENGLIB["4f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["4f"]["Name"] = [[Fill]];
 
--- GantengHubUI.Reserved.Slider.Background.Fill.UICorner
+-- StarterGui.GantengHubUI.Reserved.Slider.Background.Fill.UICorner
 GANTENGLIB["50"] = Instance.new("UICorner", GANTENGLIB["4f"]);
 GANTENGLIB["50"]["CornerRadius"] = UDim.new(0, 100);
 
--- GantengHubUI.Reserved.Slider.Background.Trigger
+-- StarterGui.GantengHubUI.Reserved.Slider.Background.Trigger
 GANTENGLIB["51"] = Instance.new("TextButton", GANTENGLIB["4d"]);
 GANTENGLIB["51"]["BorderSizePixel"] = 0;
 GANTENGLIB["51"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -800,7 +800,7 @@ GANTENGLIB["51"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["51"]["Text"] = [[]];
 GANTENGLIB["51"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.Reserved.Seperator
+-- StarterGui.GantengHubUI.Reserved.Seperator
 GANTENGLIB["52"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["52"]["BorderSizePixel"] = 0;
 GANTENGLIB["52"]["BackgroundColor3"] = Color3.fromRGB(221, 221, 221);
@@ -813,7 +813,7 @@ GANTENGLIB["52"]["Position"] = UDim2.new(0.5, 0, 0.7260767817497253, 0);
 GANTENGLIB["52"]["Visible"] = false;
 GANTENGLIB["52"]["Name"] = [[Seperator]];
 
--- GantengHubUI.Reserved.Seperator.Line
+-- StarterGui.GantengHubUI.Reserved.Seperator.Line
 GANTENGLIB["53"] = Instance.new("Frame", GANTENGLIB["52"]);
 GANTENGLIB["53"]["BorderSizePixel"] = 0;
 GANTENGLIB["53"]["BackgroundColor3"] = Color3.fromRGB(221, 221, 221);
@@ -825,7 +825,7 @@ GANTENGLIB["53"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["53"]["Position"] = UDim2.new(1, 0, 0.5, 0);
 GANTENGLIB["53"]["Name"] = [[Line]];
 
--- GantengHubUI.Reserved.Seperator.Line
+-- StarterGui.GantengHubUI.Reserved.Seperator.Line
 GANTENGLIB["54"] = Instance.new("Frame", GANTENGLIB["52"]);
 GANTENGLIB["54"]["BorderSizePixel"] = 0;
 GANTENGLIB["54"]["BackgroundColor3"] = Color3.fromRGB(221, 221, 221);
@@ -837,7 +837,7 @@ GANTENGLIB["54"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["54"]["Position"] = UDim2.new(0, 0, 0.5, 0);
 GANTENGLIB["54"]["Name"] = [[Line]];
 
--- GantengHubUI.Reserved.Seperator.TextLabel
+-- StarterGui.GantengHubUI.Reserved.Seperator.TextLabel
 GANTENGLIB["55"] = Instance.new("TextLabel", GANTENGLIB["52"]);
 GANTENGLIB["55"]["BorderSizePixel"] = 0;
 GANTENGLIB["55"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -851,11 +851,11 @@ GANTENGLIB["55"]["Text"] = [[Seperator]];
 GANTENGLIB["55"]["BackgroundTransparency"] = 1;
 GANTENGLIB["55"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 
--- GantengHubUI.Reserved.Seperator.UICorner
+-- StarterGui.GantengHubUI.Reserved.Seperator.UICorner
 GANTENGLIB["56"] = Instance.new("UICorner", GANTENGLIB["52"]);
 GANTENGLIB["56"]["CornerRadius"] = UDim.new(100, 100);
 
--- GantengHubUI.Reserved.Line
+-- StarterGui.GantengHubUI.Reserved.Line
 GANTENGLIB["57"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["57"]["BorderSizePixel"] = 0;
 GANTENGLIB["57"]["BackgroundColor3"] = Color3.fromRGB(221, 221, 221);
@@ -868,11 +868,11 @@ GANTENGLIB["57"]["Position"] = UDim2.new(0.5, 0, 0.6641746759414673, 0);
 GANTENGLIB["57"]["Visible"] = false;
 GANTENGLIB["57"]["Name"] = [[Line]];
 
--- GantengHubUI.Reserved.Line.UICorner
+-- StarterGui.GantengHubUI.Reserved.Line.UICorner
 GANTENGLIB["58"] = Instance.new("UICorner", GANTENGLIB["57"]);
 GANTENGLIB["58"]["CornerRadius"] = UDim.new(100, 100);
 
--- GantengHubUI.Reserved.MultiDropdown
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown
 GANTENGLIB["59"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["59"]["BorderSizePixel"] = 0;
 GANTENGLIB["59"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -885,7 +885,7 @@ GANTENGLIB["59"]["Position"] = UDim2.new(0.5, 0, 0.07116156816482544, 0);
 GANTENGLIB["59"]["Visible"] = false;
 GANTENGLIB["59"]["Name"] = [[MultiDropdown]];
 
--- GantengHubUI.Reserved.MultiDropdown.TextLabel
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.TextLabel
 GANTENGLIB["5a"] = Instance.new("TextLabel", GANTENGLIB["59"]);
 GANTENGLIB["5a"]["BorderSizePixel"] = 0;
 GANTENGLIB["5a"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -899,7 +899,7 @@ GANTENGLIB["5a"]["Text"] = [[Multi Dropdown]];
 GANTENGLIB["5a"]["BackgroundTransparency"] = 1;
 GANTENGLIB["5a"]["Position"] = UDim2.new(0, 10, 0, 0);
 
--- GantengHubUI.Reserved.MultiDropdown.Button
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.Button
 GANTENGLIB["5b"] = Instance.new("TextButton", GANTENGLIB["59"]);
 GANTENGLIB["5b"]["BorderSizePixel"] = 0;
 GANTENGLIB["5b"]["AutoButtonColor"] = false;
@@ -913,11 +913,11 @@ GANTENGLIB["5b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["5b"]["Text"] = [[]];
 GANTENGLIB["5b"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.Reserved.MultiDropdown.UICorner
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.UICorner
 GANTENGLIB["5c"] = Instance.new("UICorner", GANTENGLIB["59"]);
 GANTENGLIB["5c"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.MultiDropdown.Select
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.Select
 GANTENGLIB["5d"] = Instance.new("TextButton", GANTENGLIB["59"]);
 GANTENGLIB["5d"]["TextWrapped"] = true;
 GANTENGLIB["5d"]["BorderSizePixel"] = 0;
@@ -936,15 +936,15 @@ GANTENGLIB["5d"]["Text"] = [[None]];
 GANTENGLIB["5d"]["Position"] = UDim2.new(0, 299, 0, 17);
 GANTENGLIB["5d"]["BackgroundTransparency"] = 0.8999999761581421;
 
--- GantengHubUI.Reserved.MultiDropdown.Select.UICorner
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.Select.UICorner
 GANTENGLIB["5e"] = Instance.new("UICorner", GANTENGLIB["5d"]);
 GANTENGLIB["5e"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.MultiDropdown.Select.UIPadding
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.Select.UIPadding
 GANTENGLIB["5f"] = Instance.new("UIPadding", GANTENGLIB["5d"]);
 GANTENGLIB["5f"]["PaddingLeft"] = UDim.new(0, 6);
 
--- GantengHubUI.Reserved.MultiDropdown.Select.ImageLabel
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.Select.ImageLabel
 GANTENGLIB["60"] = Instance.new("ImageLabel", GANTENGLIB["5d"]);
 GANTENGLIB["60"]["BorderSizePixel"] = 0;
 GANTENGLIB["60"]["ScaleType"] = Enum.ScaleType.Crop;
@@ -957,7 +957,7 @@ GANTENGLIB["60"]["Rotation"] = 90;
 GANTENGLIB["60"]["BackgroundTransparency"] = 1;
 GANTENGLIB["60"]["Position"] = UDim2.new(0.8389999866485596, 0, 0.20399999618530273, 0);
 
--- GantengHubUI.Reserved.MultiDropdown.Buttons
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.Buttons
 GANTENGLIB["61"] = Instance.new("Frame", GANTENGLIB["59"]);
 GANTENGLIB["61"]["BorderSizePixel"] = 0;
 GANTENGLIB["61"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -969,11 +969,11 @@ GANTENGLIB["61"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["61"]["Position"] = UDim2.new(0, 186, 0, 72);
 GANTENGLIB["61"]["Name"] = [[Buttons]];
 
--- GantengHubUI.Reserved.MultiDropdown.Buttons.UICorner
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.Buttons.UICorner
 GANTENGLIB["62"] = Instance.new("UICorner", GANTENGLIB["61"]);
 GANTENGLIB["62"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.MultiDropdown.Buttons.ScrollingFrame
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.Buttons.ScrollingFrame
 GANTENGLIB["63"] = Instance.new("ScrollingFrame", GANTENGLIB["61"]);
 GANTENGLIB["63"]["Active"] = true;
 GANTENGLIB["63"]["BorderSizePixel"] = 0;
@@ -986,12 +986,12 @@ GANTENGLIB["63"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["63"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["63"]["ScrollBarThickness"] = 0;
 
--- GantengHubUI.Reserved.MultiDropdown.Buttons.ScrollingFrame.UIListLayout
+-- StarterGui.GantengHubUI.Reserved.MultiDropdown.Buttons.ScrollingFrame.UIListLayout
 GANTENGLIB["64"] = Instance.new("UIListLayout", GANTENGLIB["63"]);
 GANTENGLIB["64"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Center;
 GANTENGLIB["64"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
--- GantengHubUI.Reserved.Dropdown
+-- StarterGui.GantengHubUI.Reserved.Dropdown
 GANTENGLIB["65"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["65"]["BorderSizePixel"] = 0;
 GANTENGLIB["65"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -1004,7 +1004,7 @@ GANTENGLIB["65"]["Position"] = UDim2.new(0.5, 0, 0.07116156816482544, 0);
 GANTENGLIB["65"]["Visible"] = false;
 GANTENGLIB["65"]["Name"] = [[Dropdown]];
 
--- GantengHubUI.Reserved.Dropdown.TextLabel
+-- StarterGui.GantengHubUI.Reserved.Dropdown.TextLabel
 GANTENGLIB["66"] = Instance.new("TextLabel", GANTENGLIB["65"]);
 GANTENGLIB["66"]["BorderSizePixel"] = 0;
 GANTENGLIB["66"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -1018,7 +1018,7 @@ GANTENGLIB["66"]["Text"] = [[Dropdown]];
 GANTENGLIB["66"]["BackgroundTransparency"] = 1;
 GANTENGLIB["66"]["Position"] = UDim2.new(0, 10, 0, 0);
 
--- GantengHubUI.Reserved.Dropdown.Button
+-- StarterGui.GantengHubUI.Reserved.Dropdown.Button
 GANTENGLIB["67"] = Instance.new("TextButton", GANTENGLIB["65"]);
 GANTENGLIB["67"]["BorderSizePixel"] = 0;
 GANTENGLIB["67"]["AutoButtonColor"] = false;
@@ -1032,11 +1032,11 @@ GANTENGLIB["67"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["67"]["Text"] = [[]];
 GANTENGLIB["67"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.Reserved.Dropdown.UICorner
+-- StarterGui.GantengHubUI.Reserved.Dropdown.UICorner
 GANTENGLIB["68"] = Instance.new("UICorner", GANTENGLIB["65"]);
 GANTENGLIB["68"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Dropdown.Select
+-- StarterGui.GantengHubUI.Reserved.Dropdown.Select
 GANTENGLIB["69"] = Instance.new("TextButton", GANTENGLIB["65"]);
 GANTENGLIB["69"]["BorderSizePixel"] = 0;
 GANTENGLIB["69"]["AutoButtonColor"] = false;
@@ -1054,15 +1054,15 @@ GANTENGLIB["69"]["Text"] = [[]];
 GANTENGLIB["69"]["Position"] = UDim2.new(0, 317, 0, 17);
 GANTENGLIB["69"]["BackgroundTransparency"] = 0.8999999761581421;
 
--- GantengHubUI.Reserved.Dropdown.Select.UICorner
+-- StarterGui.GantengHubUI.Reserved.Dropdown.Select.UICorner
 GANTENGLIB["6a"] = Instance.new("UICorner", GANTENGLIB["69"]);
 GANTENGLIB["6a"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Dropdown.Select.UIPadding
+-- StarterGui.GantengHubUI.Reserved.Dropdown.Select.UIPadding
 GANTENGLIB["6b"] = Instance.new("UIPadding", GANTENGLIB["69"]);
 GANTENGLIB["6b"]["PaddingLeft"] = UDim.new(0, 6);
 
--- GantengHubUI.Reserved.Dropdown.Buttons
+-- StarterGui.GantengHubUI.Reserved.Dropdown.Buttons
 GANTENGLIB["6c"] = Instance.new("Frame", GANTENGLIB["65"]);
 GANTENGLIB["6c"]["BorderSizePixel"] = 0;
 GANTENGLIB["6c"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -1074,11 +1074,11 @@ GANTENGLIB["6c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["6c"]["Position"] = UDim2.new(0, 186, 0, 72);
 GANTENGLIB["6c"]["Name"] = [[Buttons]];
 
--- GantengHubUI.Reserved.Dropdown.Buttons.UICorner
+-- StarterGui.GantengHubUI.Reserved.Dropdown.Buttons.UICorner
 GANTENGLIB["6d"] = Instance.new("UICorner", GANTENGLIB["6c"]);
 GANTENGLIB["6d"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Dropdown.Buttons.ScrollingFrame
+-- StarterGui.GantengHubUI.Reserved.Dropdown.Buttons.ScrollingFrame
 GANTENGLIB["6e"] = Instance.new("ScrollingFrame", GANTENGLIB["6c"]);
 GANTENGLIB["6e"]["Active"] = true;
 GANTENGLIB["6e"]["BorderSizePixel"] = 0;
@@ -1091,12 +1091,12 @@ GANTENGLIB["6e"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["6e"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["6e"]["ScrollBarThickness"] = 0;
 
--- GantengHubUI.Reserved.Dropdown.Buttons.ScrollingFrame.UIListLayout
+-- StarterGui.GantengHubUI.Reserved.Dropdown.Buttons.ScrollingFrame.UIListLayout
 GANTENGLIB["6f"] = Instance.new("UIListLayout", GANTENGLIB["6e"]);
 GANTENGLIB["6f"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Center;
 GANTENGLIB["6f"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
--- GantengHubUI.Reserved.Button
+-- StarterGui.GantengHubUI.Reserved.Button
 GANTENGLIB["70"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["70"]["BorderSizePixel"] = 0;
 GANTENGLIB["70"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -1109,7 +1109,7 @@ GANTENGLIB["70"]["Position"] = UDim2.new(0.5, 0, 0.07116156816482544, 0);
 GANTENGLIB["70"]["Visible"] = false;
 GANTENGLIB["70"]["Name"] = [[Button]];
 
--- GantengHubUI.Reserved.Button.TextLabel
+-- StarterGui.GantengHubUI.Reserved.Button.TextLabel
 GANTENGLIB["71"] = Instance.new("TextLabel", GANTENGLIB["70"]);
 GANTENGLIB["71"]["BorderSizePixel"] = 0;
 GANTENGLIB["71"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -1123,7 +1123,7 @@ GANTENGLIB["71"]["Text"] = [[Button]];
 GANTENGLIB["71"]["BackgroundTransparency"] = 1;
 GANTENGLIB["71"]["Position"] = UDim2.new(0.02692425064742565, 0, 0, 0);
 
--- GantengHubUI.Reserved.Button.Button
+-- StarterGui.GantengHubUI.Reserved.Button.Button
 GANTENGLIB["72"] = Instance.new("TextButton", GANTENGLIB["70"]);
 GANTENGLIB["72"]["BorderSizePixel"] = 0;
 GANTENGLIB["72"]["AutoButtonColor"] = false;
@@ -1137,15 +1137,15 @@ GANTENGLIB["72"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["72"]["Text"] = [[]];
 GANTENGLIB["72"]["BackgroundTransparency"] = 1;
 
--- GantengHubUI.Reserved.Button.UIAspectRatioConstraint
+-- StarterGui.GantengHubUI.Reserved.Button.UIAspectRatioConstraint
 GANTENGLIB["73"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["70"]);
 GANTENGLIB["73"]["AspectRatio"] = 11.254955291748047;
 
--- GantengHubUI.Reserved.Button.UICorner
+-- StarterGui.GantengHubUI.Reserved.Button.UICorner
 GANTENGLIB["74"] = Instance.new("UICorner", GANTENGLIB["70"]);
 GANTENGLIB["74"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.SideButton
+-- StarterGui.GantengHubUI.Reserved.SideButton
 GANTENGLIB["75"] = Instance.new("TextButton", GANTENGLIB["2c"]);
 GANTENGLIB["75"]["BorderSizePixel"] = 0;
 GANTENGLIB["75"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -1159,7 +1159,7 @@ GANTENGLIB["75"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["75"]["Text"] = [[]];
 GANTENGLIB["75"]["BackgroundTransparency"] = 0.75;
 
--- GantengHubUI.Reserved.SideButton.ImageLabel
+-- StarterGui.GantengHubUI.Reserved.SideButton.ImageLabel
 GANTENGLIB["76"] = Instance.new("ImageLabel", GANTENGLIB["75"]);
 GANTENGLIB["76"]["BorderSizePixel"] = 0;
 GANTENGLIB["76"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -1169,11 +1169,11 @@ GANTENGLIB["76"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["76"]["BackgroundTransparency"] = 1;
 GANTENGLIB["76"]["Position"] = UDim2.new(0.1603461354970932, 0, 0.5, 0);
 
--- GantengHubUI.Reserved.SideButton.ImageLabel.UIAspectRatioConstraint
+-- StarterGui.GantengHubUI.Reserved.SideButton.ImageLabel.UIAspectRatioConstraint
 GANTENGLIB["77"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["76"]);
 
 
--- GantengHubUI.Reserved.SideButton.TextLabel
+-- StarterGui.GantengHubUI.Reserved.SideButton.TextLabel
 GANTENGLIB["78"] = Instance.new("TextLabel", GANTENGLIB["75"]);
 GANTENGLIB["78"]["BorderSizePixel"] = 0;
 GANTENGLIB["78"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -1188,7 +1188,7 @@ GANTENGLIB["78"]["Text"] = [[Button]];
 GANTENGLIB["78"]["BackgroundTransparency"] = 1;
 GANTENGLIB["78"]["Position"] = UDim2.new(0.6484903693199158, 0, 0.5, 0);
 
--- GantengHubUI.Reserved.Changelog
+-- StarterGui.GantengHubUI.Reserved.Changelog
 GANTENGLIB["79"] = Instance.new("Frame", GANTENGLIB["2c"]);
 GANTENGLIB["79"]["BorderSizePixel"] = 0;
 GANTENGLIB["79"]["BackgroundColor3"] = Color3.fromRGB(21, 21, 21);
@@ -1199,11 +1199,11 @@ GANTENGLIB["79"]["Position"] = UDim2.new(0.03956834599375725, 0, 0, 0);
 GANTENGLIB["79"]["Visible"] = false;
 GANTENGLIB["79"]["Name"] = [[Changelog]];
 
--- GantengHubUI.Reserved.Changelog.UICorner
+-- StarterGui.GantengHubUI.Reserved.Changelog.UICorner
 GANTENGLIB["7a"] = Instance.new("UICorner", GANTENGLIB["79"]);
 GANTENGLIB["7a"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Reserved.Changelog.Title
+-- StarterGui.GantengHubUI.Reserved.Changelog.Title
 GANTENGLIB["7b"] = Instance.new("TextLabel", GANTENGLIB["79"]);
 GANTENGLIB["7b"]["BorderSizePixel"] = 0;
 GANTENGLIB["7b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
@@ -1218,7 +1218,7 @@ GANTENGLIB["7b"]["Name"] = [[Title]];
 GANTENGLIB["7b"]["BackgroundTransparency"] = 1;
 GANTENGLIB["7b"]["Position"] = UDim2.new(0.078125, 0, 0.03799986094236374, 0);
 
--- GantengHubUI.Reserved.Changelog.Description
+-- StarterGui.GantengHubUI.Reserved.Changelog.Description
 GANTENGLIB["7c"] = Instance.new("TextLabel", GANTENGLIB["79"]);
 GANTENGLIB["7c"]["TextWrapped"] = true;
 GANTENGLIB["7c"]["BorderSizePixel"] = 0;
@@ -1234,7 +1234,7 @@ GANTENGLIB["7c"]["Name"] = [[Description]];
 GANTENGLIB["7c"]["BackgroundTransparency"] = 1;
 GANTENGLIB["7c"]["Position"] = UDim2.new(0.078125, 0, 0.5027981996536255, 0);
 
--- GantengHubUI.Reserved.Tab
+-- StarterGui.GantengHubUI.Reserved.Tab
 GANTENGLIB["7d"] = Instance.new("ScrollingFrame", GANTENGLIB["2c"]);
 GANTENGLIB["7d"]["Active"] = true;
 GANTENGLIB["7d"]["ScrollingDirection"] = Enum.ScrollingDirection.Y;
@@ -1253,13 +1253,13 @@ GANTENGLIB["7d"]["Visible"] = false;
 GANTENGLIB["7d"]["Name"] = [[Tab]];
 GANTENGLIB["7d"]["BottomImage"] = [[rbxasset://textures/ui/Scroll/scroll-middle.png/]];
 
--- GantengHubUI.Reserved.Tab.UIListLayout
+-- StarterGui.GantengHubUI.Reserved.Tab.UIListLayout
 GANTENGLIB["7e"] = Instance.new("UIListLayout", GANTENGLIB["7d"]);
 GANTENGLIB["7e"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Center;
 GANTENGLIB["7e"]["Padding"] = UDim.new(0, 5);
 GANTENGLIB["7e"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
 
--- GantengHubUI.Reserved.DropdownButton
+-- StarterGui.GantengHubUI.Reserved.DropdownButton
 GANTENGLIB["7f"] = Instance.new("TextButton", GANTENGLIB["2c"]);
 GANTENGLIB["7f"]["BorderSizePixel"] = 0;
 GANTENGLIB["7f"]["BackgroundColor3"] = Color3.fromRGB(16, 16, 16);
@@ -1272,11 +1272,11 @@ GANTENGLIB["7f"]["Name"] = [[DropdownButton]];
 GANTENGLIB["7f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 GANTENGLIB["7f"]["BackgroundTransparency"] = 0.699999988079071;
 
--- GantengHubUI.Reserved.DropdownButton.UICorner
+-- StarterGui.GantengHubUI.Reserved.DropdownButton.UICorner
 GANTENGLIB["80"] = Instance.new("UICorner", GANTENGLIB["7f"]);
 GANTENGLIB["80"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.Icon
+-- StarterGui.GantengHubUI.Icon
 GANTENGLIB["81"] = Instance.new("ImageButton", GANTENGLIB["1"]);
 GANTENGLIB["81"]["Active"] = false;
 GANTENGLIB["81"]["BorderSizePixel"] = 0;
@@ -1291,320 +1291,374 @@ GANTENGLIB["81"]["Visible"] = false;
 GANTENGLIB["81"]["Position"] = UDim2.new(0.06876304745674133, 0, 0.08966141194105148, 0);
 GANTENGLIB["81"]["BackgroundTransparency"] = 0.15000000596046448;
 
--- GantengHubUI.Icon.UIAspectRatioConstraint
+-- StarterGui.GantengHubUI.Icon.UIAspectRatioConstraint
 GANTENGLIB["82"] = Instance.new("UIAspectRatioConstraint", GANTENGLIB["81"]);
 GANTENGLIB["82"]["AspectRatio"] = 0.9999999403953552;
 
--- GantengHubUI.Icon.UICorner
+-- StarterGui.GantengHubUI.Icon.UICorner
 GANTENGLIB["83"] = Instance.new("UICorner", GANTENGLIB["81"]);
 GANTENGLIB["83"]["CornerRadius"] = UDim.new(0, 9);
 
--- GantengHubUI.TapEfffects
-GANTENGLIB["84"] = Instance.new("Folder", GANTENGLIB["1"]);
-GANTENGLIB["84"]["Name"] = [[TapEfffects]];
-
--- GantengHubUI.Library
-GANTENGLIB["85"] = Instance.new("ModuleScript", GANTENGLIB["1"]);
-GANTENGLIB["85"]["Name"] = [[Library]];
-
--- GantengHubUI.Library.Blur
-GANTENGLIB["86"] = Instance.new("ModuleScript", GANTENGLIB["85"]);
-GANTENGLIB["86"]["Name"] = [[Blur]];
+-- StarterGui.GantengHubUI.Library
+GANTENGLIB["84"] = Instance.new("ModuleScript", GANTENGLIB["1"]);
+GANTENGLIB["84"]["Name"] = [[Library]];
 
 -- Require GANTENGLIB wrapper
 local GANTENGLIB_REQUIRE = require;
 local GANTENGLIB_MODULES = {};
 local function require(Module:ModuleScript)
-    local ModuleState = GANTENGLIB_MODULES[Module];
-    if ModuleState then
-        if not ModuleState.Required then
-            ModuleState.Required = true;
-            ModuleState.Value = ModuleState.Closure();
-        end
-        return ModuleState.Value;
-    end;
-    return GANTENGLIB_REQUIRE(Module);
+	local ModuleState = GANTENGLIB_MODULES[Module];
+	if ModuleState then
+		if not ModuleState.Required then
+			ModuleState.Required = true;
+			ModuleState.Value = ModuleState.Closure();
+		end
+		return ModuleState.Value;
+	end;
+	return GANTENGLIB_REQUIRE(Module);
 end
 
-GANTENGLIB_MODULES[GANTENGLIB["85"]] = {
-Closure = function()
-    local script = GANTENGLIB["85"];
-local LIBRARY = {}
+GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
+	Closure = function()
+		local script = GANTENGLIB["84"];
+		local LIBRARY = {}
 
--- Variables
-local Socials = { discord = "discord.gg/isnahamzah", youtube=  "@isnahamzah" }
+		-- Variables
+		local Socials = { discord = "discord.gg/isnahamzah", youtube=  "@isnahamzah" }
 
--- Services
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local HttpService = game:GetService("HttpService")
-local LocalPlayer = Players.LocalPlayer
-local RunService = game:GetService("RunService")
+		-- Services
+		local UserInputService = game:GetService("UserInputService")
+		local Players = game:GetService("Players")
+		local TweenService = game:GetService("TweenService")
+		local HttpService = game:GetService("HttpService")
+		local LocalPlayer = Players.LocalPlayer
+		local RunService = game:GetService("RunService")
 
-local BlurModule = require(script.Blur)
+		-- Ga guna karena User GHUB pake HP grapik rata kiri :moyai:
+		--local BlurModule = require(script.Blur)
 
--- Shortcuts
-local GUI = script.Parent
-local Reserved = GUI.Reserved
-local Frame = GUI.MainFrame
-local MainFram = Frame
-local Icon = GUI.Icon
-local SideFrame = Frame.SideFrame
-local TopFrame = Frame.TopFrame
-local Tabs = Frame.Tabs
-local Landing = Tabs.Landing
+		local debugging = false
+		local JSONCONFIG  = [[{}]]
 
-smt = setmetatable
 
-local function Tween(ins, duration, prop)
-	local tween = TweenService:Create(ins, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), prop)
-	tween:Play()
-	return tween
-end
 
-local function EnableDrag(Frame)
-	local dragToggle
-	local dragSpeed = .25
-	local dragInput
-	local dragStart
-	local dragPos
+		local function IsStudio()
+			if debugging then
+				return false
+			else
+				return game:GetService("RunService"):IsStudio()
+			end
+		end
+		if debugging then -- this runs when debugging "true"
 
-	local function updateInput(input)
-		local Delta = input.Position - dragStart
-		local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
-		TweenService:Create(Frame, TweenInfo.new(.1), {Position = Position}):Play()
-	end
+			function writefile(a,b)
+				print("WRITEFILE: "..a..", "..b)
+			end
+			function isfile(a)
 
-	Frame.InputBegan:Connect(function(input)
-		if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-			dragToggle = true
-			dragStart = input.Position
-			startPos = Frame.Position
-			input.Changed:Connect(function()
-				if (input.UserInputState == Enum.UserInputState.End) then
-					dragToggle = false
+				if type(JSONCONFIG) == "string" then
+					print("ISFILE: "..a..", true")
+					return true
+				else
+					print("ISFILE: "..a..", false")
+				end
+			end
+
+			function readfile(a)
+				if isfile(a) then
+					print("READFILE: "..a)
+					return JSONCONFIG
+				end
+			end
+		end
+		-- ENV EMULATION AND DEBUGGING PURPOSES
+
+		-- Shortcuts
+		local GUI = script.Parent
+		local Reserved = GUI.Reserved
+		local Frame = GUI.MainFrame
+		local MainFram = Frame
+		local Icon = GUI.Icon
+		local SideFrame = Frame.SideFrame
+		local TopFrame = Frame.TopFrame
+		local Tabs = Frame.Tabs
+		local Landing = Tabs.Landing
+
+		smt = setmetatable
+
+		local function Tween(ins, duration, prop)
+			local tween = TweenService:Create(ins, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), prop)
+			tween:Play()
+			return tween
+		end
+
+		local function EnableDrag(Frame)
+			local dragToggle
+			local dragSpeed = .25
+			local dragInput
+			local dragStart
+			local dragPos
+
+			local function updateInput(input)
+				local Delta = input.Position - dragStart
+				local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+				TweenService:Create(Frame, TweenInfo.new(.1), {Position = Position}):Play()
+			end
+
+			Frame.InputBegan:Connect(function(input)
+				if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+					dragToggle = true
+					dragStart = input.Position
+					startPos = Frame.Position
+					input.Changed:Connect(function()
+						if (input.UserInputState == Enum.UserInputState.End) then
+							dragToggle = false
+						end
+					end)
+				end
+			end)
+
+			Frame.InputChanged:Connect(function(input)
+				if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+					dragInput = input
+				end
+			end)
+
+			game:GetService("UserInputService").InputChanged:Connect(function(input)
+				if (input == dragInput and dragToggle) then
+					updateInput(input)
 				end
 			end)
 		end
-	end)
 
-	Frame.InputChanged:Connect(function(input)
-		if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-			dragInput = input
-		end
-	end)
+		Frame.Visible = false
+		-- LIBARY FUNCTIONS
+		function LIBRARY:Window(title, icon)
+			local SELF = smt({}, LIBRARY)
+			local LISTTABS = {}
 
-	game:GetService("UserInputService").InputChanged:Connect(function(input)
-		if (input == dragInput and dragToggle) then
-			updateInput(input)
-		end
-	end)
-end
+			-- CONFIG SYSTEM (anjing lah bikin fitur pukimak susah ni :sob:)
+			local CONFIG = {}
+			local CONFIGLOADED = false
+			if isfile("Ganteng Hub.json") then
+				local success, result = pcall(function()
+					CONFIG = HttpService:JSONDecode(readfile("Ganteng Hub.json"))
+				end)
+				if success then
+					CONFIGLOADED = true
+				elseif not success then
+					warn("Attempted to load \"workspace/Ganteng Hub.json\", but an error occured.\nERROR: "..result)
+				end
+			end
 
-Frame.Visible = false
--- LIBARY FUNCTIONS
-function LIBRARY:Window(title, icon)
-	local SELF = smt({}, LIBRARY)
-	local LISTTABS = {}
-	
-	local newFrame = Frame:Clone()
-	newFrame.Parent = GUI
-	newFrame.Visible = true
-	BlurModule:BindFrame(newFrame, {
+			local function SAVECONFIG()
+				writefile("Ganteng Hub.json", HttpService:JSONEncode(CONFIG))
+			end
+			-- Udah gitu aja :moyai:
+
+			local newFrame = Frame:Clone()
+			newFrame.Parent = GUI
+			newFrame.Visible = true
+	--[[BlurModule:BindFrame(newFrame, {
 		Transparency = 0.98,
 		BrickColor = BrickColor.new("Institutional white")
-	})
-	EnableDrag(newFrame)
-	EnableDrag(GUI.Icon)
-	
-	-- SetFunctionStopAllTween and Others Loading screen wrapper
-	function SELF:SetFunctionSAT(func)
-		newFrame.SideFrame.StopAllTween.MouseButton1Click:Connect(func)
-	end
-	function SELF:SetSAT(...)
-		return ...
-	end
-	
-	function SELF:SetProgress(...)
-		return ...
-	end
-	function SELF:Finish()
-		newFrame.Visible = true
-	end
-	-- -----------------
-	
-	-- Misc handler
-	newFrame.TopFrame.Back.MouseButton1Click:Connect(function()
-		for k,v in pairs(LISTTABS) do
-			Tween(v.Side, 0.2, {BackgroundColor3 = Color3.fromRGB(20,20,20)})
-			v.Main.Visible = false
-		end
-		newFrame.TopFrame.Back.Visible = false
-		newFrame.TopFrame.CurrentTab.Text = "Welcome"
-		newFrame.Tabs.Landing.Visible = true
-	end)
-	newFrame.Tabs.Landing.SocialsFrame.Youtube.MouseButton1Click:Connect(function()
-		setclipboard(Socials.youtube)
-	end)
-	newFrame.Tabs.Landing.SocialsFrame.Discord.MouseButton1Click:Connect(function()
-		setclipboard(Socials.discord)
-	end)
-	
-	newFrame.TopFrame.Close.MouseButton1Click:Connect(function()
-		newFrame.Visible = false
-		GUI.Icon.Visible = true
-		game.Lighting:FindFirstChild("GH_DOF_BLUR").Enabled = false
-		
-		for _,v in pairs(workspace.Camera:FindFirstChild("neon"):FindFirstChild("MainFrame"):GetChildren()) do
-			v.Size = Vector3.new(0,0,0)
-		end
-	end)
-	
-	local exiting = false
-	newFrame.TopFrame.Exit.MouseButton1Click:Connect(function()
-		if exiting then
-			GUI:Destroy()
-			BlurModule:UnbindFrame(newFrame)
-			workspace.Camera:FindFirstChild("neon"):Destroy()
-		else
-			pcall(function()
-				Tween(newFrame.TopFrame.Exit, 0.2, { TextColor3 = Color3.fromRGB(220,0,0)})
-				exiting = true
-				task.wait(1.5)
-				Tween(newFrame.TopFrame.Exit, 0.2, { TextColor3 = Color3.fromRGB(220,220,220)})
-				exiting = false
+	})]]
+			EnableDrag(newFrame)
+			EnableDrag(GUI.Icon)
+
+			-- SetFunctionStopAllTween and Others Loading screen wrapper
+			function SELF:SetFunctionSAT(func)
+				newFrame.SideFrame.StopAllTween.MouseButton1Click:Connect(func)
+			end
+			function SELF:SetSAT(...)
+				return ...
+			end
+
+			function SELF:SetProgress(...)
+				return ...
+			end
+			function SELF:Finish()
+				newFrame.Visible = true
+			end
+			-- -----------------
+
+			-- Misc handler
+			newFrame.TopFrame.Back.MouseButton1Click:Connect(function()
+				for k,v in pairs(LISTTABS) do
+					Tween(v.Side, 0.2, {BackgroundColor3 = Color3.fromRGB(20,20,20)})
+					v.Main.Visible = false
+				end
+				newFrame.TopFrame.Back.Visible = false
+				newFrame.TopFrame.CurrentTab.Text = "Welcome"
+				newFrame.Tabs.Landing.Visible = true
 			end)
-		end
-	end)
-	
-	GUI.Icon.MouseButton1Click:Connect(function()
-		newFrame.Visible = true
-		GUI.Icon.Visible = false
-		game.Lighting:FindFirstChild("GH_DOF_BLUR").Enabled = true
+			newFrame.Tabs.Landing.SocialsFrame.Youtube.MouseButton1Click:Connect(function()
+				setclipboard(Socials.youtube)
+			end)
+			newFrame.Tabs.Landing.SocialsFrame.Discord.MouseButton1Click:Connect(function()
+				setclipboard(Socials.discord)
+			end)
+
+			newFrame.TopFrame.Close.MouseButton1Click:Connect(function()
+				newFrame.Visible = false
+				GUI.Icon.Visible = true
+				--game.Lighting:FindFirstChild("GH_DOF_BLUR").Enabled = false
+
+				for _,v in pairs(workspace.Camera:FindFirstChild("neon"):FindFirstChild("MainFrame"):GetChildren()) do
+					v.Size = Vector3.new(0,0,0)
+				end
+			end)
+
+			local exiting = false
+			newFrame.TopFrame.Exit.MouseButton1Click:Connect(function()
+				if exiting then
+					GUI:Destroy()
+					--BlurModule:UnbindFrame(newFrame)
+					workspace.Camera:FindFirstChild("neon"):Destroy()
+				else
+					task.spawn(function()
+						Tween(newFrame.TopFrame.Exit, 0.2, { TextColor3 = Color3.fromRGB(220,0,0)})
+						exiting = true
+						task.wait(1.5)
+						Tween(newFrame.TopFrame.Exit, 0.2, { TextColor3 = Color3.fromRGB(220,220,220)})
+						exiting = false
+					end)
+				end
+			end)
+
+			GUI.Icon.MouseButton1Click:Connect(function()
+				newFrame.Visible = true
+				GUI.Icon.Visible = false
+		--[[game.Lighting:FindFirstChild("GH_DOF_BLUR").Enabled = true
 		
 		for _,v in pairs(workspace.Camera:FindFirstChild("neon"):FindFirstChild("MainFrame"):GetChildren()) do
 			v.Size = Vector3.new(0.2,0.2,0.2)
-		end
-	end)
-	
-	local index = 1
-	function SELF:AddChangelog(list)
-		local order = {}
+		end]]
+			end)
 
-		for title, desc in pairs(list) do
-			table.insert(order, title)
-		end
+			local index = 1
+			function SELF:AddChangelog(list)
+				local order = {}
 
-		table.sort(order, function(a,b)
-			return a > b
-		end)  -- Sort the titles to maintain order
+				for title, desc in pairs(list) do
+					table.insert(order, title)
+				end
 
-		for _, title in ipairs(order) do
-			local desc = list[title]
-			local newCg = Reserved.Changelog:Clone()
+				table.sort(order, function(a,b)
+					return a > b
+				end)  -- Sort the titles to maintain order
 
-			newCg.Name = title
-			newCg.Parent = newFrame.Tabs.Landing.ChangelogsFrame.ScrollingFrame
+				for _, title in ipairs(order) do
+					local desc = list[title]
+					local newCg = Reserved.Changelog:Clone()
 
-			-- Update properties
-			newCg.Title.Text = title
-			newCg.Description.Text = desc
-			newCg.Visible = true
+					newCg.Name = title
+					newCg.Parent = newFrame.Tabs.Landing.ChangelogsFrame.ScrollingFrame
 
-			-- Adjust position in the scrolling frame
-			newCg.LayoutOrder = index
-			index = index + 1
-		end
-	end
-	
-	function SELF:AddTab(name,imgID)
-		local TAB = smt({}, SELF)
-		local LISTTAB = {}
-		
-		local newTab = Reserved.Tab:Clone()
-		newTab.Parent = newFrame.Tabs
-		newTab.Name = name
-		
-		local newTabButton = Reserved.SideButton:Clone()
-		newTabButton.Parent = newFrame.SideFrame.SideTabButtons.ScrollingFrame
-		newTabButton.Name = name
-		newTabButton.Visible = true
-		newTabButton.TextLabel.Text = name
-		if not string.find(imgID, "rbxassetid://", 1, true) then
-			imgID = "rbxassetid://"..imgID
-		end
-		newTabButton.ImageLabel.Image =  imgID
-		
-		LISTTAB.Side = newTabButton
-		LISTTAB.Main = newTab
-		LISTTABS[name] = LISTTAB
-		
-		
-		newTabButton.MouseButton1Click:Connect(function()
-			for LTname, value in pairs(LISTTABS) do
-				if LTname ~= name then
-					Tween(value.Side, 0.2, { BackgroundColor3 = Color3.fromRGB(20,20,20) })
-					value.Main.Visible = false
+					-- Update properties
+					newCg.Title.Text = title
+					newCg.Description.Text = desc
+					newCg.Visible = true
+
+					-- Adjust position in the scrolling frame
+					newCg.LayoutOrder = index
+					index = index + 1
 				end
 			end
-			
-			Tween(newTabButton, 0.2, { BackgroundColor3 = Color3.fromRGB(198, 198, 198)})
-			newTab.Visible = true
-			newFrame.Tabs.Landing.Visible = false
-			newFrame.TopFrame.CurrentTab.Text = name
-			newFrame.TopFrame.Back.Visible = true
-			
-		end)
-		
-		-- ELEMENTS
-		function TAB:AddLabel(text)
-			local self = smt({}, TAB)
-			local newLabel = Reserved.Title:Clone()
-			newLabel.Parent = newTab
-			newLabel.Name = text
-			
-			newLabel.TextLabel.Text = text
-			newLabel.Visible = true
-			
-			function self:Set(txt)
-				newLabel.TextLabel.Text = txt
-			end
-			
-			return self
-		end
-		function TAB:AddLabel1(text)
-			local self = smt({}, TAB)
-			local newLabel = Reserved.Title:Clone()
-			newLabel.Parent = newTab
-			newLabel.Name = text
 
-			newLabel.TextLabel.Text = text
-			newLabel.Visible = true
+			function SELF:AddTab(name,imgID)
+				local TAB = smt({}, SELF)
+				local LISTTAB = {}
 
-			function self:Set(txt)
-				newLabel.TextLabel.Text = txt
-			end
+				local NAMETAB = name
+				if not CONFIGLOADED or CONFIG[NAMETAB] == nil then
+					CONFIG[NAMETAB] =  {}
+				end
 
-			return self
-		end
-		
-		function TAB:AddButton(name, callback)
-			local self = smt({}, TAB)
-			local newButton = Reserved.Button:Clone()
-			newButton.Name = name
-			newButton.Parent = newTab
-			newButton.TextLabel.Text = name
-			newButton.Visible = true
-			
-			newButton.Button.MouseButton1Click:Connect(function()
-				task.spawn(function()
-					-- task.desynchronize()
-					callback()
+
+				local newTab = Reserved.Tab:Clone()
+				newTab.Parent = newFrame.Tabs
+				newTab.Name = name
+
+				local newTabButton = Reserved.SideButton:Clone()
+				newTabButton.Parent = newFrame.SideFrame.SideTabButtons.ScrollingFrame
+				newTabButton.Name = name
+				newTabButton.Visible = true
+				newTabButton.TextLabel.Text = name
+				if not string.find(imgID, "rbxassetid://", 1, true) then
+					imgID = "rbxassetid://"..imgID
+				end
+				newTabButton.ImageLabel.Image =  imgID
+
+				LISTTAB.Side = newTabButton
+				LISTTAB.Main = newTab
+				LISTTABS[name] = LISTTAB
+
+
+				newTabButton.MouseButton1Click:Connect(function()
+					for LTname, value in pairs(LISTTABS) do
+						if LTname ~= name then
+							Tween(value.Side, 0.2, { BackgroundColor3 = Color3.fromRGB(20,20,20) })
+							value.Main.Visible = false
+						end
+					end
+
+					Tween(newTabButton, 0.2, { BackgroundColor3 = Color3.fromRGB(198, 198, 198)})
+					newTab.Visible = true
+					newFrame.Tabs.Landing.Visible = false
+					newFrame.TopFrame.CurrentTab.Text = name
+					newFrame.TopFrame.Back.Visible = true
+
 				end)
-			end)
-			
-			newButton.Button.MouseButton1Up:Connect(function(x, y)
+
+				-- ELEMENTS
+				function TAB:AddLabel(text)
+					local self = smt({}, TAB)
+					local newLabel = Reserved.Title:Clone()
+					newLabel.Parent = newTab
+					newLabel.Name = text
+
+					newLabel.TextLabel.Text = text
+					newLabel.Visible = true
+
+					function self:Set(txt)
+						newLabel.TextLabel.Text = txt
+					end
+
+					return self
+				end
+				function TAB:AddLabel1(text)
+					local self = smt({}, TAB)
+					local newLabel = Reserved.Title:Clone()
+					newLabel.Parent = newTab
+					newLabel.Name = text
+
+					newLabel.TextLabel.Text = text
+					newLabel.Visible = true
+
+					function self:Set(txt)
+						newLabel.TextLabel.Text = txt
+					end
+
+					return self
+				end
+
+				function TAB:AddButton(name, callback)
+					local self = smt({}, TAB)
+					local newButton = Reserved.Button:Clone()
+					newButton.Name = name
+					newButton.Parent = newTab
+					newButton.TextLabel.Text = name
+					newButton.Visible = true
+
+					newButton.Button.MouseButton1Click:Connect(function()
+						task.spawn(function()
+							-- task.desynchronize()
+							callback()
+						end)
+					end)
+
+					newButton.Button.MouseButton1Up:Connect(function(x, y)
 				--[[
 				kontol TapEffect ini posisi udah exact tapi Y pos offset dikit anjing
 				
@@ -1620,358 +1674,364 @@ function LIBRARY:Window(title, icon)
 				
 				tw.Completed:Wait()
 				TapFx:Destroy()]]
-			end)
-			
-			function self:Set(txt)
-				newButton.TextLabel.Text = txt
-			end
-			
-			
-			return  self
-		end
-		
-		function TAB:AddLine(name)
-			local newline = Reserved.Line:Clone()
-			
-			newline.Parent = newTab
-			newline.Name = name or "Line"
-			newline.Visible = true
-		end
-		
-		function TAB:AddSeperator(text)
-			local self = smt({}, TAB)
-			local newSeperator = Reserved.Seperator:Clone()
-			
-			newSeperator.Name = text
-			newSeperator.TextLabel.Text = text
-			newSeperator.Parent = newTab
-			newSeperator.Visible = true
-			
-			function self:Set(txt)
-				newSeperator.TextLabel.Text = txt
-			end
-		end
-		
-		function TAB:AddToggle(name, default, callback)
-			local self = smt({}, TAB)
-			local newToggle = Reserved.Toggle:Clone()
-			
-			newToggle.Name = name
-			newToggle.TextLabel.Text = name
-			newToggle.Parent = newTab
-			newToggle.Visible = true
-			
-			if default == true then
-				callback(true)
-			end
-			
-			-- toggle func
-			local duration = 0.2
-			local boolstate = default or false
-			
-			local function Switch()
-				if boolstate == true then
-					boolstate = not boolstate -- true > false
-					task.spawn(function()
-						-- task.desynchronize()
-						Tween(newToggle.Background, duration, { BackgroundColor3 = Color3.fromRGB(131,131,131)})
-						
-						Tween(newToggle.Background, duration, { BackgroundTransparency = 0.9})
-						Tween(newToggle.Background.Switch, duration, { BackgroundTransparency = 0.55})
-						
-						Tween(newToggle.Background.Switch, duration, { Position = UDim2.fromScale(0.25, 0.5)})
 					end)
-				elseif boolstate == false then
-					boolstate = not boolstate -- false > true
-					task.spawn(function()
-						-- task.desynchronize()
-						Tween(newToggle.Background, duration, { BackgroundColor3 = Color3.fromRGB(218,218,218)})
 
-						Tween(newToggle.Background, duration, { BackgroundTransparency = 0.85})
-						Tween(newToggle.Background.Switch, duration, { BackgroundTransparency = 0.15})
-
-						Tween(newToggle.Background.Switch, duration, { Position = UDim2.fromScale(0.75, 0.5)})
-					end)
-				end
-			end
-			
-			local function Set(bool)
-				if bool == true then
-					boolstate = true -- false
-					
-					task.spawn(function()
-						-- task.desynchronize()
-						Tween(newToggle.Background, duration, { BackgroundColor3 = Color3.fromRGB(218,218,218)})
-
-						Tween(newToggle.Background, duration, { BackgroundTransparency = 0.85})
-						Tween(newToggle.Background.Switch, duration, { BackgroundTransparency = 0.15})
-
-						Tween(newToggle.Background.Switch, duration, { Position = UDim2.fromScale(0.75, 0.5)})
-					end)
-				elseif bool == false then
-					boolstate = false -- false
-					
-					task.spawn(function()
-						-- task.desynchronize()
-						Tween(newToggle.Background, duration, { BackgroundColor3 = Color3.fromRGB(131,131,131)})
-
-						Tween(newToggle.Background, duration, { BackgroundTransparency = 0.9})
-						Tween(newToggle.Background.Switch, duration, { BackgroundTransparency = 0.55})
-
-						Tween(newToggle.Background.Switch, duration, { Position = UDim2.fromScale(0.25, 0.5)})
-					end)
-				end
-			end
-			
-			function self:Toggle()
-				Switch()
-				callback(boolstate)
-			end
-			
-			function self:Set(bool)
-				Set(bool)
-				callback(bool)
-			end
-			
-			if boolstate == false then
-				-- when default false
-				newToggle.Background.BackgroundColor3 = Color3.fromRGB(131,131,131)
-				
-				newToggle.Background.BackgroundTransparency = 0.9
-				newToggle.Background.Switch.BackgroundTransparency = 0.55
-				
-				newToggle.Background.Switch.Position = UDim2.fromScale(0.25,0.5)
-			elseif boolstate == true then
-				-- when default true
-				newToggle.Background.BackgroundColor3 = Color3.fromRGB(218,218,218)
-
-				newToggle.Background.BackgroundTransparency = 0.85
-				newToggle.Background.Switch.BackgroundTransparency = 0.15
-				
-				newToggle.Background.Switch.Position = UDim2.fromScale(0.75,0.5)
-			end
-			
-			newToggle.Button.MouseButton1Click:Connect(function()
-				Switch()
-				task.spawn(function()
-					-- task.desynchronize()
-					callback(boolstate)
-				end)
-			end)
-			
-			return self
-		end
-		
-		function TAB:AddTextbox(name, clearonfocuslost, callback)
-			local self = smt({}, TAB)
-			local newTextbox = Reserved.Textbox:Clone()
-			
-			newTextbox.Parent = newTab
-			newTextbox.Name = name
-			newTextbox.TextLabel.Text = name
-			newTextbox.Textbox.ClearTextOnFocus = clearonfocuslost
-			newTextbox.Visible = true
-			
-			
-			function self:Set(txt)
-				newTextbox.Textbox.Text = txt
-				callback(txt)
-			end
-			
-			newTextbox.Textbox.FocusLost:Connect(function()
-				callback(newTextbox.Textbox.Text)
-			end)
-			
-			return self
-		end
-		
-		function TAB:AddSlider(name, min, max, default, callback, inc)
-			local self = smt({}, TAB)
-			local newSlider = Reserved.Slider:Clone()
-			
-			newSlider.Parent = newTab
-			newSlider.Name = name
-			
-			newSlider.Visible = true
-			newSlider.TextLabel.Text = name
-			
-			-- Source slider daur ulang awkoakwoawkaowkaowo
-			
-			local Mouse = LocalPlayer:GetMouse()
-			local tweenServ = TweenService
-
-			local Trigger = newSlider.Background.Trigger
-			local Label = newSlider.Textbox
-			local Fill = newSlider.Background.Fill
-			local Parent = newSlider.Background
-
-			local perc
-			local Percent
-			local MouseDown = false
-			local delayTw = 0.3
-			
-			inc = inc or 1
-
-			local function convertValueToScale(value)
-				return (value - min) / (max - min) * (1 - 0) + 0
-			end
-
-
-			Label.Text = tostring(default) or tostring(min)
-			Fill.Size = UDim2.fromScale(convertValueToScale(default), 1)
-			
-			-- this also update
-			local function Slide()
-				MouseDown = true
-				repeat
-					task.wait()
-					Percent = math.clamp((Mouse.X - Parent.AbsolutePosition.X) / Parent.AbsoluteSize.X, 0, 1)
-					perc = min + (Percent * (max - min))
-
-					-- Calculate the rounded value with the specified precision
-					local roundedValue = math.round(perc / inc) * inc
-
-					-- Clamp the value to the specified range
-					perc = math.clamp(roundedValue, min, max)
-					
-					-- fix float integer problem
-					local function fixInt(number, decimalPlaces)
-						local multiplier = 10 ^ decimalPlaces
-						return math.floor(number * multiplier + 0.5) / multiplier
+					function self:Set(txt)
+						newButton.TextLabel.Text = txt
 					end
 
 
-
-
-					local amountDecimal = tostring(inc)
-					amountDecimal:gsub("%d+.","")
-					amountDecimal = #amountDecimal
-					perc = fixInt(perc,tonumber(amountDecimal))
-
-					Label.Text = perc
-
-					Tween(Fill, 0.2, { Size = UDim2.fromScale(Percent, 1) })
-					
-					callback(perc, newSlider)
-				until MouseDown == false
-			end
-			
-			local function Update(value)
-				if not value then
-					return
-				elseif value > max or value < min or not value then
-					return
+					return  self
 				end
-				
-				Tween(Fill, 0.2, { Size = UDim2.fromScale(convertValueToScale(value), 1) })
 
-				callback(value, newSlider)
-			end
-			callback(default)
-			
-			-- start sliding
-			Trigger.MouseButton1Down:Connect(function()
-				Slide()
-			end)
-			
-			-- stop sliding
-			UserInputService.InputEnded:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-					MouseDown = false
+				function TAB:AddLine(name)
+					local newline = Reserved.Line:Clone()
+
+					newline.Parent = newTab
+					newline.Name = name or "Line"
+					newline.Visible = true
 				end
-			end)
-			
-			newSlider.Textbox:GetPropertyChangedSignal("Text"):Connect(function()
-				Update(tonumber(newSlider.Textbox.Text))
-			end)
-			
-			function self:Set(value)
-				Update(value)
-			end
-			
-			return self
-		end
-		
-		function TAB:AddDropdown(name, options, callback, default)
-			local self = smt({}, TAB)
-			local state = false -- variable to check if dropdown opened or not
-			local newDropdown = Reserved.Dropdown:Clone()
-			
-			newDropdown.Name = name
-			newDropdown.Parent = newTab
-			newDropdown.TextLabel.Text = name
-			newDropdown.Visible = true
-			
-			if default then
-				newDropdown.Select.Text = default
-				callback(default)
-			else
-				newDropdown.Select.Text = "None"
-			end
-			
-			local function ToggleDD()
-				if state == false then
-					state = not state -- open
-					Tween(newDropdown, 0.2, { Size = UDim2.fromOffset(371,111)})
-				elseif state == true then
-					state = not state -- close
-					Tween(newDropdown, 0.2, { Size = UDim2.fromOffset(371,33)})
-				end
-			end
-			
-			local function Select(object)
-				Tween(object, 0.2, { BackgroundColor3 = Color3.fromRGB(45,45,45) })
-				newDropdown.Select.Text = object.Text
-				for _,otherobject in pairs(newDropdown.Buttons.ScrollingFrame:GetChildren()) do
-					if otherobject:IsA("TextButton") and otherobject ~= object then
-						Tween(otherobject, 0.2, { BackgroundColor3 = Color3.fromRGB(15,15,15) })
+
+				function TAB:AddSeperator(text)
+					local self = smt({}, TAB)
+					local newSeperator = Reserved.Seperator:Clone()
+
+					newSeperator.Name = text
+					newSeperator.TextLabel.Text = text
+					newSeperator.Parent = newTab
+					newSeperator.Visible = true
+
+					function self:Set(txt)
+						newSeperator.TextLabel.Text = txt
 					end
 				end
-				ToggleDD()
-			end
-			
-			for _,option in pairs(options) do
-				local newOption = Reserved.DropdownButton:Clone()
-				
-				newOption.Name = option
-				newOption.Text = option
-				newOption.Parent = newDropdown.Buttons.ScrollingFrame
-				newOption.Visible = true
-				
-				newOption.MouseButton1Click:Connect(function()
-					callback(option)
-					Select(newOption)
-				end)
-			end
-			
-			newDropdown.Select.MouseButton1Click:Connect(function()
-				ToggleDD()
-			end)
-			
-			function self:Clear()
-				for _,item in pairs(newDropdown.Buttons.ScrollingFrame:GetChildren()) do
-					if item:IsA("TextButton") then
-						item:Destroy()
+
+				function TAB:AddToggle(name, default, callback)
+					local self = smt({}, TAB)
+					local newToggle = Reserved.Toggle:Clone()
+
+					newToggle.Name = name
+					newToggle.TextLabel.Text = name
+					newToggle.Parent = newTab
+					newToggle.Visible = true
+
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
+						default = CONFIG[NAMETAB][name]
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
+						CONFIG[NAMETAB][name] = default
 					end
-				end
-			end
-			
-			function self:Add(options)
-				if type(options) == "string" then
-					local option = options
-					local newOption = Reserved.DropdownButton:Clone()
 
-					newOption.Name = option
-					newOption.Text = option
-					newOption.Parent = newDropdown.Buttons.ScrollingFrame
-					newOption.Visible = true
+					if default == true then
+						callback(true)
+					end
 
-					newOption.MouseButton1Click:Connect(function()
-						callback(option)
-						Select(newOption)
+					-- toggle func
+					local duration = 0.2
+					local boolstate = default or false
+
+					local function Switch()
+						if boolstate == true then
+							boolstate = not boolstate -- true > false
+							task.spawn(function()
+								-- task.desynchronize()
+								Tween(newToggle.Background, duration, { BackgroundColor3 = Color3.fromRGB(131,131,131)})
+
+								Tween(newToggle.Background, duration, { BackgroundTransparency = 0.9})
+								Tween(newToggle.Background.Switch, duration, { BackgroundTransparency = 0.55})
+
+								Tween(newToggle.Background.Switch, duration, { Position = UDim2.fromScale(0.25, 0.5)})
+							end)
+						elseif boolstate == false then
+							boolstate = not boolstate -- false > true
+							task.spawn(function()
+								-- task.desynchronize()
+								Tween(newToggle.Background, duration, { BackgroundColor3 = Color3.fromRGB(218,218,218)})
+
+								Tween(newToggle.Background, duration, { BackgroundTransparency = 0.85})
+								Tween(newToggle.Background.Switch, duration, { BackgroundTransparency = 0.15})
+
+								Tween(newToggle.Background.Switch, duration, { Position = UDim2.fromScale(0.75, 0.5)})
+							end)
+						end
+					end
+
+					local function Set(bool)
+						if bool == true then
+							boolstate = true -- false
+
+							task.spawn(function()
+								-- task.desynchronize()
+								Tween(newToggle.Background, duration, { BackgroundColor3 = Color3.fromRGB(218,218,218)})
+
+								Tween(newToggle.Background, duration, { BackgroundTransparency = 0.85})
+								Tween(newToggle.Background.Switch, duration, { BackgroundTransparency = 0.15})
+
+								Tween(newToggle.Background.Switch, duration, { Position = UDim2.fromScale(0.75, 0.5)})
+							end)
+						elseif bool == false then
+							boolstate = false -- false
+
+							task.spawn(function()
+								-- task.desynchronize()
+								Tween(newToggle.Background, duration, { BackgroundColor3 = Color3.fromRGB(131,131,131)})
+
+								Tween(newToggle.Background, duration, { BackgroundTransparency = 0.9})
+								Tween(newToggle.Background.Switch, duration, { BackgroundTransparency = 0.55})
+
+								Tween(newToggle.Background.Switch, duration, { Position = UDim2.fromScale(0.25, 0.5)})
+							end)
+						end
+					end
+
+					function self:Toggle()
+						Switch()
+						CONFIG[NAMETAB][name] = boolstate
+						SAVECONFIG()
+						callback(boolstate)
+					end
+
+					function self:Set(bool)
+						Set(bool)
+						CONFIG[NAMETAB][name] = bool
+						SAVECONFIG()
+						callback(bool)
+					end
+
+					if boolstate == false then
+						-- when default false
+						newToggle.Background.BackgroundColor3 = Color3.fromRGB(131,131,131)
+
+						newToggle.Background.BackgroundTransparency = 0.9
+						newToggle.Background.Switch.BackgroundTransparency = 0.55
+
+						newToggle.Background.Switch.Position = UDim2.fromScale(0.25,0.5)
+					elseif boolstate == true then
+						-- when default true
+						newToggle.Background.BackgroundColor3 = Color3.fromRGB(218,218,218)
+
+						newToggle.Background.BackgroundTransparency = 0.85
+						newToggle.Background.Switch.BackgroundTransparency = 0.15
+
+						newToggle.Background.Switch.Position = UDim2.fromScale(0.75,0.5)
+					end
+
+					newToggle.Button.MouseButton1Click:Connect(function()
+						Switch()
+						task.spawn(function()
+							-- task.desynchronize()
+							CONFIG[NAMETAB][name] = boolstate
+							SAVECONFIG()
+							callback(boolstate)
+
+						end)
 					end)
-				elseif type(options) == "table" then
-					for _, option in pairs(options) do
+
+					return self
+				end
+
+				function TAB:AddTextbox(name, clearonfocuslost, callback)
+					local self = smt({}, TAB)
+					local default
+					local newTextbox = Reserved.Textbox:Clone()
+
+					newTextbox.Parent = newTab
+					newTextbox.Name = name
+					newTextbox.TextLabel.Text = name
+					newTextbox.Textbox.ClearTextOnFocus = clearonfocuslost
+					newTextbox.Visible = true
+
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
+						default = CONFIG[NAMETAB][name]
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
+						CONFIG[NAMETAB][name] = ""
+					end
+
+					if default ~=  "" and default then
+						newTextbox.Textbox.Text = default
+						callback(newTextbox.Textbox.Text)
+						CONFIG[NAMETAB][name] = newTextbox.Textbox.Text
+					end
+
+
+					function self:Set(txt)
+						newTextbox.Textbox.Text = txt
+						CONFIG[NAMETAB][name] = txt
+						callback(txt)
+					end
+
+					newTextbox.Textbox.FocusLost:Connect(function()
+						CONFIG[NAMETAB][name] = newTextbox.Textbox.Text
+						callback(newTextbox.Textbox.Text)
+					end)
+
+					return self
+				end
+
+				function TAB:AddSlider(name, min, max, default, callback, inc)
+					local self = smt({}, TAB)
+					local newSlider = Reserved.Slider:Clone()
+
+					newSlider.Parent = newTab
+					newSlider.Name = name
+
+					newSlider.Visible = true
+					newSlider.TextLabel.Text = name
+
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
+						default = CONFIG[NAMETAB][name]
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
+						CONFIG[NAMETAB][name] = default
+					end
+
+					-- Source slider daur ulang awkoakwoawkaowkaowo
+
+					local Mouse = LocalPlayer:GetMouse()
+					local tweenServ = TweenService
+
+					local Trigger = newSlider.Background.Trigger
+					local Label = newSlider.Textbox
+					local Fill = newSlider.Background.Fill
+					local Parent = newSlider.Background
+
+					local perc
+					local Percent
+					local MouseDown = false
+					local delayTw = 0.3
+
+					inc = inc or 1
+
+					local function convertValueToScale(value)
+						return (value - min) / (max - min) * (1 - 0) + 0
+					end
+
+
+					Label.Text = tostring(default) or tostring(min)
+					Fill.Size = UDim2.fromScale(convertValueToScale(default), 1)
+
+					-- this also update
+					local function Slide()
+						MouseDown = true
+						repeat
+							task.wait()
+							Percent = math.clamp((Mouse.X - Parent.AbsolutePosition.X) / Parent.AbsoluteSize.X, 0, 1)
+							perc = min + (Percent * (max - min))
+
+							-- Calculate the rounded value with the specified precision
+							local roundedValue = math.round(perc / inc) * inc
+
+							-- Clamp the value to the specified range
+							perc = math.clamp(roundedValue, min, max)
+
+							-- fix float integer problem
+							local function fixInt(number, decimalPlaces)
+								local multiplier = 10 ^ decimalPlaces
+								return math.floor(number * multiplier + 0.5) / multiplier
+							end
+
+
+
+
+							local amountDecimal = tostring(inc)
+							amountDecimal:gsub("%d+.","")
+							amountDecimal = #amountDecimal
+							perc = fixInt(perc,tonumber(amountDecimal))
+
+							Label.Text = perc
+
+							Tween(Fill, 0.2, { Size = UDim2.fromScale(Percent, 1) })
+							CONFIG[NAMETAB][name] = perc
+							callback(perc, newSlider)
+						until MouseDown == false
+						SAVECONFIG()
+					end
+
+					local function Update(value)
+						if not value then
+							return
+						elseif value > max or value < min or not value then
+							return
+						end
+
+						Tween(Fill, 0.2, { Size = UDim2.fromScale(convertValueToScale(value), 1) })
+
+						CONFIG[NAMETAB][name] = value
+						callback(value, newSlider)
+					end
+					callback(default)
+
+					-- start sliding
+					Trigger.MouseButton1Down:Connect(function()
+						Slide()
+					end)
+
+					-- stop sliding
+					UserInputService.InputEnded:Connect(function(input)
+						if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+							MouseDown = false
+						end
+					end)
+
+					newSlider.Textbox:GetPropertyChangedSignal("Text"):Connect(function()
+						Update(tonumber(newSlider.Textbox.Text))
+					end)
+
+					function self:Set(value)
+						CONFIG[NAMETAB][name] = value
+						SAVECONFIG()
+						Update(value)
+					end
+
+					return self
+				end
+
+				function TAB:AddDropdown(name, options, callback, default)
+					local self = smt({}, TAB)
+					local state = false -- variable to check if dropdown opened or not
+					local newDropdown = Reserved.Dropdown:Clone()
+					local selected
+
+					newDropdown.Name = name
+					newDropdown.Parent = newTab
+					newDropdown.TextLabel.Text = name
+					newDropdown.Visible = true
+
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
+						default = CONFIG[NAMETAB][name]
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
+						CONFIG[NAMETAB][name] = ""
+					end
+
+					if default and default ~= "" then
+						newDropdown.Select.Text = default
+						CONFIG[NAMETAB][name] = default
+						callback(default)
+					else
+						newDropdown.Select.Text = "None"
+					end
+
+					local function ToggleDD()
+						if state == false then
+							state = not state -- open
+							Tween(newDropdown, 0.2, { Size = UDim2.fromOffset(371,111)})
+						elseif state == true then
+							state = not state -- close
+							Tween(newDropdown, 0.2, { Size = UDim2.fromOffset(371,33)})
+						end
+					end
+
+					local function Select(object)
+						Tween(object, 0.2, { BackgroundColor3 = Color3.fromRGB(45,45,45) })
+						newDropdown.Select.Text = object.Text
+						selected = object.Text
+						for _,otherobject in pairs(newDropdown.Buttons.ScrollingFrame:GetChildren()) do
+							if otherobject:IsA("TextButton") and otherobject ~= object then
+								Tween(otherobject, 0.2, { BackgroundColor3 = Color3.fromRGB(15,15,15) })
+							end
+						end
+						ToggleDD()
+					end
+
+					for _,option in pairs(options) do
 						local newOption = Reserved.DropdownButton:Clone()
 
 						newOption.Name = option
@@ -1980,357 +2040,186 @@ function LIBRARY:Window(title, icon)
 						newOption.Visible = true
 
 						newOption.MouseButton1Click:Connect(function()
+							CONFIG[NAMETAB][name] = option
+							SAVECONFIG()
 							callback(option)
 							Select(newOption)
 						end)
 					end
-				elseif options and type(options) ~= "table" or "string" then
-					error('"string" or "table" expected, got '..type(options))
-				end 
-			end
-			
-			return self
-		end
-		
-		function TAB:AddMultiDropdown(name, options, callback, default)
-			local self = smt({}, TAB)
-			local state = false
-			local newMultiDD = Reserved.MultiDropdown:Clone()
-			
-			newMultiDD.Name = name
-			newMultiDD.TextLabel.Name = name
-			newMultiDD.Parent = newTab
-			newMultiDD.Visible = true
-			
-			local selected = {}
-			
-			if type(default) == "table" then
-				callback(default)
-				newMultiDD.Select.Text = table.concat(default, ", ")
-			elseif type(default) == "string" then
-				callback(default)
-				newMultiDD.Select.Text = default
-			end
-			
-			local function ToggleDD()
-				if state == false then
-					state = not state -- open
-					Tween(newMultiDD, 0.2, { Size = UDim2.fromOffset(371,111)})
-				elseif state == true then
-					state = not state -- close
-					Tween(newMultiDD, 0.2, { Size = UDim2.fromOffset(371,33)})
-				end
-			end
-			
-			local function Click(object)
-				if not table.find(selected, object.Text) then -- kalo blum di select
-					table.insert(selected, object.Text)
-					
-					Tween(object, 0.2, { BackgroundColor3 = Color3.fromRGB(45,45,45) })
-					newMultiDD.Select.Text = table.concat(selected, ", ")
-				elseif table.find(selected, object.Text) then -- kalo sempet di select
-					table.remove(selected, table.find(selected, object.Text))
 
-					Tween(object, 0.2, { BackgroundColor3 = Color3.fromRGB(15,15,15) })
-					newMultiDD.Select.Text = table.concat(selected, ", ")
-				end
-				if #selected == 0 then
-					newMultiDD.Select.Text = "None"
-				end
-			end
-			
-			local function Add(option)
-				local newOption = Reserved.DropdownButton:Clone()
+					newDropdown.Select.MouseButton1Click:Connect(function()
+						ToggleDD()
+					end)
 
-				newOption.Name = option
-				newOption.Text = option
-				newOption.Parent = newMultiDD.Buttons.ScrollingFrame
-				newOption.Visible = true
-
-				newOption.MouseButton1Click:Connect(function()
-					Click(newOption)
-					callback(selected)
-				end)
-			end
-			
-			for _,option in pairs(options) do
-				Add(option)
-			end
-			
-			newMultiDD.Select.MouseButton1Click:Connect(ToggleDD)
-			
-			function self:Add(option)
-				if typeof(option) == "table" then
-					for _,v in pairs(option) do
-						Add(v)
+					function self:Clear()
+						for _,item in pairs(newDropdown.Buttons.ScrollingFrame:GetChildren()) do
+							if item:IsA("TextButton") then
+								item:Destroy()
+							end
+						end
 					end
-				elseif typeof(option) == "string" then
-					Add(option)
-				end
-			end
-			
-			function self:Clear()
-				for _, item in pairs(newMultiDD.Buttons.ScrollingFrame:GetChildren()) do
-					if item:IsA("TextButton") then
-						item:Destroy()
+
+					function self:Add(options)
+						if type(options) == "string" then
+							local option = options
+							local newOption = Reserved.DropdownButton:Clone()
+
+							newOption.Name = option
+							newOption.Text = option
+							newOption.Parent = newDropdown.Buttons.ScrollingFrame
+							newOption.Visible = true
+
+							newOption.MouseButton1Click:Connect(function()
+								CONFIG[NAMETAB][name] = option
+								SAVECONFIG()
+								callback(option)
+								Select(newOption)
+							end)
+						elseif type(options) == "table" then
+							for _, option in pairs(options) do
+								local newOption = Reserved.DropdownButton:Clone()
+
+								newOption.Name = option
+								newOption.Text = option
+								newOption.Parent = newDropdown.Buttons.ScrollingFrame
+								newOption.Visible = true
+
+								newOption.MouseButton1Click:Connect(function()
+									CONFIG[NAMETAB][name] = option
+									SAVECONFIG()
+									callback(option)
+									Select(newOption)
+								end)
+							end
+						elseif options and type(options) ~= "table" or "string" then
+							error('"string" or "table" expected, got '..type(options))
+						end 
 					end
+
+					return self
 				end
-				selected = {}
-				newMultiDD.Select.Text = "None"
-			end
-			
-			return self
-		end
-		
-		return TAB
-	end
-	return SELF
-end
 
-return LIBRARY
-end;
-};
-GANTENGLIB_MODULES[GANTENGLIB["86"]] = {
-Closure = function()
-    local script = GANTENGLIB["86"];
--- fractality
+				function TAB:AddMultiDropdown(name, options, callback, default)
+					local self = smt({}, TAB)
+					local state = false
+					local newMultiDD = Reserved.MultiDropdown:Clone()
 
+					default = default or {}
 
-local module = {}
+					newMultiDD.Name = name
+					newMultiDD.TextLabel.Text = name
+					newMultiDD.Parent = newTab
+					newMultiDD.Visible = true
 
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
+						default = CONFIG[NAMETAB][name]
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
+						CONFIG[NAMETAB][name] = {}
+					end
 
-local RunService = game:GetService'RunService'
-local camera = workspace.CurrentCamera
--- idk
-local dof = Instance.new("DepthOfFieldEffect", game.Lighting) --orangtuanya lighting awkoakowkaowkaw
-dof.Enabled = true
-dof.FarIntensity = 0
-dof.FocusDistance = 51.6
-dof.InFocusRadius = 50
-dof.NearIntensity = 0.3
-dof.Name = "GH_DOF_BLUR"
----
+					local selected = {}
 
-do
-	local function IsNotNaN(x)
-		return x == x
-	end
-	local continue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
-	while not continue do
-		RunService.RenderStepped:wait()
-		continue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
-	end
-end
+					if type(default) == "table" and #default > 0 then
+						SAVECONFIG()
+						callback(default)
+						newMultiDD.Select.Text = table.concat(default, ", ")
+					elseif type(default) == "string" and #default > 0 then
+						SAVECONFIG()
+						callback(default)
+						newMultiDD.Select.Text = default
+					else
+						newMultiDD.Select.Text = "None"
+					end
 
-local binds = {}
-local root = Instance.new('Folder', camera)
-root.Name = 'neon'
+					local function ToggleDD()
+						if state == false then
+							state = not state -- open
+							Tween(newMultiDD, 0.2, { Size = UDim2.fromOffset(371,111)})
+						elseif state == true then
+							state = not state -- close
+							Tween(newMultiDD, 0.2, { Size = UDim2.fromOffset(371,33)})
+						end
+					end
 
+					local function Click(object)
+						if not table.find(selected, object.Text) then -- kalo blum di select
+							table.insert(selected, object.Text)
 
-local GenUid; do -- Generate unique names for RenderStepped bindings
-	local id = 0
-	function GenUid()
-		id = id + 1
-		return 'neon::'..tostring(id)
-	end
-end
+							Tween(object, 0.2, { BackgroundColor3 = Color3.fromRGB(45,45,45) })
+							newMultiDD.Select.Text = table.concat(selected, ", ")
+						elseif table.find(selected, object.Text) then -- kalo sempet di select
+							table.remove(selected, table.find(selected, object.Text))
 
-local DrawQuad; do
-	local acos, max, pi, sqrt = math.acos, math.max, math.pi, math.sqrt
-	local sz = 0.2
+							Tween(object, 0.2, { BackgroundColor3 = Color3.fromRGB(15,15,15) })
+							newMultiDD.Select.Text = table.concat(selected, ", ")
+						end
+						if #selected == 0 then
+							newMultiDD.Select.Text = "None"
+						end
+					end
 
-	function DrawTriangle(v1, v2, v3, p0, p1) -- I think Stravant wrote this function
-		local s1 = (v1 - v2).magnitude
-		local s2 = (v2 - v3).magnitude
-		local s3 = (v3 - v1).magnitude
-		local smax = max(s1, s2, s3)
-		local A, B, C
-		if s1 == smax then
-			A, B, C = v1, v2, v3
-		elseif s2 == smax then
-			A, B, C = v2, v3, v1
-		elseif s3 == smax then
-			A, B, C = v3, v1, v2
-		end
+					local function Add(option, state)
+						local newOption = Reserved.DropdownButton:Clone()
 
-		local para = ( (B-A).x*(C-A).x + (B-A).y*(C-A).y + (B-A).z*(C-A).z ) / (A-B).magnitude
-		local perp = sqrt((C-A).magnitude^2 - para*para)
-		local dif_para = (A - B).magnitude - para
+						newOption.Name = option
+						newOption.Text = option
+						newOption.Parent = newMultiDD.Buttons.ScrollingFrame
+						newOption.Visible = true
 
-		local st = CFrame.new(B, A)
-		local za = CFrame.Angles(pi/2,0,0)
+						if state == true then
+							newOption.BackgroundColor3 = Color3.fromRGB(45,45,45)
+							table.insert(selected,option)
+						end
 
-		local cf0 = st
+						newOption.MouseButton1Click:Connect(function()
+							Click(newOption)
+							CONFIG[NAMETAB][name] = selected
+							SAVECONFIG()
+							callback(selected)
+						end)
+					end
 
-		local Top_Look = (cf0 * za).lookVector
-		local Mid_Point = A + CFrame.new(A, B).lookVector * para
-		local Needed_Look = CFrame.new(Mid_Point, C).lookVector
-		local dot = Top_Look.x*Needed_Look.x + Top_Look.y*Needed_Look.y + Top_Look.z*Needed_Look.z
+					for _,option in pairs(options) do
+						if table.find(default, option) then
+							Add(option, true)
+						else
+							Add(option, false)
+						end
+					end
 
-		local ac = CFrame.Angles(0, 0, acos(dot))
+					newMultiDD.Select.MouseButton1Click:Connect(ToggleDD)
 
-		cf0 = cf0 * ac
-		if ((cf0 * za).lookVector - Needed_Look).magnitude > 0.01 then
-			cf0 = cf0 * CFrame.Angles(0, 0, -2*acos(dot))
-		end
-		cf0 = cf0 * CFrame.new(0, perp/2, -(dif_para + para/2))
+					function self:Add(option)
+						if typeof(option) == "table" then
+							for _,v in pairs(option) do
+								Add(v)
+							end
+						elseif typeof(option) == "string" then
+							Add(option)
+						end
+					end
 
-		local cf1 = st * ac * CFrame.Angles(0, pi, 0)
-		if ((cf1 * za).lookVector - Needed_Look).magnitude > 0.01 then
-			cf1 = cf1 * CFrame.Angles(0, 0, 2*acos(dot))
-		end
-		cf1 = cf1 * CFrame.new(0, perp/2, dif_para/2)
+					function self:Clear()
+						for _, item in pairs(newMultiDD.Buttons.ScrollingFrame:GetChildren()) do
+							if item:IsA("TextButton") then
+								item:Destroy()
+							end
+						end
+						selected = {}
+						CONFIG[NAMETAB][name] = {}
+						newMultiDD.Select.Text = "None"
+					end
 
-		if not p0 then
-			p0, PART = Instance.new('Part')
-			p0.FormFactor = 'Custom'
-			p0.TopSurface = 0
-			p0.BottomSurface = 0
-			p0.Anchored = true
-			p0.CanCollide = false
-			p0.Material = 'Glass'
-			p0.Size = Vector3.new(sz, sz, sz)
-			local mesh = Instance.new('SpecialMesh', p0)
-			mesh.MeshType = 2
-			mesh.Name = 'WedgeMesh'
-		end
-		p0.WedgeMesh.Scale = Vector3.new(0, perp/sz, para/sz)
-		p0.CFrame = cf0
-
-		if not p1 then
-			p1 = p0:clone()
-		end
-		p1.WedgeMesh.Scale = Vector3.new(0, perp/sz, dif_para/sz)
-		p1.CFrame = cf1
-
-		return p0, p1
-	end
-
-	function DrawQuad(v1, v2, v3, v4, parts)
-		parts[1], parts[2] = DrawTriangle(v1, v2, v3, parts[1], parts[2])
-		parts[3], parts[4] = DrawTriangle(v3, v2, v4, parts[3], parts[4])
-	end
-end
-
-
---------------------------------
----- Module API --------------------------------
-----------------------------------------------------------------
-
-
--- Create a part binding for a GuiObject.
-function module:BindFrame(frame, properties)
-	if binds[frame] then
-		return binds[frame].parts
-	end
-
-	local uid = GenUid()
-	local parts = {}
-	local f = Instance.new('Folder', root)
-	f.Name = frame.Name
-
-	local parents = {} -- construct hierarchy tree for rotation
-	do
-		local function add(child)
-			if child:IsA'GuiObject' then
-				parents[#parents + 1] = child
-				add(child.Parent)
-			end
-		end
-		add(frame)
-	end
-
-	local function UpdateOrientation(fetchProps)
-		local zIndex = 1 - 0.05*frame.ZIndex
-		-- the transparency inversion bug still surfaces when there's z-fighting
-		local tl, br = frame.AbsolutePosition, frame.AbsolutePosition + frame.AbsoluteSize
-		local tr, bl = Vector2.new(br.x, tl.y), Vector2.new(tl.x, br.y)
-		do
-			local rot = 0;
-			for _, v in ipairs(parents) do
-				rot = rot + v.Rotation
-			end
-			if rot ~= 0 and rot%180 ~= 0 then
-				local mid = tl:lerp(br, 0.5)
-				local s, c = math.sin(math.rad(rot)), math.cos(math.rad(rot))
-				local vec = tl
-				tl = Vector2.new(c*(tl.x - mid.x) - s*(tl.y - mid.y), s*(tl.x - mid.x) + c*(tl.y - mid.y)) + mid
-				tr = Vector2.new(c*(tr.x - mid.x) - s*(tr.y - mid.y), s*(tr.x - mid.x) + c*(tr.y - mid.y)) + mid
-				bl = Vector2.new(c*(bl.x - mid.x) - s*(bl.y - mid.y), s*(bl.x - mid.x) + c*(bl.y - mid.y)) + mid
-				br = Vector2.new(c*(br.x - mid.x) - s*(br.y - mid.y), s*(br.x - mid.x) + c*(br.y - mid.y)) + mid
-			end
-		end
-		DrawQuad(
-			camera:ScreenPointToRay(tl.x, tl.y, zIndex).Origin, 
-			camera:ScreenPointToRay(tr.x, tr.y, zIndex).Origin, 
-			camera:ScreenPointToRay(bl.x, bl.y, zIndex).Origin, 
-			camera:ScreenPointToRay(br.x, br.y, zIndex).Origin, 
-			parts
-		)
-		if fetchProps then
-			for _, pt in pairs(parts) do
-				pt.Parent = f
-			end
-			for propName, propValue in pairs(properties) do
-				for _, pt in pairs(parts) do
-					pt[propName] = propValue
+					return self
 				end
+
+				return TAB
 			end
+			return SELF
 		end
-	end
 
-	UpdateOrientation(true)
-	RunService:BindToRenderStep(uid, 2000, UpdateOrientation)
-
-	binds[frame] = {
-		uid = uid;
-		parts = parts;
-	}
-	return binds[frame].parts
-end
-
--- Applies the `properties` table to bound parts.
-function module:Modify(frame, properties)
-	local parts = module:GetBoundParts(frame)
-	if parts then
-		for propName, propValue in pairs(properties) do
-			for _, pt in pairs(parts) do
-				pt[propName] = propValue
-			end
-		end
-	else
-		warn(('No part bindings exist for %s'):format(frame:GetFullName()))
-	end
-end
-
--- Removes the part binding from a gui object if one exists.
-function module:UnbindFrame(frame)
-	local cb = binds[frame]
-	if cb then
-		RunService:UnbindFromRenderStep(cb.uid)
-		for _, v in pairs(cb.parts) do
-			v:Destroy()
-		end
-		binds[frame] = nil
-	else
-		warn(('No part bindings exist for %s'):format(frame:GetFullName()))
-	end
-end
-
--- Returns true if a part binding exists for the gui object.
-function module:HasBinding(frame)
-	return binds[frame] ~= nil
-end
-
--- Returns an array using this.
-function module:GetBoundParts(frame)
-	return binds[frame] and binds[frame].parts
-end
-
-
-return module
-
-end;
+		return LIBRARY
+	end;
 };
 
-return require(GANTENGLIB["85"])
+return require(GANTENGLIB["84"])

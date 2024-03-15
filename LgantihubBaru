@@ -9,7 +9,7 @@
 	- SonicTuru (Ganteng Hub: Blox Fruit Developer)
 	- Chillz (UI Developer)
 
-	"savekonfig done ygy" - Chillz
+	"bug udah ilang tuhhhhhh" - Chillz
 																															]]
 
 
@@ -1338,8 +1338,7 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 		--local BlurModule = require(script.Blur)
 
 		local debugging = false
-		local JSONCONFIG  = [[{"Shop":[],"Main":[],"Teleport":[],"Item":[],"Info":{"Multi Dropdown":[],"Bulk add Multi dropdown":[],"testi dd":"","Select Sea Monster":["Kill Shark","Kill PirateShips","Kill Sea Beast"],"testi config peler":115,"testi togel false":false,"testi config peler pake inc":5,"sat":false,"Add Multi Dropdown":"","testi togel true":true,"testibox":"","testibox clear":""},"Misc":[]}]]
-
+		local JSONCONFIG  = [[{}]]
 
 
 
@@ -1572,7 +1571,7 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 				local LISTTAB = {}
 
 				local NAMETAB = name
-				if not CONFIGLOADED then
+				if not CONFIGLOADED or CONFIG[NAMETAB] == nil then
 					CONFIG[NAMETAB] =  {}
 				end
 
@@ -1716,9 +1715,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					newToggle.Parent = newTab
 					newToggle.Visible = true
 
-					if CONFIGLOADED and CONFIG[NAMETAB][name] then
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
 						default = CONFIG[NAMETAB][name]
-					elseif not CONFIGLOADED then
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
 						CONFIG[NAMETAB][name] = default
 					end
 
@@ -1841,9 +1840,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					newTextbox.Textbox.ClearTextOnFocus = clearonfocuslost
 					newTextbox.Visible = true
 
-					if CONFIGLOADED and CONFIG[NAMETAB][name] then
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
 						default = CONFIG[NAMETAB][name]
-					elseif not CONFIGLOADED then
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
 						CONFIG[NAMETAB][name] = ""
 					end
 
@@ -1878,9 +1877,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					newSlider.Visible = true
 					newSlider.TextLabel.Text = name
 
-					if CONFIGLOADED and CONFIG[NAMETAB][name] then
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
 						default = CONFIG[NAMETAB][name]
-					elseif not CONFIGLOADED then
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
 						CONFIG[NAMETAB][name] = default
 					end
 
@@ -1996,9 +1995,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					newDropdown.TextLabel.Text = name
 					newDropdown.Visible = true
 
-					if CONFIGLOADED and CONFIG[NAMETAB][name] then
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
 						default = CONFIG[NAMETAB][name]
-					elseif not CONFIGLOADED then
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
 						CONFIG[NAMETAB][name] = ""
 					end
 
@@ -2112,9 +2111,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					newMultiDD.Parent = newTab
 					newMultiDD.Visible = true
 
-					if CONFIGLOADED and CONFIG[NAMETAB][name] then
+					if CONFIGLOADED and CONFIG[NAMETAB][name] ~= nil then
 						default = CONFIG[NAMETAB][name]
-					else
+					elseif not CONFIGLOADED or CONFIG[NAMETAB][name] == nil then
 						CONFIG[NAMETAB][name] = {}
 					end
 

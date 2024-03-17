@@ -2052,6 +2052,8 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					end)
 
 					function self:Clear()
+                        selected = nil
+                        newDropdown.Select.Text = "None"
 						for _,item in pairs(newDropdown.Buttons.ScrollingFrame:GetChildren()) do
 							if item:IsA("TextButton") then
 								item:Destroy()

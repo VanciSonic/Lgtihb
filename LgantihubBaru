@@ -1722,7 +1722,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					end
 
 					if default == true then
-						callback(true)
+                        task.spawn(function()
+                            callback(true)
+                        end)
 					end
 
 					-- toggle func
@@ -1787,14 +1789,18 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 						Switch()
 						CONFIG[NAMETAB][name] = boolstate
 						SAVECONFIG()
-						callback(boolstate)
+                        task.spawn(function()
+                            callback(boolstate)
+                        end)
 					end
 
 					function self:Set(bool)
 						Set(bool)
 						CONFIG[NAMETAB][name] = bool
 						SAVECONFIG()
-						callback(bool)
+                        task.spawn(function()
+                            callback(bool)
+                        end)
 					end
 
 					if boolstate == false then
@@ -1848,7 +1854,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 
 					if default ~=  "" and default then
 						newTextbox.Textbox.Text = default
-						callback(newTextbox.Textbox.Text)
+                        task.spawn(function()
+                            callback(newTextbox.Textbox.Text)
+                        end)
 						CONFIG[NAMETAB][name] = newTextbox.Textbox.Text
 					end
 
@@ -1856,12 +1864,16 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					function self:Set(txt)
 						newTextbox.Textbox.Text = txt
 						CONFIG[NAMETAB][name] = txt
-						callback(txt)
+                        task.spawn(function()
+                            callback(txt)
+                        end)
 					end
 
 					newTextbox.Textbox.FocusLost:Connect(function()
 						CONFIG[NAMETAB][name] = newTextbox.Textbox.Text
-						callback(newTextbox.Textbox.Text)
+                        task.spawn(function()
+                            callback(newTextbox.Textbox.Text)
+                        end)
 					end)
 
 					return self
@@ -1940,7 +1952,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 
 							Tween(Fill, 0.2, { Size = UDim2.fromScale(Percent, 1) })
 							CONFIG[NAMETAB][name] = perc
-							callback(perc, newSlider)
+                            task.spawn(function()
+                                callback(perc, newSlider)
+                            end)
 						until MouseDown == false
 						SAVECONFIG()
 					end
@@ -1955,9 +1969,13 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 						Tween(Fill, 0.2, { Size = UDim2.fromScale(convertValueToScale(value), 1) })
 
 						CONFIG[NAMETAB][name] = value
-						callback(value, newSlider)
+                        task.spawn(function()
+                            callback(value, newSlider)
+                        end)
 					end
-					callback(default)
+                    task.spawn(function()
+                        callback(default)
+                    end)
 
 					-- start sliding
 					Trigger.MouseButton1Down:Connect(function()
@@ -2004,7 +2022,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					if default and default ~= "" then
 						newDropdown.Select.Text = default
 						CONFIG[NAMETAB][name] = default
-						callback(default)
+                        task.spawn(function()
+                            callback(default)
+                        end)
 					else
 						newDropdown.Select.Text = "None"
 					end
@@ -2042,7 +2062,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 						newOption.MouseButton1Click:Connect(function()
 							CONFIG[NAMETAB][name] = option
 							SAVECONFIG()
-							callback(option)
+                            task.spawn(function()
+                                callback(option)
+                            end)
 							Select(newOption)
 						end)
 					end
@@ -2052,6 +2074,8 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 					end)
 
 					function self:Clear()
+                        selected = nil
+                        newDropdown.Select.Text = "None"
 						for _,item in pairs(newDropdown.Buttons.ScrollingFrame:GetChildren()) do
 							if item:IsA("TextButton") then
 								item:Destroy()
@@ -2072,7 +2096,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 							newOption.MouseButton1Click:Connect(function()
 								CONFIG[NAMETAB][name] = option
 								SAVECONFIG()
-								callback(option)
+                                task.spawn(function()
+                                    callback(option)
+                                end)
 								Select(newOption)
 							end)
 						elseif type(options) == "table" then
@@ -2087,7 +2113,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 								newOption.MouseButton1Click:Connect(function()
 									CONFIG[NAMETAB][name] = option
 									SAVECONFIG()
-									callback(option)
+                                    task.spawn(function()
+                                        callback(option)
+                                    end)
 									Select(newOption)
 								end)
 							end
@@ -2121,11 +2149,15 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 
 					if type(default) == "table" and #default > 0 then
 						SAVECONFIG()
-						callback(default)
+                        task.spawn(function()
+                            callback(default)
+                        end)
 						newMultiDD.Select.Text = table.concat(default, ", ")
 					elseif type(default) == "string" and #default > 0 then
 						SAVECONFIG()
-						callback(default)
+                        task.spawn(function()
+                            callback(default)
+                        end)
 						newMultiDD.Select.Text = default
 					else
 						newMultiDD.Select.Text = "None"
@@ -2175,7 +2207,9 @@ GANTENGLIB_MODULES[GANTENGLIB["84"]] = {
 							Click(newOption)
 							CONFIG[NAMETAB][name] = selected
 							SAVECONFIG()
-							callback(selected)
+                            task.spawn(function()
+                                callback(selected)
+                            end)
 						end)
 					end
 

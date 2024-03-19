@@ -1,0 +1,1376 @@
+																															--[[
+	// Ganteng Hub Free UI LIBRARY \\
+	Author: SonicTuru, Chillz, Isnahamzah
+	This belongs to Ganteng Hub Developers.
+	
+	
+	// Credits \\
+	- Isnahamzah (CEO)
+	- SonicTuru (Ganteng Hub: Blox Fruit Developer)
+	- Chillz (UI Developer)
+
+	"kelaz 1 hari kelar" - Chillz
+	"multidropdown sama saveconfig gausah ya" - Isnahamzah
+	"ini buat ghub free?" - SonicTuru
+																															]]
+
+
+--// Source \\
+
+-- Instances: 79 | Scripts: 0 | Modules: 1
+local GANTENGHUB = {};
+
+-- Ganteng Hub
+GANTENGHUB["1"] = Instance.new("ScreenGui");
+GANTENGHUB["1"]["IgnoreGuiInset"] = true;
+GANTENGHUB["1"]["ScreenInsets"] = Enum.ScreenInsets.DeviceSafeInsets;
+GANTENGHUB["1"]["Name"] = [[Ganteng Hub]];
+GANTENGHUB["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
+GANTENGHUB["1"]["ResetOnSpawn"] = false;
+if game:GetService("RunService"):IsStudio() then
+	GANTENGHUB["1"].Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+else
+	GANTENGHUB["1"].Parent = gethui() or game.CoreGui
+end
+
+-- Ganteng Hub.MainFrame
+GANTENGHUB["2"] = Instance.new("Frame", GANTENGHUB["1"]);
+GANTENGHUB["2"]["BorderSizePixel"] = 0;
+GANTENGHUB["2"]["BackgroundColor3"] = Color3.fromRGB(32, 32, 32);
+GANTENGHUB["2"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["2"]["Size"] = UDim2.new(0, 535, 0, 311);
+GANTENGHUB["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["2"]["Position"] = UDim2.new(0.5015876293182373, 0, 0.49931600689888, 0);
+GANTENGHUB["2"]["Name"] = [[MainFrame]];
+GANTENGHUB["2"].Visible = false
+
+-- Ganteng Hub.MainFrame.UICorner
+GANTENGHUB["3"] = Instance.new("UICorner", GANTENGHUB["2"]);
+
+
+-- Ganteng Hub.MainFrame.TopFrame
+GANTENGHUB["4"] = Instance.new("Frame", GANTENGHUB["2"]);
+GANTENGHUB["4"]["BorderSizePixel"] = 0;
+GANTENGHUB["4"]["BackgroundColor3"] = Color3.fromRGB(23, 23, 23);
+GANTENGHUB["4"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["4"]["Size"] = UDim2.new(0, 535, 0, 34);
+GANTENGHUB["4"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["4"]["Position"] = UDim2.new(0.49971848726272583, 0, 0.05512426421046257, 0);
+GANTENGHUB["4"]["Name"] = [[TopFrame]];
+
+-- Ganteng Hub.MainFrame.TopFrame.UICorner
+GANTENGHUB["5"] = Instance.new("UICorner", GANTENGHUB["4"]);
+
+
+-- Ganteng Hub.MainFrame.TopFrame.BORDER
+GANTENGHUB["6"] = Instance.new("Frame", GANTENGHUB["4"]);
+GANTENGHUB["6"]["BorderSizePixel"] = 0;
+GANTENGHUB["6"]["BackgroundColor3"] = Color3.fromRGB(23, 23, 23);
+GANTENGHUB["6"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["6"]["Size"] = UDim2.new(0, 535, 0, 6);
+GANTENGHUB["6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["6"]["Position"] = UDim2.new(0.5, 0, 0.8928571343421936, 0);
+GANTENGHUB["6"]["Name"] = [[BORDER]];
+
+-- Ganteng Hub.MainFrame.TopFrame.ImageLabel
+GANTENGHUB["7"] = Instance.new("ImageLabel", GANTENGHUB["4"]);
+GANTENGHUB["7"]["BorderSizePixel"] = 0;
+GANTENGHUB["7"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["7"]["Image"] = [[rbxassetid://14601663040]];
+GANTENGHUB["7"]["Size"] = UDim2.new(0, 29, 0, 40);
+GANTENGHUB["7"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["7"]["BackgroundTransparency"] = 1;
+GANTENGHUB["7"]["Position"] = UDim2.new(0.014953271485865116, 0, 0.029411764815449715, 0);
+
+-- Ganteng Hub.MainFrame.TopFrame.ImageLabel.UIAspectRatioConstraint
+GANTENGHUB["8"] = Instance.new("UIAspectRatioConstraint", GANTENGHUB["7"]);
+
+
+-- Ganteng Hub.MainFrame.TopFrame.Exit
+GANTENGHUB["9"] = Instance.new("TextButton", GANTENGHUB["4"]);
+GANTENGHUB["9"]["Active"] = false;
+GANTENGHUB["9"]["BorderSizePixel"] = 0;
+GANTENGHUB["9"]["TextStrokeColor3"] = Color3.fromRGB(214, 214, 214);
+GANTENGHUB["9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["9"]["TextSize"] = 21;
+GANTENGHUB["9"]["FontFace"] = Font.new([[rbxasset://fonts/families/FredokaOne.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["9"]["TextColor3"] = Color3.fromRGB(186, 186, 186);
+GANTENGHUB["9"]["Selectable"] = false;
+GANTENGHUB["9"]["Size"] = UDim2.new(0, 33, 0, 33);
+GANTENGHUB["9"]["Name"] = [[Exit]];
+GANTENGHUB["9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["9"]["Text"] = [[X]];
+GANTENGHUB["9"]["Position"] = UDim2.new(0.9353365898132324, 0, -0.028999777510762215, 0);
+GANTENGHUB["9"]["BackgroundTransparency"] = 1;
+
+-- Ganteng Hub.MainFrame.TopFrame.Close
+GANTENGHUB["a"] = Instance.new("TextButton", GANTENGHUB["4"]);
+GANTENGHUB["a"]["Active"] = false;
+GANTENGHUB["a"]["BorderSizePixel"] = 0;
+GANTENGHUB["a"]["TextStrokeColor3"] = Color3.fromRGB(214, 214, 214);
+GANTENGHUB["a"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["a"]["TextSize"] = 21;
+GANTENGHUB["a"]["FontFace"] = Font.new([[rbxasset://fonts/families/FredokaOne.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["a"]["TextColor3"] = Color3.fromRGB(186, 186, 186);
+GANTENGHUB["a"]["Selectable"] = false;
+GANTENGHUB["a"]["Size"] = UDim2.new(0, 33, 0, 33);
+GANTENGHUB["a"]["Name"] = [[Close]];
+GANTENGHUB["a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["a"]["Text"] = [[-]];
+GANTENGHUB["a"]["Position"] = UDim2.new(0.873654305934906, 0, -0.028999777510762215, 0);
+GANTENGHUB["a"]["BackgroundTransparency"] = 1;
+
+-- Ganteng Hub.MainFrame.TopFrame.Title
+GANTENGHUB["b"] = Instance.new("TextLabel", GANTENGHUB["4"]);
+GANTENGHUB["b"]["BorderSizePixel"] = 0;
+GANTENGHUB["b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["b"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGHUB["b"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["b"]["TextStrokeColor3"] = Color3.fromRGB(214, 214, 214);
+GANTENGHUB["b"]["TextSize"] = 21;
+GANTENGHUB["b"]["TextColor3"] = Color3.fromRGB(186, 186, 186);
+GANTENGHUB["b"]["Size"] = UDim2.new(0, 200, 0, 33);
+GANTENGHUB["b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["b"]["Text"] = [[Ganteng Hub]];
+GANTENGHUB["b"]["Name"] = [[Title]];
+GANTENGHUB["b"]["BackgroundTransparency"] = 1;
+GANTENGHUB["b"]["Position"] = UDim2.new(0.08299999684095383, 0, -0.028999999165534973, 0);
+
+-- Ganteng Hub.MainFrame.TabFrame
+GANTENGHUB["c"] = Instance.new("Frame", GANTENGHUB["2"]);
+GANTENGHUB["c"]["BorderSizePixel"] = 0;
+GANTENGHUB["c"]["BackgroundColor3"] = Color3.fromRGB(23, 23, 23);
+GANTENGHUB["c"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["c"]["Size"] = UDim2.new(0, 383, 0, 263);
+GANTENGHUB["c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["c"]["Position"] = UDim2.new(0.6286904811859131, 0, 0.5523707270622253, 0);
+GANTENGHUB["c"]["Name"] = [[TabFrame]];
+
+-- Ganteng Hub.MainFrame.TabFrame.UICorner
+GANTENGHUB["d"] = Instance.new("UICorner", GANTENGHUB["c"]);
+GANTENGHUB["d"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.TabFrame.Tabs
+GANTENGHUB["e"] = Instance.new("Folder", GANTENGHUB["c"]);
+GANTENGHUB["e"]["Name"] = [[Tabs]];
+
+-- Ganteng Hub.MainFrame.UIStroke
+GANTENGHUB["f"] = Instance.new("UIStroke", GANTENGHUB["2"]);
+GANTENGHUB["f"]["Color"] = Color3.fromRGB(80, 80, 80);
+GANTENGHUB["f"]["Thickness"] = 2.0999999046325684;
+
+-- Ganteng Hub.MainFrame.SideFrame
+GANTENGHUB["10"] = Instance.new("Frame", GANTENGHUB["2"]);
+GANTENGHUB["10"]["BorderSizePixel"] = 0;
+GANTENGHUB["10"]["BackgroundColor3"] = Color3.fromRGB(23, 23, 23);
+GANTENGHUB["10"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["10"]["Size"] = UDim2.new(0, 130, 0, 263);
+GANTENGHUB["10"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["10"]["Position"] = UDim2.new(0.1371016800403595, 0, 0.5523707270622253, 0);
+GANTENGHUB["10"]["Name"] = [[SideFrame]];
+
+-- Ganteng Hub.MainFrame.SideFrame.UICorner
+GANTENGHUB["11"] = Instance.new("UICorner", GANTENGHUB["10"]);
+GANTENGHUB["11"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.SideFrame.ScrollingFrame
+GANTENGHUB["12"] = Instance.new("ScrollingFrame", GANTENGHUB["10"]);
+GANTENGHUB["12"]["Active"] = true;
+GANTENGHUB["12"]["BorderSizePixel"] = 0;
+GANTENGHUB["12"]["CanvasSize"] = UDim2.new(0, 0, 0, 1);
+GANTENGHUB["12"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["12"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
+GANTENGHUB["12"]["BackgroundTransparency"] = 1;
+GANTENGHUB["12"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGHUB["12"]["ScrollBarImageColor3"] = Color3.fromRGB(54, 54, 54);
+GANTENGHUB["12"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["12"]["ScrollBarThickness"] = 3;
+
+-- Ganteng Hub.MainFrame.SideFrame.ScrollingFrame.UIListLayout
+GANTENGHUB["13"] = Instance.new("UIListLayout", GANTENGHUB["12"]);
+GANTENGHUB["13"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Center;
+GANTENGHUB["13"]["Padding"] = UDim.new(0, 5);
+GANTENGHUB["13"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+
+-- Ganteng Hub.MainFrame.RESERVED
+GANTENGHUB["14"] = Instance.new("Frame", GANTENGHUB["2"]);
+GANTENGHUB["14"]["BorderSizePixel"] = 0;
+GANTENGHUB["14"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["14"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGHUB["14"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["14"]["Visible"] = false;
+GANTENGHUB["14"]["Name"] = [[RESERVED]];
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown
+GANTENGHUB["15"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["15"]["BorderSizePixel"] = 0;
+GANTENGHUB["15"]["AutoButtonColor"] = false;
+GANTENGHUB["15"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
+GANTENGHUB["15"]["Selectable"] = false;
+GANTENGHUB["15"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["15"]["Size"] = UDim2.new(0.9800000190734863, 0, 0, 30);
+GANTENGHUB["15"]["Name"] = [[Dropdown]];
+GANTENGHUB["15"]["ClipsDescendants"] = true;
+GANTENGHUB["15"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["15"]["Text"] = [[]];
+GANTENGHUB["15"]["Position"] = UDim2.new(0.5, 0, 0.8644906878471375, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.UICorner
+GANTENGHUB["16"] = Instance.new("UICorner", GANTENGHUB["15"]);
+GANTENGHUB["16"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.TextLabel
+GANTENGHUB["17"] = Instance.new("TextLabel", GANTENGHUB["15"]);
+GANTENGHUB["17"]["BorderSizePixel"] = 0;
+GANTENGHUB["17"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["17"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGHUB["17"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["17"]["TextStrokeColor3"] = Color3.fromRGB(214, 214, 214);
+GANTENGHUB["17"]["TextSize"] = 21;
+GANTENGHUB["17"]["TextColor3"] = Color3.fromRGB(132, 132, 132);
+GANTENGHUB["17"]["Size"] = UDim2.new(0, 358, 0, 26);
+GANTENGHUB["17"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["17"]["Text"] = [[Dropdown]];
+GANTENGHUB["17"]["BackgroundTransparency"] = 1;
+GANTENGHUB["17"]["Position"] = UDim2.new(0, 9, 0, 2);
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.Button
+GANTENGHUB["18"] = Instance.new("TextButton", GANTENGHUB["15"]);
+GANTENGHUB["18"]["BorderSizePixel"] = 0;
+GANTENGHUB["18"]["AutoButtonColor"] = false;
+GANTENGHUB["18"]["BackgroundColor3"] = Color3.fromRGB(50, 50, 50);
+GANTENGHUB["18"]["Selectable"] = false;
+GANTENGHUB["18"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["18"]["Size"] = UDim2.new(0, 115, 0, 24);
+GANTENGHUB["18"]["Name"] = [[Button]];
+GANTENGHUB["18"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["18"]["Text"] = [[]];
+GANTENGHUB["18"]["Position"] = UDim2.new(0, 308, 0, 15);
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.Button.UICorner
+GANTENGHUB["19"] = Instance.new("UICorner", GANTENGHUB["18"]);
+GANTENGHUB["19"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.Button.TextLabel
+GANTENGHUB["1a"] = Instance.new("TextLabel", GANTENGHUB["18"]);
+GANTENGHUB["1a"]["TextWrapped"] = true;
+GANTENGHUB["1a"]["BorderSizePixel"] = 0;
+GANTENGHUB["1a"]["TextScaled"] = true;
+GANTENGHUB["1a"]["BackgroundColor3"] = Color3.fromRGB(50, 50, 50);
+GANTENGHUB["1a"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGHUB["1a"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["1a"]["TextSize"] = 23;
+GANTENGHUB["1a"]["TextColor3"] = Color3.fromRGB(194, 194, 194);
+GANTENGHUB["1a"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["1a"]["Size"] = UDim2.new(1, 0, 0.8500000238418579, 0);
+GANTENGHUB["1a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["1a"]["Text"] = [[None]];
+GANTENGHUB["1a"]["BackgroundTransparency"] = 1;
+GANTENGHUB["1a"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.Button.UIPadding
+GANTENGHUB["1b"] = Instance.new("UIPadding", GANTENGHUB["18"]);
+GANTENGHUB["1b"]["PaddingLeft"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.Dropdown
+GANTENGHUB["1c"] = Instance.new("TextButton", GANTENGHUB["15"]);
+GANTENGHUB["1c"]["BorderSizePixel"] = 0;
+GANTENGHUB["1c"]["AutoButtonColor"] = false;
+GANTENGHUB["1c"]["BackgroundColor3"] = Color3.fromRGB(25, 25, 25);
+GANTENGHUB["1c"]["Selectable"] = false;
+GANTENGHUB["1c"]["Size"] = UDim2.new(0, 367, 0, 128);
+GANTENGHUB["1c"]["Name"] = [[Dropdown]];
+GANTENGHUB["1c"]["ClipsDescendants"] = true;
+GANTENGHUB["1c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["1c"]["Text"] = [[]];
+GANTENGHUB["1c"]["Position"] = UDim2.new(0, 4, 0, 35);
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.Dropdown.UICorner
+GANTENGHUB["1d"] = Instance.new("UICorner", GANTENGHUB["1c"]);
+GANTENGHUB["1d"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.Dropdown.ScrollingFrame
+GANTENGHUB["1e"] = Instance.new("ScrollingFrame", GANTENGHUB["1c"]);
+GANTENGHUB["1e"]["Active"] = true;
+GANTENGHUB["1e"]["BorderSizePixel"] = 0;
+GANTENGHUB["1e"]["CanvasSize"] = UDim2.new(0, 0, 0, 1);
+GANTENGHUB["1e"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["1e"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
+GANTENGHUB["1e"]["BackgroundTransparency"] = 1;
+GANTENGHUB["1e"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGHUB["1e"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["1e"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["1e"]["ScrollBarThickness"] = 0;
+
+-- Ganteng Hub.MainFrame.RESERVED.Dropdown.Dropdown.ScrollingFrame.UIListLayout
+GANTENGHUB["1f"] = Instance.new("UIListLayout", GANTENGHUB["1e"]);
+GANTENGHUB["1f"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Center;
+GANTENGHUB["1f"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+
+-- Ganteng Hub.MainFrame.RESERVED.Toggle
+GANTENGHUB["20"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["20"]["BorderSizePixel"] = 0;
+GANTENGHUB["20"]["AutoButtonColor"] = false;
+GANTENGHUB["20"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
+GANTENGHUB["20"]["Selectable"] = false;
+GANTENGHUB["20"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["20"]["Size"] = UDim2.new(0.9800000786781311, 0, -0.09514562785625458, 55);
+GANTENGHUB["20"]["Name"] = [[Toggle]];
+GANTENGHUB["20"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["20"]["Text"] = [[]];
+GANTENGHUB["20"]["Position"] = UDim2.new(0.5, 0, 0.05922330170869827, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Toggle.UICorner
+GANTENGHUB["21"] = Instance.new("UICorner", GANTENGHUB["20"]);
+GANTENGHUB["21"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Toggle.TextLabel
+GANTENGHUB["22"] = Instance.new("TextLabel", GANTENGHUB["20"]);
+GANTENGHUB["22"]["BorderSizePixel"] = 0;
+GANTENGHUB["22"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["22"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGHUB["22"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["22"]["TextStrokeColor3"] = Color3.fromRGB(214, 214, 214);
+GANTENGHUB["22"]["TextSize"] = 21;
+GANTENGHUB["22"]["TextColor3"] = Color3.fromRGB(132, 132, 132);
+GANTENGHUB["22"]["Size"] = UDim2.new(0, 358, 0, 26);
+GANTENGHUB["22"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["22"]["Text"] = [[Toggle]];
+GANTENGHUB["22"]["BackgroundTransparency"] = 1;
+GANTENGHUB["22"]["Position"] = UDim2.new(0, 9, 0, 2);
+
+-- Ganteng Hub.MainFrame.RESERVED.Toggle.Bar
+GANTENGHUB["23"] = Instance.new("Frame", GANTENGHUB["20"]);
+GANTENGHUB["23"]["BorderSizePixel"] = 0;
+GANTENGHUB["23"]["BackgroundColor3"] = Color3.fromRGB(58, 58, 58);
+GANTENGHUB["23"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["23"]["Size"] = UDim2.new(0, 48, 0, 20);
+GANTENGHUB["23"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["23"]["Position"] = UDim2.new(0.9125058650970459, 0, 0.49180328845977783, 0);
+GANTENGHUB["23"]["Name"] = [[Bar]];
+
+-- Ganteng Hub.MainFrame.RESERVED.Toggle.Bar.UICorner
+GANTENGHUB["24"] = Instance.new("UICorner", GANTENGHUB["23"]);
+GANTENGHUB["24"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Toggle.Bar.Switch
+GANTENGHUB["25"] = Instance.new("Frame", GANTENGHUB["23"]);
+GANTENGHUB["25"]["BorderSizePixel"] = 0;
+GANTENGHUB["25"]["BackgroundColor3"] = Color3.fromRGB(136, 136, 136);
+GANTENGHUB["25"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["25"]["Size"] = UDim2.new(0, 23, 0, 23);
+GANTENGHUB["25"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["25"]["Position"] = UDim2.new(0.25, 0, 0.5, 0);
+GANTENGHUB["25"]["Name"] = [[Switch]];
+
+-- Ganteng Hub.MainFrame.RESERVED.Toggle.Bar.Switch.UICorner
+GANTENGHUB["26"] = Instance.new("UICorner", GANTENGHUB["25"]);
+GANTENGHUB["26"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Toggle.Bar.Switch.UIAspectRatioConstraint
+GANTENGHUB["27"] = Instance.new("UIAspectRatioConstraint", GANTENGHUB["25"]);
+
+
+-- Ganteng Hub.MainFrame.RESERVED.Label
+GANTENGHUB["28"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["28"]["BorderSizePixel"] = 0;
+GANTENGHUB["28"]["AutoButtonColor"] = false;
+GANTENGHUB["28"]["BackgroundColor3"] = Color3.fromRGB(41, 41, 41);
+GANTENGHUB["28"]["Selectable"] = false;
+GANTENGHUB["28"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["28"]["Size"] = UDim2.new(0.9800000786781311, 0, -0.09514562785625458, 55);
+GANTENGHUB["28"]["Name"] = [[Label]];
+GANTENGHUB["28"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["28"]["Text"] = [[]];
+GANTENGHUB["28"]["Position"] = UDim2.new(0.5, 0, 0.05922330170869827, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Label.UICorner
+GANTENGHUB["29"] = Instance.new("UICorner", GANTENGHUB["28"]);
+GANTENGHUB["29"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Label.Title
+GANTENGHUB["2a"] = Instance.new("TextLabel", GANTENGHUB["28"]);
+GANTENGHUB["2a"]["BorderSizePixel"] = 0;
+GANTENGHUB["2a"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["2a"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGHUB["2a"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["2a"]["TextStrokeColor3"] = Color3.fromRGB(214, 214, 214);
+GANTENGHUB["2a"]["TextSize"] = 21;
+GANTENGHUB["2a"]["TextColor3"] = Color3.fromRGB(186, 186, 186);
+GANTENGHUB["2a"]["Size"] = UDim2.new(0, 358, 0, 26);
+GANTENGHUB["2a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["2a"]["Name"] = [[Title]];
+GANTENGHUB["2a"]["BackgroundTransparency"] = 1;
+GANTENGHUB["2a"]["Position"] = UDim2.new(0, 9, 0, 2);
+
+-- Ganteng Hub.MainFrame.RESERVED.Line
+GANTENGHUB["2b"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["2b"]["BorderSizePixel"] = 0;
+GANTENGHUB["2b"]["AutoButtonColor"] = false;
+GANTENGHUB["2b"]["BackgroundColor3"] = Color3.fromRGB(61, 61, 61);
+GANTENGHUB["2b"]["Selectable"] = false;
+GANTENGHUB["2b"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["2b"]["Size"] = UDim2.new(0.9800000786781311, 0, -0.19223301112651825, 55);
+GANTENGHUB["2b"]["Name"] = [[Line]];
+GANTENGHUB["2b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["2b"]["Text"] = [[]];
+GANTENGHUB["2b"]["Position"] = UDim2.new(0.5, 0, 0.5621359348297119, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Line.UICorner
+GANTENGHUB["2c"] = Instance.new("UICorner", GANTENGHUB["2b"]);
+GANTENGHUB["2c"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Seperator
+GANTENGHUB["2d"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["2d"]["BorderSizePixel"] = 0;
+GANTENGHUB["2d"]["AutoButtonColor"] = false;
+GANTENGHUB["2d"]["BackgroundColor3"] = Color3.fromRGB(61, 61, 61);
+GANTENGHUB["2d"]["Selectable"] = false;
+GANTENGHUB["2d"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["2d"]["Size"] = UDim2.new(0.9800000786781311, 0, -0.19223301112651825, 55);
+GANTENGHUB["2d"]["Name"] = [[Seperator]];
+GANTENGHUB["2d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["2d"]["Text"] = [[]];
+GANTENGHUB["2d"]["Position"] = UDim2.new(0.5, 0, 0.5621359348297119, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Seperator.UICorner
+GANTENGHUB["2e"] = Instance.new("UICorner", GANTENGHUB["2d"]);
+GANTENGHUB["2e"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Seperator.TextLabel
+GANTENGHUB["2f"] = Instance.new("TextLabel", GANTENGHUB["2d"]);
+GANTENGHUB["2f"]["BorderSizePixel"] = 0;
+GANTENGHUB["2f"]["BackgroundColor3"] = Color3.fromRGB(23, 23, 23);
+GANTENGHUB["2f"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["2f"]["TextSize"] = 14;
+GANTENGHUB["2f"]["TextColor3"] = Color3.fromRGB(132, 132, 132);
+GANTENGHUB["2f"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["2f"]["Size"] = UDim2.new(0, 150, 0, 7);
+GANTENGHUB["2f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["2f"]["Text"] = [[Seperator]];
+GANTENGHUB["2f"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider
+GANTENGHUB["30"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["30"]["BorderSizePixel"] = 0;
+GANTENGHUB["30"]["AutoButtonColor"] = false;
+GANTENGHUB["30"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
+GANTENGHUB["30"]["Selectable"] = false;
+GANTENGHUB["30"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["30"]["Size"] = UDim2.new(0.9800000786781311, 0, 0.013592232950031757, 55);
+GANTENGHUB["30"]["Name"] = [[Slider]];
+GANTENGHUB["30"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["30"]["Text"] = [[]];
+GANTENGHUB["30"]["Position"] = UDim2.new(0.5, 0, 0.8436893224716187, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.UICorner
+GANTENGHUB["31"] = Instance.new("UICorner", GANTENGHUB["30"]);
+GANTENGHUB["31"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.TextLabel
+GANTENGHUB["32"] = Instance.new("TextLabel", GANTENGHUB["30"]);
+GANTENGHUB["32"]["BorderSizePixel"] = 0;
+GANTENGHUB["32"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["32"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGHUB["32"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["32"]["TextStrokeColor3"] = Color3.fromRGB(214, 214, 214);
+GANTENGHUB["32"]["TextSize"] = 21;
+GANTENGHUB["32"]["TextColor3"] = Color3.fromRGB(132, 132, 132);
+GANTENGHUB["32"]["Size"] = UDim2.new(0, 358, 0, 26);
+GANTENGHUB["32"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["32"]["Text"] = [[Slider]];
+GANTENGHUB["32"]["BackgroundTransparency"] = 1;
+GANTENGHUB["32"]["Position"] = UDim2.new(0, 9, 0, 2);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.Frame
+GANTENGHUB["33"] = Instance.new("Frame", GANTENGHUB["30"]);
+GANTENGHUB["33"]["BorderSizePixel"] = 0;
+GANTENGHUB["33"]["BackgroundColor3"] = Color3.fromRGB(50, 50, 50);
+GANTENGHUB["33"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["33"]["Size"] = UDim2.new(0, 47, 0, 24);
+GANTENGHUB["33"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["33"]["Position"] = UDim2.new(0, 341, 0, 15);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.Frame.TextBox
+GANTENGHUB["34"] = Instance.new("TextBox", GANTENGHUB["33"]);
+GANTENGHUB["34"]["BorderSizePixel"] = 0;
+GANTENGHUB["34"]["TextSize"] = 23;
+GANTENGHUB["34"]["TextWrapped"] = true;
+GANTENGHUB["34"]["TextScaled"] = true;
+GANTENGHUB["34"]["BackgroundColor3"] = Color3.fromRGB(50, 50, 50);
+GANTENGHUB["34"]["TextColor3"] = Color3.fromRGB(194, 194, 194);
+GANTENGHUB["34"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["34"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["34"]["BackgroundTransparency"] = 1;
+GANTENGHUB["34"]["PlaceholderText"] = [[...]];
+GANTENGHUB["34"]["Size"] = UDim2.new(1, 0, 0.8500000238418579, 0);
+GANTENGHUB["34"]["Selectable"] = false;
+GANTENGHUB["34"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["34"]["Text"] = [[]];
+GANTENGHUB["34"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.Frame.UICorner
+GANTENGHUB["35"] = Instance.new("UICorner", GANTENGHUB["33"]);
+GANTENGHUB["35"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.Background
+GANTENGHUB["36"] = Instance.new("TextButton", GANTENGHUB["30"]);
+GANTENGHUB["36"]["BorderSizePixel"] = 0;
+GANTENGHUB["36"]["AutoButtonColor"] = false;
+GANTENGHUB["36"]["BackgroundColor3"] = Color3.fromRGB(50, 50, 50);
+GANTENGHUB["36"]["Selectable"] = false;
+GANTENGHUB["36"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["36"]["Size"] = UDim2.new(0, 356, 0, 18);
+GANTENGHUB["36"]["Name"] = [[Background]];
+GANTENGHUB["36"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["36"]["Text"] = [[]];
+GANTENGHUB["36"]["Position"] = UDim2.new(0.49754875898361206, 0, 0.7411251664161682, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.Background.UICorner
+GANTENGHUB["37"] = Instance.new("UICorner", GANTENGHUB["36"]);
+GANTENGHUB["37"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.Background.Fill
+GANTENGHUB["38"] = Instance.new("TextButton", GANTENGHUB["36"]);
+GANTENGHUB["38"]["BorderSizePixel"] = 0;
+GANTENGHUB["38"]["AutoButtonColor"] = false;
+GANTENGHUB["38"]["BackgroundColor3"] = Color3.fromRGB(99, 99, 99);
+GANTENGHUB["38"]["Selectable"] = false;
+GANTENGHUB["38"]["Size"] = UDim2.new(0.9992977380752563, 0, 1, 0);
+GANTENGHUB["38"]["Name"] = [[Fill]];
+GANTENGHUB["38"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["38"]["Text"] = [[]];
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.Background.Fill.UICorner
+GANTENGHUB["39"] = Instance.new("UICorner", GANTENGHUB["38"]);
+GANTENGHUB["39"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Slider.Background.Trigger
+GANTENGHUB["3a"] = Instance.new("TextButton", GANTENGHUB["36"]);
+GANTENGHUB["3a"]["BorderSizePixel"] = 0;
+GANTENGHUB["3a"]["AutoButtonColor"] = false;
+GANTENGHUB["3a"]["BackgroundColor3"] = Color3.fromRGB(50, 50, 50);
+GANTENGHUB["3a"]["Selectable"] = false;
+GANTENGHUB["3a"]["Size"] = UDim2.new(1, 0, 1, 0);
+GANTENGHUB["3a"]["Name"] = [[Trigger]];
+GANTENGHUB["3a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["3a"]["Text"] = [[]];
+GANTENGHUB["3a"]["BackgroundTransparency"] = 1;
+
+-- Ganteng Hub.MainFrame.RESERVED.Textbox
+GANTENGHUB["3b"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["3b"]["BorderSizePixel"] = 0;
+GANTENGHUB["3b"]["AutoButtonColor"] = false;
+GANTENGHUB["3b"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
+GANTENGHUB["3b"]["Selectable"] = false;
+GANTENGHUB["3b"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["3b"]["Size"] = UDim2.new(0.9800000786781311, 0, -0.09514562785625458, 55);
+GANTENGHUB["3b"]["Name"] = [[Textbox]];
+GANTENGHUB["3b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["3b"]["Text"] = [[]];
+GANTENGHUB["3b"]["Position"] = UDim2.new(0.5, 0, 0.05922330170869827, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Textbox.UICorner
+GANTENGHUB["3c"] = Instance.new("UICorner", GANTENGHUB["3b"]);
+GANTENGHUB["3c"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Textbox.TextLabel
+GANTENGHUB["3d"] = Instance.new("TextLabel", GANTENGHUB["3b"]);
+GANTENGHUB["3d"]["BorderSizePixel"] = 0;
+GANTENGHUB["3d"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["3d"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGHUB["3d"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["3d"]["TextStrokeColor3"] = Color3.fromRGB(214, 214, 214);
+GANTENGHUB["3d"]["TextSize"] = 21;
+GANTENGHUB["3d"]["TextColor3"] = Color3.fromRGB(132, 132, 132);
+GANTENGHUB["3d"]["Size"] = UDim2.new(0, 358, 0, 26);
+GANTENGHUB["3d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["3d"]["Text"] = [[Textbox]];
+GANTENGHUB["3d"]["BackgroundTransparency"] = 1;
+GANTENGHUB["3d"]["Position"] = UDim2.new(0, 9, 0, 2);
+
+-- Ganteng Hub.MainFrame.RESERVED.Textbox.Frame
+GANTENGHUB["3e"] = Instance.new("Frame", GANTENGHUB["3b"]);
+GANTENGHUB["3e"]["BorderSizePixel"] = 0;
+GANTENGHUB["3e"]["BackgroundColor3"] = Color3.fromRGB(50, 50, 50);
+GANTENGHUB["3e"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["3e"]["Size"] = UDim2.new(0, 79, 0, 24);
+GANTENGHUB["3e"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["3e"]["Position"] = UDim2.new(0.869877815246582, 0, 0.49180328845977783, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Textbox.Frame.TextBox
+GANTENGHUB["3f"] = Instance.new("TextBox", GANTENGHUB["3e"]);
+GANTENGHUB["3f"]["BorderSizePixel"] = 0;
+GANTENGHUB["3f"]["TextSize"] = 23;
+GANTENGHUB["3f"]["TextWrapped"] = true;
+GANTENGHUB["3f"]["TextScaled"] = true;
+GANTENGHUB["3f"]["BackgroundColor3"] = Color3.fromRGB(50, 50, 50);
+GANTENGHUB["3f"]["TextColor3"] = Color3.fromRGB(194, 194, 194);
+GANTENGHUB["3f"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["3f"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["3f"]["BackgroundTransparency"] = 1;
+GANTENGHUB["3f"]["PlaceholderText"] = [[...]];
+GANTENGHUB["3f"]["Size"] = UDim2.new(1, 0, 0.8500000238418579, 0);
+GANTENGHUB["3f"]["Selectable"] = false;
+GANTENGHUB["3f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["3f"]["Text"] = [[]];
+GANTENGHUB["3f"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Textbox.Frame.UICorner
+GANTENGHUB["40"] = Instance.new("UICorner", GANTENGHUB["3e"]);
+GANTENGHUB["40"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Button
+GANTENGHUB["41"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["41"]["BorderSizePixel"] = 0;
+GANTENGHUB["41"]["AutoButtonColor"] = false;
+GANTENGHUB["41"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
+GANTENGHUB["41"]["Selectable"] = false;
+GANTENGHUB["41"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["41"]["Size"] = UDim2.new(0.9800000786781311, 0, -0.09514562785625458, 55);
+GANTENGHUB["41"]["Name"] = [[Button]];
+GANTENGHUB["41"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["41"]["Text"] = [[]];
+GANTENGHUB["41"]["Position"] = UDim2.new(0.5, 0, 0.05922330170869827, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.Button.UICorner
+GANTENGHUB["42"] = Instance.new("UICorner", GANTENGHUB["41"]);
+GANTENGHUB["42"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Button.TextLabel
+GANTENGHUB["43"] = Instance.new("TextLabel", GANTENGHUB["41"]);
+GANTENGHUB["43"]["BorderSizePixel"] = 0;
+GANTENGHUB["43"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["43"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGHUB["43"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["43"]["TextStrokeColor3"] = Color3.fromRGB(214, 214, 214);
+GANTENGHUB["43"]["TextSize"] = 21;
+GANTENGHUB["43"]["TextColor3"] = Color3.fromRGB(132, 132, 132);
+GANTENGHUB["43"]["Size"] = UDim2.new(0, 358, 0, 26);
+GANTENGHUB["43"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["43"]["Text"] = [[Button]];
+GANTENGHUB["43"]["BackgroundTransparency"] = 1;
+GANTENGHUB["43"]["Position"] = UDim2.new(0, 9, 0, 2);
+
+-- Ganteng Hub.MainFrame.RESERVED.SideButton
+GANTENGHUB["44"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["44"]["BorderSizePixel"] = 0;
+GANTENGHUB["44"]["AutoButtonColor"] = false;
+GANTENGHUB["44"]["BackgroundColor3"] = Color3.fromRGB(23, 23, 23);
+GANTENGHUB["44"]["Selectable"] = false;
+GANTENGHUB["44"]["Size"] = UDim2.new(0, 130, 0, 31);
+GANTENGHUB["44"]["Name"] = [[SideButton]];
+GANTENGHUB["44"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["44"]["Text"] = [[]];
+
+-- Ganteng Hub.MainFrame.RESERVED.SideButton.Icon
+GANTENGHUB["45"] = Instance.new("ImageLabel", GANTENGHUB["44"]);
+GANTENGHUB["45"]["BorderSizePixel"] = 0;
+GANTENGHUB["45"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["45"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["45"]["Size"] = UDim2.new(0, 25, 0, 25);
+GANTENGHUB["45"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["45"]["Name"] = [[Icon]];
+GANTENGHUB["45"]["BackgroundTransparency"] = 1;
+GANTENGHUB["45"]["Position"] = UDim2.new(0.13099999725818634, 0, 0.5, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.SideButton.Icon.UIAspectRatioConstraint
+GANTENGHUB["46"] = Instance.new("UIAspectRatioConstraint", GANTENGHUB["45"]);
+
+
+-- Ganteng Hub.MainFrame.RESERVED.SideButton.TextLabel
+GANTENGHUB["47"] = Instance.new("TextLabel", GANTENGHUB["44"]);
+GANTENGHUB["47"]["BorderSizePixel"] = 0;
+GANTENGHUB["47"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["47"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+GANTENGHUB["47"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["47"]["TextSize"] = 18;
+GANTENGHUB["47"]["TextColor3"] = Color3.fromRGB(181, 181, 181);
+GANTENGHUB["47"]["AnchorPoint"] = Vector2.new(0, 0.5);
+GANTENGHUB["47"]["Size"] = UDim2.new(0, 95, 0, 20);
+GANTENGHUB["47"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["47"]["Text"] = [[Button]];
+GANTENGHUB["47"]["BackgroundTransparency"] = 1;
+GANTENGHUB["47"]["Position"] = UDim2.new(0.26899999380111694, 0, 0.5, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.SideButton.UICorner
+GANTENGHUB["48"] = Instance.new("UICorner", GANTENGHUB["44"]);
+GANTENGHUB["48"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.MainFrame.RESERVED.Tab
+GANTENGHUB["49"] = Instance.new("ScrollingFrame", GANTENGHUB["14"]);
+GANTENGHUB["49"]["Active"] = true;
+GANTENGHUB["49"]["ScrollingDirection"] = Enum.ScrollingDirection.Y;
+GANTENGHUB["49"]["BorderSizePixel"] = 0;
+GANTENGHUB["49"]["CanvasSize"] = UDim2.new(0, 0, 0, 0);
+GANTENGHUB["49"]["TopImage"] = [[rbxasset://textures/ui/Scroll/scroll-middle.png]];
+GANTENGHUB["49"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+GANTENGHUB["49"]["AutomaticCanvasSize"] = Enum.AutomaticSize.Y;
+GANTENGHUB["49"]["BackgroundTransparency"] = 1;
+GANTENGHUB["49"]["Size"] = UDim2.new(1, 0, 0.9790874719619751, 0);
+GANTENGHUB["49"]["ScrollBarImageColor3"] = Color3.fromRGB(54, 54, 54);
+GANTENGHUB["49"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["49"]["ScrollBarThickness"] = 3;
+GANTENGHUB["49"]["Position"] = UDim2.new(0, 0, 0.017000000923871994, 0);
+GANTENGHUB["49"]["Name"] = [[Tab]];
+GANTENGHUB["49"]["BottomImage"] = [[rbxasset://textures/ui/Scroll/scroll-middle.png]];
+
+-- Ganteng Hub.MainFrame.RESERVED.Tab.UIListLayout
+GANTENGHUB["4a"] = Instance.new("UIListLayout", GANTENGHUB["49"]);
+GANTENGHUB["4a"]["HorizontalAlignment"] = Enum.HorizontalAlignment.Center;
+GANTENGHUB["4a"]["Padding"] = UDim.new(0, 5);
+GANTENGHUB["4a"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+
+-- Ganteng Hub.MainFrame.RESERVED.DropdownButton
+GANTENGHUB["4b"] = Instance.new("TextButton", GANTENGHUB["14"]);
+GANTENGHUB["4b"]["BorderSizePixel"] = 0;
+GANTENGHUB["4b"]["AutoButtonColor"] = false;
+GANTENGHUB["4b"]["BackgroundColor3"] = Color3.fromRGB(29, 29, 29);
+GANTENGHUB["4b"]["TextSize"] = 14;
+GANTENGHUB["4b"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+GANTENGHUB["4b"]["TextColor3"] = Color3.fromRGB(132, 132, 132);
+GANTENGHUB["4b"]["Size"] = UDim2.new(0, 367, 0, 20);
+GANTENGHUB["4b"]["Name"] = [[DropdownButton]];
+GANTENGHUB["4b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+
+-- Ganteng Hub.MainFrame.RESERVED.DropdownButton.UICorner
+GANTENGHUB["4c"] = Instance.new("UICorner", GANTENGHUB["4b"]);
+GANTENGHUB["4c"]["CornerRadius"] = UDim.new(0, 5);
+
+-- Ganteng Hub.LIBRARY
+GANTENGHUB["4d"] = Instance.new("ModuleScript", GANTENGHUB["1"]);
+GANTENGHUB["4d"]["Name"] = [[LIBRARY]];
+
+-- Ganteng Hub.FloatingIcon
+GANTENGHUB["4e"] = Instance.new("ImageButton", GANTENGHUB["1"]);
+GANTENGHUB["4e"]["BorderSizePixel"] = 0;
+GANTENGHUB["4e"]["BackgroundColor3"] = Color3.fromRGB(23, 23, 23);
+GANTENGHUB["4e"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+GANTENGHUB["4e"]["Image"] = [[rbxassetid://14601663040]];
+GANTENGHUB["4e"]["Size"] = UDim2.new(0, 55, 0, 55);
+GANTENGHUB["4e"]["Name"] = [[FloatingIcon]];
+GANTENGHUB["4e"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+GANTENGHUB["4e"]["Visible"] = false;
+GANTENGHUB["4e"]["Position"] = UDim2.new(0.11238337308168411, 0, 0.11969904601573944, 0);
+
+-- Ganteng Hub.FloatingIcon.UICorner
+GANTENGHUB["4f"] = Instance.new("UICorner", GANTENGHUB["4e"]);
+
+
+-- Require GANTENGHUB wrapper
+local GANTENGHUB_REQUIRE = require;
+local GANTENGHUB_MODULES = {};
+local function require(Module:ModuleScript)
+	local ModuleState = GANTENGHUB_MODULES[Module];
+	if ModuleState then
+		if not ModuleState.Required then
+			ModuleState.Required = true;
+			ModuleState.Value = ModuleState.Closure();
+		end
+		return ModuleState.Value;
+	end;
+	return GANTENGHUB_REQUIRE(Module);
+end
+
+GANTENGHUB_MODULES[GANTENGHUB["4d"]] = {
+	Closure = function()
+		local script = GANTENGHUB["4d"];
+		local LIBRARY = {}
+
+		-- Services
+		local UserInputService = game:GetService("UserInputService")
+		local Players = game:GetService("Players")
+		local TweenService = game:GetService("TweenService")
+		local HttpService = game:GetService("HttpService")
+		local LocalPlayer = Players.LocalPlayer
+		local RunService = game:GetService("RunService")
+		local LocalPlayer = Players.LocalPlayer
+		-- Variables
+		local GUI = script.Parent
+		local GUIFrame = GUI.MainFrame
+		local FloatingIcon = GUI.FloatingIcon
+		local durationTween = 0.2
+		local TabClaimed = false
+		-- Function
+		local function Tween(ins, duration, prop)
+			local tween = TweenService:Create(ins, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), prop)
+			tween:Play()
+			return tween
+		end
+		local function SyncDurTween(ins, prop) -- tween but duration already set
+			local tween = TweenService:Create(ins, TweenInfo.new(durationTween, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), prop)
+			tween:Play()
+			return tween
+		end
+
+		local function EnableDrag(Frame)
+			local dragToggle
+			local dragSpeed = .25
+			local dragInput
+			local dragStart
+			local dragPos
+
+			local function updateInput(input)
+				local Delta = input.Position - dragStart
+				local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+				TweenService:Create(Frame, TweenInfo.new(.1), {Position = Position}):Play()
+			end
+
+			Frame.InputBegan:Connect(function(input)
+				if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+					dragToggle = true
+					dragStart = input.Position
+					startPos = Frame.Position
+					input.Changed:Connect(function()
+						if (input.UserInputState == Enum.UserInputState.End) then
+							dragToggle = false
+						end
+					end)
+				end
+			end)
+
+			Frame.InputChanged:Connect(function(input)
+				if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+					dragInput = input
+				end
+			end)
+
+			game:GetService("UserInputService").InputChanged:Connect(function(input)
+				if (input == dragInput and dragToggle) then
+					updateInput(input)
+				end
+			end)
+		end
+
+		function LIBRARY:Window(title, icon)
+			local self = setmetatable({}, LIBRARY)
+			local newWindow = GUIFrame:Clone()
+
+			local MainFrame = newWindow
+			local SideFrame = MainFrame.SideFrame
+			local TopFrame = MainFrame.TopFrame
+			local TabFrame = MainFrame.TabFrame
+			local Reserved = MainFrame.RESERVED
+			local Tabs = TabFrame.Tabs
+			local newFloating = GUI.FloatingIcon:Clone()
+
+			newWindow.Parent = GUI
+			newWindow.Name = title
+			newWindow.Visible = true
+			EnableDrag(newWindow)
+			GUIFrame.Visible = false
+
+			newFloating.Visible = false
+			newFloating.Name = "Floating"..title
+			newFloating.Parent = GUI
+			FloatingIcon.Visible = false
+			EnableDrag(newFloating)
+
+			-- Misc Button Handler
+			local exiting = false
+			TopFrame.Exit.MouseButton1Click:Connect(function()
+				if exiting then
+					GUI:Destroy()
+				else
+					task.spawn(function()
+						SyncDurTween(TopFrame.Exit, { TextColor3 = Color3.fromRGB(220,0,0)})
+						exiting = true
+						task.wait(1.5)
+						SyncDurTween(TopFrame.Exit, { TextColor3 = Color3.fromRGB(220,220,220)})
+						exiting = false
+					end)
+				end
+			end)
+
+			TopFrame.Close.MouseButton1Click:Connect(function()
+				task.spawn(function()
+			--[[local tw = SyncDurTween(newWindow, { Size = UDim2.new(0, 0,0,0)})
+			tw.Completed:Wait()]]
+					newWindow.Visible = false
+				end)
+
+				task.spawn(function()
+					newFloating.Visible = true
+					newFloating.Size = UDim2.new(0,0,0,0)
+					local tw = SyncDurTween(newFloating, { Size = UDim2.new(0, 55,0,55)})
+					tw.Completed:Wait()
+				end)
+
+			end)
+			newFloating.MouseButton1Click:Connect(function()
+				task.spawn(function()
+					newWindow.Visible = true
+			--[[local tw = SyncDurTween(newWindow, { Size = UDim2.new(0, 535,0,311)})
+			tw.Completed:Wait()]]
+				end)
+
+				task.spawn(function()
+					local tw = SyncDurTween(newFloating, { Size = UDim2.new(0, 0,0,0)})
+					tw.Completed:Wait()
+					newFloating.Visible = false
+				end)
+			end)
+
+			-- [[[[[[[[[]]]]]]]]] 
+
+
+
+			-- UI LIBRARY FUNCTION HANDLER
+
+			function self:AddTab(name, imgID)
+				local TAB = setmetatable({}, self)
+				local newButtonTab = Reserved.SideButton:Clone()
+				newButtonTab.Name = name
+				newButtonTab.Parent = SideFrame.ScrollingFrame
+
+
+
+				if not string.find(imgID, "rbxassetid://", 1, true) then
+					imgID = "rbxassetid://"..imgID
+				end
+				newButtonTab.Icon.Image = imgID
+				newButtonTab.TextLabel.Text = name
+
+				local newTab = Reserved.Tab:Clone()
+				newTab.Name = name
+				newTab.Parent = Tabs
+				newTab.Visible = false
+
+				if not TabClaimed then
+					newButtonTab.BackgroundColor3 = Color3.fromRGB(40,40,40)
+					newTab.Visible = true
+					TabClaimed = true
+				end
+
+				newButtonTab.MouseButton1Click:Connect(function()
+					Tabs[name].Visible = true
+					SyncDurTween(newButtonTab, { BackgroundColor3 = Color3.fromRGB(40,40,40)})
+					for i,v in pairs(Tabs:GetChildren()) do
+						if v:IsA("ScrollingFrame") then
+							if v.Name ~= name then
+								v.Visible = false
+							end
+						end
+					end
+					for i,v in pairs(SideFrame.ScrollingFrame:GetChildren()) do
+						if v:IsA("TextButton") then
+							if v.Name ~= name then
+								SyncDurTween(v, { BackgroundColor3 = Color3.fromRGB(22,22,22)})
+							end
+						end
+					end
+
+				end)
+
+				-- Element handler
+				function TAB:AddLabel(text)
+					local self = setmetatable({}, TAB)
+					local newLabel = Reserved.Label:Clone()
+					newLabel.Parent = newTab
+					newLabel.Name = text
+
+					newLabel.Title.Text = text
+					newLabel.Visible = true
+
+					function self:Set(txt)
+						newLabel.Title.Text = txt
+					end
+
+					return self
+				end
+				function TAB:AddLabel1(text)
+					local self = setmetatable({}, TAB)
+					local newLabel = Reserved.Label:Clone()
+					newLabel.Parent = newTab
+					newLabel.Name = text
+
+					newLabel.Title.Text = text
+					newLabel.Visible = true
+
+					function self:Set(txt)
+						newLabel.Title.Text = txt
+					end
+
+					return self
+				end
+
+				function TAB:AddLine(name)
+					local self = setmetatable({}, TAB)
+
+					local newLine = Reserved.Line:Clone()
+					newLine.Parent = newTab
+					newLine.Name = name or "Line"
+
+					return self
+				end
+				function TAB:AddLine1(name)
+					local self = setmetatable({}, TAB)
+
+					local newLine = Reserved.Line:Clone()
+					newLine.Parent = newTab
+					newLine.Name = name or "Line"
+
+					return self
+				end
+
+				function TAB:AddSeperator(name)
+					local self = setmetatable({}, TAB)
+
+					local newLine = Reserved.Seperator:Clone()
+					newLine.Parent = newTab
+					newLine.Name = name or "Seperator"
+					newLine.TextLabel.Text = name or ""
+
+					function self:Set(txt)
+						newLine.TextLabel.Text = txt
+					end
+
+					return self
+				end
+
+				function TAB:AddButton(name, callback)
+					local self = setmetatable({}, TAB)
+
+					local newButton = Reserved.Button:Clone()
+					newButton.Name = name
+					newButton.Parent = newTab
+					newButton.TextLabel.Text = name
+
+					function self:Set(txt)
+						newButton.TextLabel.Text = txt
+					end
+
+					newButton.MouseButton1Click:Connect(function()
+						task.spawn(function()
+							local tw = Tween(newButton, 0.1 ,{BackgroundColor3 = Color3.fromRGB(24,24,24)})
+							callback()
+							tw.Completed:Wait()
+							Tween(newButton, 0.1 ,{BackgroundColor3 = Color3.fromRGB(30,30,30)})
+						end)
+					end)
+
+					return self
+				end
+
+				function TAB:AddToggle(name, default, callback)
+					local self = setmetatable({}, TAB)
+
+					local newToggle = Reserved.Toggle:Clone()
+					newToggle.Name = name
+					newToggle.Parent = newTab
+					newToggle.TextLabel.Text = name
+
+					default = default or false
+					local state = default
+					if default == true then
+						newToggle.Bar.BackgroundColor3 = Color3.fromRGB(99,99,99)
+						newToggle.Bar.Switch.BackgroundColor3 = Color3.fromRGB(225,225,225)
+
+						newToggle.Bar.Switch.Position = UDim2.new(0.75, 0,0.5, 0)
+					end
+
+					local function Set(bool)
+						if bool == true then
+							SyncDurTween(newToggle.Bar, {BackgroundColor3 = Color3.fromRGB(99,99,99)})
+							SyncDurTween(newToggle.Bar.Switch, {BackgroundColor3 = Color3.fromRGB(225,225,225)})
+
+							SyncDurTween(newToggle.Bar.Switch, {Position = UDim2.new(0.75,0,0.5,0)})
+						elseif bool == false then
+							SyncDurTween(newToggle.Bar, {BackgroundColor3 = Color3.fromRGB(57,57,57)})
+							SyncDurTween(newToggle.Bar.Switch, {BackgroundColor3 = Color3.fromRGB(135,135,135)})
+
+							SyncDurTween(newToggle.Bar.Switch, {Position = UDim2.new(0.25,0,0.5,0)})
+						end
+						state = bool
+					end
+
+					function self:Set(bool)
+						Set(bool)
+						task.spawn(function()
+							callback(bool)
+						end)
+					end
+
+					function self:Switch()
+						if state then
+							Set(false)
+						elseif not state then
+							Set(true)
+						end
+						task.spawn(function()
+							callback(state)
+						end)
+					end
+
+					newToggle.MouseButton1Click:Connect(function()
+						self:Switch()
+					end)
+
+					return self
+				end
+
+				function TAB:AddTextbox(name, cof, callback)
+					local self = setmetatable({}, TAB)
+					local newTextbox = Reserved.Textbox:Clone()
+
+					newTextbox.Name = name
+					newTextbox.Frame.TextBox.ClearTextOnFocus = cof
+					newTextbox.Parent = newTab
+					newTextbox.TextLabel.Text = name
+
+					newTextbox.Frame.TextBox.FocusLost:Connect(function()
+						if newTextbox.Frame.TextBox.Text ~= "" then
+							task.spawn(function()
+								callback(newTextbox.Frame.TextBox.Text)
+							end)
+						end
+					end)
+
+					function self:Set(txt)
+						newTextbox.Frame.TextBox.Text = txt
+						task.spawn(function()
+							callback(newTextbox.Frame.TextBox.Text)
+						end)
+					end
+
+					return self
+				end
+
+				function TAB:AddSlider(name, min, max, default, callback, inc)
+					local self = setmetatable({}, TAB)
+					local newSlider = Reserved.Slider:Clone()
+
+					newSlider.Parent = newTab
+					newSlider.Name = name
+
+					newSlider.Visible = true
+					newSlider.TextLabel.Text = name
+
+					-- Source slider daur ulang awkoakwoawkaowkaowo
+
+					local Mouse = LocalPlayer:GetMouse()
+					local tweenServ = TweenService
+
+					local Trigger = newSlider.Background.Trigger
+					local Label = newSlider.Frame.TextBox
+					local Fill = newSlider.Background.Fill
+					local Parent = newSlider.Background
+
+					local perc
+					local Percent
+					local MouseDown = false
+					local delayTw = durationTween
+
+					inc = inc or 1
+
+					local function convertValueToScale(value)
+						return (value - min) / (max - min) * (1 - 0) + 0
+					end
+
+
+					Label.Text = tostring(default) or tostring(min)
+					Fill.Size = UDim2.fromScale(convertValueToScale(default), 1)
+
+					-- this also update
+					local function Slide()
+						MouseDown = true
+						repeat
+							task.wait()
+							Percent = math.clamp((Mouse.X - Parent.AbsolutePosition.X) / Parent.AbsoluteSize.X, 0, 1)
+							perc = min + (Percent * (max - min))
+
+							-- Calculate the rounded value with the specified precision
+							local roundedValue = math.round(perc / inc) * inc
+
+							-- Clamp the value to the specified range
+							perc = math.clamp(roundedValue, min, max)
+
+							-- fix float integer problem
+							local function fixInt(number, decimalPlaces)
+								local multiplier = 10 ^ decimalPlaces
+								return math.floor(number * multiplier + 0.5) / multiplier
+							end
+
+							local amountDecimal = tostring(inc)
+							amountDecimal:gsub("%d+.","")
+							amountDecimal = #amountDecimal
+							perc = fixInt(perc,tonumber(amountDecimal))
+
+							Label.Text = perc
+
+							Tween(Fill, 0.2, { Size = UDim2.fromScale(Percent, 1) })
+							task.spawn(function()
+								callback(perc, newSlider)
+							end)
+						until MouseDown == false
+					end
+
+					local function Update(value)
+						if not value then
+							return
+						elseif value > max or value < min or not value then
+							return
+						end
+
+						Tween(Fill, 0.2, { Size = UDim2.fromScale(convertValueToScale(value), 1) })
+
+						task.spawn(function()
+							callback(value, newSlider)
+						end)
+					end
+					task.spawn(function()
+						callback(default)
+					end)
+
+					-- start sliding
+					Trigger.MouseButton1Down:Connect(function()
+						Slide()
+					end)
+
+					-- stop sliding
+					UserInputService.InputEnded:Connect(function(input)
+						if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+							MouseDown = false
+						end
+					end)
+
+					newSlider.Frame.TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+						Update(tonumber(newSlider.Frame.TextBox.Text))
+					end)
+
+					function self:Set(value)
+						Update(value)
+					end
+
+					return self
+				end
+
+				function TAB:AddDropdown(name, options, callback, default)
+					local self = setmetatable({}, TAB)
+					local stateDD = false
+					local selected
+
+					local newDropdown = Reserved.Dropdown:Clone()
+					newDropdown.Name = name
+					newDropdown.Parent = newTab
+					newDropdown.TextLabel.Text = name
+
+					if default and default ~= "" then
+						newDropdown.Button.TextLabel.Text = default
+						selected = default
+						task.spawn(function()
+							callback(default)
+						end)
+					else
+						newDropdown.Button.TextLabel.Text = "None"
+					end
+
+					local function ToggleDD()
+						if stateDD == false then
+							stateDD = not stateDD -- open
+							SyncDurTween(newDropdown, { Size = UDim2.new(0.98, 0,0.436, 55) })
+						elseif stateDD == true then
+							stateDD = not stateDD -- close
+							SyncDurTween(newDropdown, { Size = UDim2.new(0.98, 0,0, 30) })
+						end
+					end
+
+					local function Select(object)
+						SyncDurTween(object, { BackgroundColor3 = Color3.fromRGB(49,49,49) })
+						newDropdown.Button.TextLabel.Text = object.Text
+						selected = object.Text
+						for _, otherobject in pairs(newDropdown.Dropdown.ScrollingFrame:GetChildren()) do
+							if otherobject:IsA("TextButton") and otherobject ~= object then
+								SyncDurTween(otherobject, { BackgroundColor3 = Color3.fromRGB(28,28,28) })
+							end
+						end
+					end
+
+					local function Add(options)
+						if type(options) == "string" then
+							local option = options
+							local newOption = Reserved.DropdownButton:Clone()
+
+							newOption.Name = option
+							newOption.Text = option
+							newOption.Parent = newDropdown.Dropdown.ScrollingFrame
+							newOption.Visible = true
+
+							newOption.MouseButton1Click:Connect(function()
+								Select(newOption)
+								ToggleDD()
+								task.spawn(function()
+									callback(option)
+								end)
+							end)
+						elseif type(options) == "table" then
+							for _, option in pairs(options) do
+								local newOption = Reserved.DropdownButton:Clone()
+
+								newOption.Name = option
+								newOption.Text = option
+								newOption.Parent = newDropdown.Dropdown.ScrollingFrame
+								newOption.Visible = true
+
+								newOption.MouseButton1Click:Connect(function()
+									Select(newOption)
+									ToggleDD()
+									task.spawn(function()
+										callback(option)
+									end)
+								end)
+							end
+						elseif options and type(options) ~= "table" or "string" then
+							error('"string" or "table" expected, got "'..type(options)..'"')
+						end 
+					end
+
+					Add(options)
+
+					function self:Add(options)
+						Add(options)
+					end
+					function self:Set(option)
+						for i,v in pairs(newDropdown.Dropdown.ScrollingFrame:GetChildren()) do
+							if v:IsA("TextButton") then
+								if v.Name == option then
+									Select(v)
+									task.spawn(function()
+										callback(option)
+									end)
+								end
+							end
+						end
+					end
+
+					function self:Clear()
+						selected = nil
+						newDropdown.Button.TextLabel.Text = "None"
+						for _,item in pairs(newDropdown.Dropdown.ScrollingFrame:GetChildren()) do
+							if item:IsA("TextButton") then
+								item:Destroy()
+							end
+						end
+					end
+
+					newDropdown.MouseButton1Click:Connect(function()
+						ToggleDD()
+					end)
+					newDropdown.Button.MouseButton1Click:Connect(function()
+						ToggleDD()
+					end)
+
+					return self
+				end
+
+				return TAB
+			end
+
+			return self
+		end
+
+		return LIBRARY
+	end;
+};
+
+return require(GANTENGHUB["4d"])

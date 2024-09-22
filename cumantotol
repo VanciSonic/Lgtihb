@@ -1,4 +1,4 @@
--- kaitun bf 2
+print("KONTOLLLLLLLLLLLLLLLLLLLLLLL")
 
 PosX = 1
 PosY = 30
@@ -14,8 +14,6 @@ _G.FastAttack = true
 _G.FastAttackDelay = "0.175"
 _G.RemoveHit = true
 _G.Auto_Stats_Kaitun = true
-
-print("KONTOLLLLLLLLLLLLLLLLLLLLLLL")
 
 -- auto join team
 if game.Players.LocalPlayer.Team == nil then

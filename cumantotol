@@ -15,6 +15,8 @@ _G.FastAttackDelay = "0.175"
 _G.RemoveHit = true
 _G.Auto_Stats_Kaitun = true
 
+print("KONTOLLLLLLLLLLLLLLLLLLLLLLL")
+
 -- auto join team
 if game.Players.LocalPlayer.Team == nil then
     repeat task.wait() until game:IsLoaded()
@@ -36,6 +38,8 @@ if game.Players.LocalPlayer.Team == nil then
         task.wait()
     until player.Team ~= nil and game:IsLoaded()
 end
+
+
 
 wait(1.5)
 
@@ -197,6 +201,8 @@ spawn(function()
 		wait(3)
     end
 end)
+
+print("KONTOLLLLLLLLLLLLLLLLLLLLLLL")
 
 --------------- Code
 

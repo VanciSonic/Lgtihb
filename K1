@@ -1402,7 +1402,7 @@ function RcHub:Window(GuiConfig)
                 OpenSection = true
                 UpdateSizeSection()
             elseif AlwaysOpen == false then
-                OpenSection = true
+                OpenSection = false
                 UpdateSizeSection()
             else
                 OpenSection = false

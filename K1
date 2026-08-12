@@ -18,11 +18,27 @@ ConfigData       = {}
 Elements         = {}
 CURRENT_VERSION  = nil
 
+local _saveScheduled = false
 function SaveConfig()
-    if writefile then
+    if not writefile then return end
+    if _saveScheduled then return end
+    _saveScheduled = true
+    task.delay(0.75, function()
+        _saveScheduled = false
         ConfigData._version = CURRENT_VERSION
+        pcall(function()
+            writefile(ConfigFile, HttpService:JSONEncode(ConfigData))
+        end)
+    end)
+end
+
+function SaveConfigNow()
+    if not writefile then return end
+    _saveScheduled = false
+    ConfigData._version = CURRENT_VERSION
+    pcall(function()
         writefile(ConfigFile, HttpService:JSONEncode(ConfigData))
-    end
+    end)
 end
 
 function LoadConfigFromFile()
@@ -1909,15 +1925,18 @@ function RcHub:Window(GuiConfig)
                     ToggleFunc:Set(ToggleFunc.Value)
                 end)
 
-                function ToggleFunc:Set(Value)
-                    if typeof(ToggleConfig.Callback) == "function" then
-                        local ok, err = pcall(function()
-                            ToggleConfig.Callback(Value)
-                        end)
-                        if not ok then warn("Toggle Callback error:", err) end
-                    end
+                function ToggleFunc:Set(Value, silent)
+                    ToggleFunc.Value = Value
                     ConfigData[configKey] = Value
-                    SaveConfig()
+                    if not silent then
+                        if typeof(ToggleConfig.Callback) == "function" then
+                            local ok, err = pcall(function()
+                                ToggleConfig.Callback(Value)
+                            end)
+                            if not ok then warn("Toggle Callback error:", err) end
+                        end
+                        SaveConfig()
+                    end
                     if Value then
                         TweenService:Create(ToggleTitle, TweenInfo.new(0.2), { TextColor3 = GuiConfig.Color }):Play()
                         TweenService:Create(ToggleCircle, TweenInfo.new(0.2), { Position = UDim2.new(0, 15, 0, 0) })
@@ -1937,7 +1956,7 @@ function RcHub:Window(GuiConfig)
                     end
                 end
 
-                ToggleFunc:Set(ToggleFunc.Value)
+                ToggleFunc:Set(ToggleFunc.Value, true)
                 CountItem = CountItem + 1
                 Elements[configKey] = ToggleFunc
                 return ToggleFunc
@@ -2287,15 +2306,17 @@ function RcHub:Window(GuiConfig)
                 InputTextBox.Size = UDim2.new(1, -10, 1, -8)
                 InputTextBox.Name = "InputTextBox"
                 InputTextBox.Parent = InputFrame
-                function InputFunc:Set(Value)
-                    InputTextBox.Text = Value
+                function InputFunc:Set(Value, silent)
+                    InputTextBox.Text = tostring(Value or "")
                     InputFunc.Value = Value
-                    InputConfig.Callback(Value)
                     ConfigData[configKey] = Value
-                    SaveConfig()
+                    if not silent then
+                        pcall(function() InputConfig.Callback(Value) end)
+                        SaveConfig()
+                    end
                 end
 
-                InputFunc:Set(InputFunc.Value)
+                InputFunc:Set(InputFunc.Value, true)
 
                 InputTextBox.FocusLost:Connect(function()
                     InputFunc:Set(InputTextBox.Text)
@@ -2557,7 +2578,7 @@ function RcHub:Window(GuiConfig)
                     end)
                 end
 
-                function DropdownFunc:Set(Value)
+                function DropdownFunc:Set(Value, silent)
                     if DropdownConfig.Multi then
                         DropdownFunc.Value = type(Value) == "table" and Value or {}
                     else
@@ -2565,7 +2586,9 @@ function RcHub:Window(GuiConfig)
                     end
 
                     ConfigData[configKey] = DropdownFunc.Value
-                    SaveConfig()
+                    if not silent then
+                        SaveConfig()
+                    end
 
                     local texts = {}
                     for _, Drop in ScrollSelect:GetChildren() do
@@ -2595,12 +2618,12 @@ function RcHub:Window(GuiConfig)
                         and (DropdownConfig.Multi and "Select Options" or "Select Option")
                         or table.concat(texts, ", ")
 
-                    if DropdownConfig.Callback then
+                    if not silent and DropdownConfig.Callback then
                         if DropdownConfig.Multi then
-                            DropdownConfig.Callback(DropdownFunc.Value)
+                            pcall(DropdownConfig.Callback, DropdownFunc.Value)
                         else
                             local str = (DropdownFunc.Value ~= nil) and tostring(DropdownFunc.Value) or ""
-                            DropdownConfig.Callback(str)
+                            pcall(DropdownConfig.Callback, str)
                         end
                     end
                 end
@@ -2613,7 +2636,7 @@ function RcHub:Window(GuiConfig)
                     return self.Value
                 end
 
-                function DropdownFunc:SetValues(newList, selecting)
+                function DropdownFunc:SetValues(newList, selecting, silent)
                     newList = newList or {}
                     selecting = selecting or (DropdownConfig.Multi and {} or nil)
                     DropdownFunc:Clear()
@@ -2621,10 +2644,10 @@ function RcHub:Window(GuiConfig)
                         DropdownFunc:AddOption(v)
                     end
                     DropdownFunc.Options = newList
-                    DropdownFunc:Set(selecting)
+                    DropdownFunc:Set(selecting, silent)
                 end
 
-                DropdownFunc:SetValues(DropdownFunc.Options, DropdownFunc.Value)
+                DropdownFunc:SetValues(DropdownFunc.Options, DropdownFunc.Value, true)
 
                 CountItem = CountItem + 1
                 CountDropdown = CountDropdown + 1

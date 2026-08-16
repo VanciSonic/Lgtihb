@@ -1378,22 +1378,53 @@ function RcHub:Window(GuiConfig)
                 ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, OffsetY)
             end
 
+            local function GetSectionSize()
+                local SectionSizeYWitdh = 38
+
+                for _, v in SectionAdd:GetChildren() do
+                    if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+                        SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
+                    end
+                end
+
+                return SectionSizeYWitdh
+            end
+
+            local function RecalculateSectionSize()
+                if not OpenSection then
+                    return
+                end
+
+                local SectionSizeYWitdh = GetSectionSize()
+
+                -- Do not tween here. This function is also used while
+                -- elements are being created, so the section must be
+                -- resized immediately to prevent late elements from
+                -- being clipped/hidden until the user reopens it.
+                Section.Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
+                SectionAdd.Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
+                SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
+                FeatureFrame.Rotation = 90
+
+                UpdateSizeScroll()
+            end
+
             local function UpdateSizeSection()
                 if OpenSection then
-                    local SectionSizeYWitdh = 38
-                    for _, v in SectionAdd:GetChildren() do
-                        if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
-                            SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
-                        end
-                    end
+                    local SectionSizeYWitdh = GetSectionSize()
+
                     TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 90 }):Play()
-                    TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, SectionSizeYWitdh) })
-                        :Play()
-                    TweenService:Create(SectionAdd, TweenInfo.new(0.5),
-                        { Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38) }):Play()
-                    TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(1, 0, 0, 2) }):Play()
-                    task.wait(0.5)
-                    UpdateSizeScroll()
+                    TweenService:Create(Section, TweenInfo.new(0.5), {
+                        Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
+                    }):Play()
+                    TweenService:Create(SectionAdd, TweenInfo.new(0.5), {
+                        Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
+                    }):Play()
+                    TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), {
+                        Size = UDim2.new(1, 0, 0, 2)
+                    }):Play()
+
+                    task.delay(0.5, UpdateSizeScroll)
                 end
             end
 
@@ -1429,21 +1460,36 @@ function RcHub:Window(GuiConfig)
 
             if AlwaysOpen == true or AlwaysOpen == false then
                 OpenSection = true
-                local SectionSizeYWitdh = 38
-                for _, v in SectionAdd:GetChildren() do
-                    if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
-                        SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
-                    end
-                end
-                FeatureFrame.Rotation = 90
-                Section.Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
-                SectionAdd.Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
-                SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
-                UpdateSizeScroll()
+                RecalculateSectionSize()
             end
 
-            SectionAdd.ChildAdded:Connect(UpdateSizeSection)
-            SectionAdd.ChildRemoved:Connect(UpdateSizeSection)
+            -- Elements are added to SectionAdd after AddSection() returns.
+            -- Recalculate on the next scheduler step so the new element's
+            -- size/layout has already been applied.
+            local SectionRefreshQueued = false
+
+            local function QueueSectionRefresh()
+                if SectionRefreshQueued then
+                    return
+                end
+
+                SectionRefreshQueued = true
+
+                task.defer(function()
+                    task.wait()
+                    SectionRefreshQueued = false
+                    RecalculateSectionSize()
+                end)
+            end
+
+            SectionAdd.ChildAdded:Connect(QueueSectionRefresh)
+            SectionAdd.ChildRemoved:Connect(QueueSectionRefresh)
+
+            -- Final pass after the current UI construction tick.
+            task.defer(function()
+                task.wait()
+                RecalculateSectionSize()
+            end)
 
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then

@@ -1404,7 +1404,10 @@ function RcHub:Window(GuiConfig)
                 Section.Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
                 SectionAdd.Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
                 SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
-                FeatureFrame.Rotation = 90
+
+                if FeatureFrame and FeatureFrame.Parent then
+                    FeatureFrame.Rotation = 90
+                end
 
                 UpdateSizeScroll()
             end
@@ -1429,13 +1432,20 @@ function RcHub:Window(GuiConfig)
             end
 
             if AlwaysOpen == true then
+                -- AlwaysOpen sections start open and cannot be toggled.
+                -- Do NOT call UpdateSizeSection() here: there are no
+                -- children yet, so it would start a 0.5s tween toward
+                -- the empty 38px size and later override the real size
+                -- while Add* elements are being created.
                 SectionButton:Destroy()
-                FeatureFrame:Destroy()
+                FeatureFrame.Visible = false
                 OpenSection = true
-                UpdateSizeSection()
+
             elseif AlwaysOpen == false then
-                OpenSection = false
-                UpdateSizeSection()
+                -- false keeps the original API behavior: start open,
+                -- but allow the user to collapse/reopen the section.
+                OpenSection = true
+
             else
                 OpenSection = false
             end
@@ -1459,6 +1469,9 @@ function RcHub:Window(GuiConfig)
             end
 
             if AlwaysOpen == true or AlwaysOpen == false then
+                -- Start open without creating an empty-section tween.
+                -- Each Add* function calls RecalculateSectionSize()
+                -- after its element is fully constructed.
                 OpenSection = true
                 RecalculateSectionSize()
             end

@@ -1463,33 +1463,10 @@ function RcHub:Window(GuiConfig)
                 RecalculateSectionSize()
             end
 
-            -- Elements are added to SectionAdd after AddSection() returns.
-            -- Recalculate on the next scheduler step so the new element's
-            -- size/layout has already been applied.
-            local SectionRefreshQueued = false
-
-            local function QueueSectionRefresh()
-                if SectionRefreshQueued then
-                    return
-                end
-
-                SectionRefreshQueued = true
-
-                task.defer(function()
-                    task.wait()
-                    SectionRefreshQueued = false
-                    RecalculateSectionSize()
-                end)
-            end
-
-            SectionAdd.ChildAdded:Connect(QueueSectionRefresh)
-            SectionAdd.ChildRemoved:Connect(QueueSectionRefresh)
-
-            -- Final pass after the current UI construction tick.
-            task.defer(function()
-                task.wait()
-                RecalculateSectionSize()
-            end)
+            -- Section children are created synchronously by the Add* methods below.
+            -- Do NOT use task.defer/task.delay from ChildAdded here: in some Roblox
+            -- execution contexts that callback loses the Instance/Plugin capability.
+            -- Each Add* method performs a direct refresh after its element is complete.
 
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then
@@ -1610,6 +1587,7 @@ function RcHub:Window(GuiConfig)
                 end
 
                 CountItem = CountItem + 1
+                RecalculateSectionSize()
                 return ParagraphFunc
             end
 
@@ -1769,6 +1747,7 @@ function RcHub:Window(GuiConfig)
                 end
 
                 CountItem = CountItem + 1
+                RecalculateSectionSize()
                 return PanelFunc
             end
 
@@ -1829,6 +1808,7 @@ function RcHub:Window(GuiConfig)
                 end
 
                 CountItem = CountItem + 1
+                RecalculateSectionSize()
             end
 
             function Items:AddToggle(ToggleConfig)
@@ -2005,6 +1985,7 @@ function RcHub:Window(GuiConfig)
 
                 ToggleFunc:Set(ToggleFunc.Value, true)
                 CountItem = CountItem + 1
+                RecalculateSectionSize()
                 Elements[configKey] = ToggleFunc
                 return ToggleFunc
             end
@@ -2237,6 +2218,7 @@ function RcHub:Window(GuiConfig)
                 end)
                 SliderFunc:Set(SliderConfig.Default)
                 CountItem = CountItem + 1
+                RecalculateSectionSize()
                 Elements[configKey] = SliderFunc
                 return SliderFunc
             end
@@ -2369,6 +2351,7 @@ function RcHub:Window(GuiConfig)
                     InputFunc:Set(InputTextBox.Text)
                 end)
                 CountItem = CountItem + 1
+                RecalculateSectionSize()
                 Elements[configKey] = InputFunc
                 return InputFunc
             end
@@ -2697,6 +2680,7 @@ function RcHub:Window(GuiConfig)
                 DropdownFunc:SetValues(DropdownFunc.Options, DropdownFunc.Value, true)
 
                 CountItem = CountItem + 1
+                RecalculateSectionSize()
                 CountDropdown = CountDropdown + 1
                 Elements[configKey] = DropdownFunc
                 return DropdownFunc
@@ -2727,6 +2711,7 @@ function RcHub:Window(GuiConfig)
                 UICorner.Parent = Divider
 
                 CountItem = CountItem + 1
+                RecalculateSectionSize()
                 return Divider
             end
 
@@ -2761,6 +2746,7 @@ function RcHub:Window(GuiConfig)
                 Label.TextXAlignment = Enum.TextXAlignment.Left
 
                 CountItem = CountItem + 1
+                RecalculateSectionSize()
                 return SubSection
             end
 

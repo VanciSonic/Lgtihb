@@ -1249,6 +1249,7 @@ function RcHub:Window(GuiConfig)
             Section.ClipsDescendants = true
             Section.LayoutOrder = 1
             Section.Size = UDim2.new(1, 0, 0, 30)
+            Section.AutomaticSize = Enum.AutomaticSize.None
             Section.Name = "Section"
             Section.Parent = ScrolLayers
 
@@ -1356,6 +1357,7 @@ function RcHub:Window(GuiConfig)
             SectionAdd.LayoutOrder = 1
             SectionAdd.Position = UDim2.new(0.5, 0, 0, 38)
             SectionAdd.Size = UDim2.new(1, 0, 0, 100)
+            SectionAdd.AutomaticSize = Enum.AutomaticSize.None
             SectionAdd.Name = "SectionAdd"
             SectionAdd.Parent = Section
 
@@ -1378,74 +1380,42 @@ function RcHub:Window(GuiConfig)
                 ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, OffsetY)
             end
 
-            local function GetSectionSize()
-                local SectionSizeYWitdh = 38
-
-                for _, v in SectionAdd:GetChildren() do
-                    if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
-                        SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
-                    end
-                end
-
-                return SectionSizeYWitdh
-            end
-
-            local function RecalculateSectionSize()
-                if not OpenSection then
-                    return
-                end
-
-                local SectionSizeYWitdh = GetSectionSize()
-
-                -- Do not tween here. This function is also used while
-                -- elements are being created, so the section must be
-                -- resized immediately to prevent late elements from
-                -- being clipped/hidden until the user reopens it.
-                Section.Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
-                SectionAdd.Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
-                SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
-
-                if FeatureFrame and FeatureFrame.Parent then
-                    FeatureFrame.Rotation = 90
-                end
-
-                UpdateSizeScroll()
-            end
-
             local function UpdateSizeSection()
                 if OpenSection then
-                    local SectionSizeYWitdh = GetSectionSize()
-
+                    local SectionSizeYWitdh = 38
+                    for _, v in SectionAdd:GetChildren() do
+                        if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+                            SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
+                        end
+                    end
                     TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 90 }):Play()
-                    TweenService:Create(Section, TweenInfo.new(0.5), {
-                        Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
-                    }):Play()
-                    TweenService:Create(SectionAdd, TweenInfo.new(0.5), {
-                        Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
-                    }):Play()
-                    TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), {
-                        Size = UDim2.new(1, 0, 0, 2)
-                    }):Play()
-
-                    task.delay(0.5, UpdateSizeScroll)
+                    TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, SectionSizeYWitdh) })
+                        :Play()
+                    TweenService:Create(SectionAdd, TweenInfo.new(0.5),
+                        { Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38) }):Play()
+                    TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(1, 0, 0, 2) }):Play()
+                    task.wait(0.5)
+                    UpdateSizeScroll()
                 end
             end
 
             if AlwaysOpen == true then
-                -- AlwaysOpen sections start open and cannot be toggled.
-                -- Do NOT call UpdateSizeSection() here: there are no
-                -- children yet, so it would start a 0.5s tween toward
-                -- the empty 38px size and later override the real size
-                -- while Add* elements are being created.
+                -- Always-open sections use Roblox AutomaticSize instead of
+                -- ChildAdded/task callbacks. This lets UIListLayout calculate
+                -- the final height as elements are added, without yielding or
+                -- touching Instances from a ChildAdded callback.
                 SectionButton:Destroy()
-                FeatureFrame.Visible = false
+                FeatureFrame:Destroy()
                 OpenSection = true
+
+                Section.AutomaticSize = Enum.AutomaticSize.Y
+                SectionAdd.AutomaticSize = Enum.AutomaticSize.Y
+                SectionAdd.Size = UDim2.new(1, 0, 0, 0)
+                SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
 
             elseif AlwaysOpen == false then
-                -- false keeps the original API behavior: start open,
-                -- but allow the user to collapse/reopen the section.
-                OpenSection = true
-
+                OpenSection = false
+                UpdateSizeSection()
             else
                 OpenSection = false
             end
@@ -1468,18 +1438,27 @@ function RcHub:Window(GuiConfig)
                 end)
             end
 
-            if AlwaysOpen == true or AlwaysOpen == false then
-                -- Start open without creating an empty-section tween.
-                -- Each Add* function calls RecalculateSectionSize()
-                -- after its element is fully constructed.
+            if AlwaysOpen == true then
+                -- AutomaticSize handles the final size after all Add* calls.
+                -- Do not calculate children here because AddSection runs before
+                -- the caller has created the section's elements.
                 OpenSection = true
-                RecalculateSectionSize()
-            end
+                UpdateSizeScroll()
 
-            -- Section children are created synchronously by the Add* methods below.
-            -- Do NOT use task.defer/task.delay from ChildAdded here: in some Roblox
-            -- execution contexts that callback loses the Instance/Plugin capability.
-            -- Each Add* method performs a direct refresh after its element is complete.
+            elseif AlwaysOpen == false then
+                OpenSection = true
+                local SectionSizeYWitdh = 38
+                for _, v in SectionAdd:GetChildren() do
+                    if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+                        SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
+                    end
+                end
+                FeatureFrame.Rotation = 90
+                Section.Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
+                SectionAdd.Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
+                SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
+                UpdateSizeScroll()
+            end
 
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then
@@ -1600,7 +1579,6 @@ function RcHub:Window(GuiConfig)
                 end
 
                 CountItem = CountItem + 1
-                RecalculateSectionSize()
                 return ParagraphFunc
             end
 
@@ -1760,7 +1738,6 @@ function RcHub:Window(GuiConfig)
                 end
 
                 CountItem = CountItem + 1
-                RecalculateSectionSize()
                 return PanelFunc
             end
 
@@ -1821,7 +1798,6 @@ function RcHub:Window(GuiConfig)
                 end
 
                 CountItem = CountItem + 1
-                RecalculateSectionSize()
             end
 
             function Items:AddToggle(ToggleConfig)
@@ -1998,7 +1974,6 @@ function RcHub:Window(GuiConfig)
 
                 ToggleFunc:Set(ToggleFunc.Value, true)
                 CountItem = CountItem + 1
-                RecalculateSectionSize()
                 Elements[configKey] = ToggleFunc
                 return ToggleFunc
             end
@@ -2231,7 +2206,6 @@ function RcHub:Window(GuiConfig)
                 end)
                 SliderFunc:Set(SliderConfig.Default)
                 CountItem = CountItem + 1
-                RecalculateSectionSize()
                 Elements[configKey] = SliderFunc
                 return SliderFunc
             end
@@ -2364,7 +2338,6 @@ function RcHub:Window(GuiConfig)
                     InputFunc:Set(InputTextBox.Text)
                 end)
                 CountItem = CountItem + 1
-                RecalculateSectionSize()
                 Elements[configKey] = InputFunc
                 return InputFunc
             end
@@ -2693,7 +2666,6 @@ function RcHub:Window(GuiConfig)
                 DropdownFunc:SetValues(DropdownFunc.Options, DropdownFunc.Value, true)
 
                 CountItem = CountItem + 1
-                RecalculateSectionSize()
                 CountDropdown = CountDropdown + 1
                 Elements[configKey] = DropdownFunc
                 return DropdownFunc
@@ -2724,7 +2696,6 @@ function RcHub:Window(GuiConfig)
                 UICorner.Parent = Divider
 
                 CountItem = CountItem + 1
-                RecalculateSectionSize()
                 return Divider
             end
 
@@ -2759,7 +2730,6 @@ function RcHub:Window(GuiConfig)
                 Label.TextXAlignment = Enum.TextXAlignment.Left
 
                 CountItem = CountItem + 1
-                RecalculateSectionSize()
                 return SubSection
             end
 

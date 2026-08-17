@@ -1249,7 +1249,6 @@ function RcHub:Window(GuiConfig)
             Section.ClipsDescendants = true
             Section.LayoutOrder = 1
             Section.Size = UDim2.new(1, 0, 0, 30)
-            Section.AutomaticSize = Enum.AutomaticSize.None
             Section.Name = "Section"
             Section.Parent = ScrolLayers
 
@@ -1357,7 +1356,6 @@ function RcHub:Window(GuiConfig)
             SectionAdd.LayoutOrder = 1
             SectionAdd.Position = UDim2.new(0.5, 0, 0, 38)
             SectionAdd.Size = UDim2.new(1, 0, 0, 100)
-            SectionAdd.AutomaticSize = Enum.AutomaticSize.None
             SectionAdd.Name = "SectionAdd"
             SectionAdd.Parent = Section
 
@@ -1400,21 +1398,12 @@ function RcHub:Window(GuiConfig)
             end
 
             if AlwaysOpen == true then
-                -- Always-open sections use Roblox AutomaticSize instead of
-                -- ChildAdded/task callbacks. This lets UIListLayout calculate
-                -- the final height as elements are added, without yielding or
-                -- touching Instances from a ChildAdded callback.
                 SectionButton:Destroy()
                 FeatureFrame:Destroy()
                 OpenSection = true
-
-                Section.AutomaticSize = Enum.AutomaticSize.Y
-                SectionAdd.AutomaticSize = Enum.AutomaticSize.Y
-                SectionAdd.Size = UDim2.new(1, 0, 0, 0)
-                SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
-
+                UpdateSizeSection()
             elseif AlwaysOpen == false then
-                OpenSection = false
+                OpenSection = true
                 UpdateSizeSection()
             else
                 OpenSection = false
@@ -1438,14 +1427,7 @@ function RcHub:Window(GuiConfig)
                 end)
             end
 
-            if AlwaysOpen == true then
-                -- AutomaticSize handles the final size after all Add* calls.
-                -- Do not calculate children here because AddSection runs before
-                -- the caller has created the section's elements.
-                OpenSection = true
-                UpdateSizeScroll()
-
-            elseif AlwaysOpen == false then
+            if AlwaysOpen == true or AlwaysOpen == false then
                 OpenSection = true
                 local SectionSizeYWitdh = 38
                 for _, v in SectionAdd:GetChildren() do
@@ -1459,6 +1441,9 @@ function RcHub:Window(GuiConfig)
                 SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
                 UpdateSizeScroll()
             end
+
+            SectionAdd.ChildAdded:Connect(UpdateSizeSection)
+            SectionAdd.ChildRemoved:Connect(UpdateSizeSection)
 
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then

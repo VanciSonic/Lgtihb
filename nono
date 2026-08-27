@@ -1,0 +1,319 @@
+--// Executor Warning Popup
+--// LocalScript / Executor
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+--============================================================
+-- CONFIG
+--============================================================
+
+local ExecutorName = "Unknown Executor"
+
+pcall(function()
+    if identifyexecutor then
+        local name = identifyexecutor()
+        if name and tostring(name) ~= "" then
+            ExecutorName = tostring(name)
+        end
+    end
+end)
+
+--============================================================
+-- GUI
+--============================================================
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ExecutorWarning"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = PlayerGui
+
+-- Overlay
+local Overlay = Instance.new("Frame")
+Overlay.Name = "Overlay"
+Overlay.Size = UDim2.fromScale(1, 1)
+Overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Overlay.BackgroundTransparency = 1
+Overlay.BorderSizePixel = 0
+Overlay.ZIndex = 1
+Overlay.Parent = ScreenGui
+
+-- Main
+local Main = Instance.new("Frame")
+Main.Name = "Main"
+Main.Size = UDim2.fromOffset(430, 235)
+Main.Position = UDim2.fromScale(0.5, 0.5)
+Main.AnchorPoint = Vector2.new(0.5, 0.5)
+Main.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+Main.BackgroundTransparency = 1
+Main.BorderSizePixel = 0
+Main.ZIndex = 2
+Main.Parent = ScreenGui
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 10)
+Corner.Parent = Main
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.fromRGB(75, 75, 75)
+Stroke.Thickness = 1
+Stroke.Transparency = 1
+Stroke.Parent = Main
+
+--============================================================
+-- TITLE
+--============================================================
+
+local Warning = Instance.new("TextLabel")
+Warning.Name = "Warning"
+Warning.Size = UDim2.new(1, -40, 0, 30)
+Warning.Position = UDim2.fromOffset(20, 17)
+Warning.BackgroundTransparency = 1
+Warning.Text = "GANTENG HUB"
+Warning.TextColor3 = Color3.fromRGB(245, 245, 245)
+Warning.TextSize = 20
+Warning.Font = Enum.Font.GothamBold
+Warning.TextXAlignment = Enum.TextXAlignment.Left
+Warning.TextTransparency = 1
+Warning.ZIndex = 3
+Warning.Parent = Main
+
+--============================================================
+-- SUBTITLE
+--============================================================
+
+local LowExecutor = Instance.new("TextLabel")
+LowExecutor.Name = "LowExecutor"
+LowExecutor.Size = UDim2.new(1, -40, 0, 25)
+LowExecutor.Position = UDim2.fromOffset(20, 48)
+LowExecutor.BackgroundTransparency = 1
+LowExecutor.Text = "Low Executor Detected !!"
+LowExecutor.TextColor3 = Color3.fromRGB(190, 190, 190)
+LowExecutor.TextSize = 17
+LowExecutor.Font = Enum.Font.GothamMedium
+LowExecutor.TextXAlignment = Enum.TextXAlignment.Left
+LowExecutor.TextTransparency = 1
+LowExecutor.ZIndex = 3
+LowExecutor.Parent = Main
+
+--============================================================
+-- MESSAGE
+--============================================================
+
+local Message = Instance.new("TextLabel")
+Message.Name = "Message"
+Message.Size = UDim2.new(1, -40, 0, 92)
+Message.Position = UDim2.fromOffset(20, 78)
+Message.BackgroundTransparency = 1
+Message.Text = string.format(
+    "Apakah Anda Yakin Ingin Melanjutkan Menggunakan Executor [ %s ] ?\n\nExecutor tersebut bisa membuat beberapa feature error\nbahkan menyebabkan crash terhadap script.",
+    ExecutorName
+)
+Message.TextColor3 = Color3.fromRGB(155, 155, 155)
+Message.TextSize = 15
+Message.Font = Enum.Font.Gotham
+Message.TextWrapped = true
+Message.TextXAlignment = Enum.TextXAlignment.Left
+Message.TextYAlignment = Enum.TextYAlignment.Top
+Message.TextTransparency = 1
+Message.ZIndex = 3
+Message.Parent = Main
+
+--============================================================
+-- BUTTONS
+--============================================================
+
+local Continue = Instance.new("TextButton")
+Continue.Name = "Continue"
+Continue.Size = UDim2.fromOffset(185, 38)
+Continue.Position = UDim2.new(0, 20, 1, -53)
+Continue.BackgroundColor3 = Color3.fromRGB(235, 235, 235)
+Continue.BackgroundTransparency = 1
+Continue.BorderSizePixel = 0
+Continue.Text = "Lanjutkan"
+Continue.TextColor3 = Color3.fromRGB(20, 20, 20)
+Continue.TextSize = 13
+Continue.Font = Enum.Font.GothamBold
+Continue.AutoButtonColor = false
+Continue.TextTransparency = 1
+Continue.ZIndex = 3
+Continue.Parent = Main
+
+local ContinueCorner = Instance.new("UICorner")
+ContinueCorner.CornerRadius = UDim.new(0, 7)
+ContinueCorner.Parent = Continue
+
+local Change = Instance.new("TextButton")
+Change.Name = "ChangeExecutor"
+Change.Size = UDim2.fromOffset(185, 38)
+Change.Position = UDim2.new(1, -205, 1, -53)
+Change.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Change.BackgroundTransparency = 1
+Change.BorderSizePixel = 0
+Change.Text = "Ganti Executor"
+Change.TextColor3 = Color3.fromRGB(225, 225, 225)
+Change.TextSize = 13
+Change.Font = Enum.Font.GothamBold
+Change.AutoButtonColor = false
+Change.TextTransparency = 1
+Change.ZIndex = 3
+Change.Parent = Main
+
+local ChangeCorner = Instance.new("UICorner")
+ChangeCorner.CornerRadius = UDim.new(0, 7)
+ChangeCorner.Parent = Change
+
+local ChangeStroke = Instance.new("UIStroke")
+ChangeStroke.Color = Color3.fromRGB(75, 75, 75)
+ChangeStroke.Thickness = 1
+ChangeStroke.Transparency = 1
+ChangeStroke.Parent = Change
+
+--============================================================
+-- OPEN ANIMATION
+--============================================================
+
+Main.Size = UDim2.fromOffset(390, 205)
+
+TweenService:Create(
+    Overlay,
+    TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+    {BackgroundTransparency = 0.45}
+):Play()
+
+local Open = TweenInfo.new(
+    0.45,
+    Enum.EasingStyle.Back,
+    Enum.EasingDirection.Out
+)
+
+TweenService:Create(Main, Open, {
+    Size = UDim2.fromOffset(430, 235),
+    BackgroundTransparency = 0
+}):Play()
+
+TweenService:Create(Stroke, TweenInfo.new(0.3), {
+    Transparency = 0
+}):Play()
+
+task.delay(0.08, function()
+    TweenService:Create(Warning, TweenInfo.new(0.25), {
+        TextTransparency = 0
+    }):Play()
+end)
+
+task.delay(0.13, function()
+    TweenService:Create(LowExecutor, TweenInfo.new(0.25), {
+        TextTransparency = 0
+    }):Play()
+end)
+
+task.delay(0.18, function()
+    TweenService:Create(Message, TweenInfo.new(0.3), {
+        TextTransparency = 0
+    }):Play()
+end)
+
+task.delay(0.25, function()
+    TweenService:Create(Continue, TweenInfo.new(0.3), {
+        BackgroundTransparency = 0,
+        TextTransparency = 0
+    }):Play()
+
+    TweenService:Create(Change, TweenInfo.new(0.3), {
+        BackgroundTransparency = 0,
+        TextTransparency = 0
+    }):Play()
+
+    TweenService:Create(ChangeStroke, TweenInfo.new(0.3), {
+        Transparency = 0
+    }):Play()
+end)
+
+--============================================================
+-- BUTTON HOVER
+--============================================================
+
+Continue.MouseEnter:Connect(function()
+    TweenService:Create(Continue, TweenInfo.new(0.15), {
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    }):Play()
+end)
+
+Continue.MouseLeave:Connect(function()
+    TweenService:Create(Continue, TweenInfo.new(0.15), {
+        BackgroundColor3 = Color3.fromRGB(235, 235, 235)
+    }):Play()
+end)
+
+Change.MouseEnter:Connect(function()
+    TweenService:Create(Change, TweenInfo.new(0.15), {
+        BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    }):Play()
+end)
+
+Change.MouseLeave:Connect(function()
+    TweenService:Create(Change, TweenInfo.new(0.15), {
+        BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    }):Play()
+end)
+
+--============================================================
+-- CLOSE ANIMATION
+--============================================================
+
+local function ClosePopup()
+    TweenService:Create(Overlay, TweenInfo.new(0.2), {
+        BackgroundTransparency = 1
+    }):Play()
+
+    local Close = TweenService:Create(
+        Main,
+        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In),
+        {
+            Size = UDim2.fromOffset(390, 205),
+            BackgroundTransparency = 1
+        }
+    )
+
+    for _, obj in ipairs({
+        Warning,
+        LowExecutor,
+        Message,
+        Continue,
+        Change
+    }) do
+        TweenService:Create(obj, TweenInfo.new(0.15), {
+            TextTransparency = 1
+        }):Play()
+    end
+
+    Close:Play()
+
+    task.delay(0.32, function()
+        ScreenGui:Destroy()
+    end)
+end
+
+
+Continue.MouseButton1Click:Connect(function()
+    ClosePopup()
+
+    -- Script kamu lanjut di sini.
+    -- contoh:
+    -- print("Executor accepted:", ExecutorName)
+end)
+
+Change.MouseButton1Click:Connect(function()
+    -- Tutup popup
+    ClosePopup()
+
+    -- Masukkan logic "Ganti Executor" kamu di sini.
+    -- contoh:
+    -- warn("Silakan gunakan executor lain.")
+end)

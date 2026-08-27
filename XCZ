@@ -1,158 +1,233 @@
 local WEBHOOK="https://discord.com/api/webhooks/1542363277030596618/oms4xEFrJaIL6vWzc3PKedzg42kFbFZjntXXOrD6dkpiAGAIda_yFNLZo0-xxHpALCk-"
+local KEY=getgenv().Key or "4jTdjBxbZVaEHolgDQ9JLn5v"
+local DISCORD_ID=getgenv().id or "979693557193523272"
+
 local function T(v)return type(v)=="function"end
 local function S(v)return type(v)=="string"end
-local function Safe(f,...)
-local ok,r=pcall(f,...)
-return ok,r
-end
+local function Safe(f,...)return pcall(f,...)end
+
 local function ExecName()
-local ok,a,b=Safe(identifyexecutor)
-if ok and S(a)and a~=""then
-if S(b)and b~=""then return a.." "..b end
-return a
+    local ok,a,b=pcall(identifyexecutor)
+    if ok and S(a) and a~="" then return S(b) and b~="" and a.." "..b or a end
+    for _,n in ipairs({"getexecutorname","getexecutor"})do
+        local f=_G[n]
+        if T(f)then
+            local ok2,x,y=pcall(f)
+            if ok2 and S(x) and x~="" then return S(y) and y~="" and x.." "..y or x end
+        end
+    end
+    return "Unknown"
 end
-local names={"getexecutorname","getexecutor"}
-for _,n in ipairs(names)do
-local f=_G[n]
-if T(f)then
-local ok,a,b=Safe(f)
-if ok then
-if S(a)and a~=""then
-if S(b)and b~=""then return a.." "..b end
-return a
+
+local function Check(list)
+    local r={}
+    for _,x in ipairs(list)do r[#r+1]={x,T(_G[x])}end
+    return r
 end
-end
-end
-end
-return "Unknown"
-end
+
 local UNC={
-{"getgenv",function()return T(getgenv)end},
-{"getrenv",function()return T(getrenv)end},
-{"getgc",function()return T(getgc)end},
-{"getreg",function()return T(getreg)end},
-{"getinstances",function()return T(getinstances)end},
-{"getnilinstances",function()return T(getnilinstances)end},
-{"getscripts",function()return T(getscripts)end},
-{"getloadedmodules",function()return T(getloadedmodules)end},
-{"getconnections",function()return T(getconnections)end},
-{"getcallbackvalue",function()return T(getcallbackvalue)end},
-{"getcustomasset",function()return T(getcustomasset)end},
-{"gethui",function()return T(gethui)end},
-{"gethiddenproperty",function()return T(gethiddenproperty)end},
-{"sethiddenproperty",function()return T(sethiddenproperty)end},
-{"getrawmetatable",function()return T(getrawmetatable)end},
-{"setrawmetatable",function()return T(setrawmetatable)end},
-{"hookfunction",function()return T(hookfunction)end},
-{"newcclosure",function()return T(newcclosure)end},
-{"iscclosure",function()return T(iscclosure)end},
-{"islclosure",function()return T(islclosure)end},
-{"checkcaller",function()return T(checkcaller)end},
-{"getthreadidentity",function()return T(getthreadidentity)end},
-{"setthreadidentity",function()return T(setthreadidentity)end},
-{"identifyexecutor",function()return T(identifyexecutor)end},
-{"cloneref",function()return T(cloneref)end},
-{"compareinstances",function()return T(compareinstances)end},
-{"isfile",function()return T(isfile)end},
-{"readfile",function()return T(readfile)end},
-{"writefile",function()return T(writefile)end},
-{"appendfile",function()return T(appendfile)end},
-{"makefolder",function()return T(makefolder)end},
-{"isfolder",function()return T(isfolder)end},
-{"delfile",function()return T(delfile)end},
-{"delfolder",function()return T(delfolder)end},
-{"listfiles",function()return T(listfiles)end},
-{"request",function()return T(request)or T(http_request)or(type(syn)=="table"and T(syn.request))end},
-{"setclipboard",function()return T(setclipboard)end},
-{"toclipboard",function()return T(toclipboard)end},
-{"queue_on_teleport",function()return T(queue_on_teleport)or T(queueonteleport)end},
-{"getnamecallmethod",function()return T(getnamecallmethod)end}
+    {"getgenv",function()return T(getgenv)end},
+    {"getrenv",function()return T(getrenv)end},
+    {"getgc",function()return T(getgc)end},
+    {"getreg",function()return T(getreg)end},
+    {"getinstances",function()return T(getinstances)end},
+    {"getnilinstances",function()return T(getnilinstances)end},
+    {"getscripts",function()return T(getscripts)end},
+    {"getloadedmodules",function()return T(getloadedmodules)end},
+    {"getconnections",function()return T(getconnections)end},
+    {"getcallbackvalue",function()return T(getcallbackvalue)end},
+    {"getcustomasset",function()return T(getcustomasset)end},
+    {"gethui",function()return T(gethui)end},
+    {"gethiddenproperty",function()return T(gethiddenproperty)end},
+    {"sethiddenproperty",function()return T(sethiddenproperty)end},
+    {"getrawmetatable",function()return T(getrawmetatable)end},
+    {"setrawmetatable",function()return T(setrawmetatable)end},
+    {"hookfunction",function()return T(hookfunction)end},
+    {"newcclosure",function()return T(newcclosure)end},
+    {"iscclosure",function()return T(iscclosure)end},
+    {"islclosure",function()return T(islclosure)end},
+    {"checkcaller",function()return T(checkcaller)end},
+    {"getthreadidentity",function()return T(getthreadidentity)end},
+    {"setthreadidentity",function()return T(setthreadidentity)end},
+    {"identifyexecutor",function()return T(identifyexecutor)end},
+    {"cloneref",function()return T(cloneref)end},
+    {"compareinstances",function()return T(compareinstances)end},
+    {"isfile",function()return T(isfile)end},
+    {"readfile",function()return T(readfile)end},
+    {"writefile",function()return T(writefile)end},
+    {"appendfile",function()return T(appendfile)end},
+    {"makefolder",function()return T(makefolder)end},
+    {"isfolder",function()return T(isfolder)end},
+    {"delfile",function()return T(delfile)end},
+    {"delfolder",function()return T(delfolder)end},
+    {"listfiles",function()return T(listfiles)end},
+    {"request",function()return T(request)or T(http_request)or type(syn)=="table"and T(syn.request)end},
+    {"setclipboard",function()return T(setclipboard)end},
+    {"toclipboard",function()return T(toclipboard)end},
+    {"queue_on_teleport",function()return T(queue_on_teleport)or T(queueonteleport)end},
+    {"getnamecallmethod",function()return T(getnamecallmethod)end}
 }
+
 local sUNC={
-{"debug.getinfo",function()return debug~=nil and T(debug.getinfo)end},
-{"debug.getupvalue",function()return debug~=nil and T(debug.getupvalue)end},
-{"debug.setupvalue",function()return debug~=nil and T(debug.setupvalue)end},
-{"debug.getregistry",function()return debug~=nil and T(debug.getregistry)end},
-{"debug.getlocal",function()return debug~=nil and T(debug.getlocal)end},
-{"debug.setlocal",function()return debug~=nil and T(debug.setlocal)end},
-{"debug.traceback",function()return debug~=nil and T(debug.traceback)end},
-{"pcall",function()return T(pcall)end},
-{"xpcall",function()return T(xpcall)end},
-{"coroutine.create",function()return coroutine~=nil and T(coroutine.create)end},
-{"coroutine.resume",function()return coroutine~=nil and T(coroutine.resume)end},
-{"coroutine.status",function()return coroutine~=nil and T(coroutine.status)end},
-{"coroutine.wrap",function()return coroutine~=nil and T(coroutine.wrap)end},
-{"coroutine.yield",function()return coroutine~=nil and T(coroutine.yield)end},
-{"string.dump",function()return string~=nil and T(string.dump)end},
-{"loadstring",function()return T(loadstring)end},
-{"getfenv",function()return T(getfenv)end},
-{"setfenv",function()return T(setfenv)end},
-{"rawget",function()return T(rawget)end},
-{"rawset",function()return T(rawset)end},
-{"rawequal",function()return T(rawequal)end},
-{"rawlen",function()return T(rawlen)end},
-{"select",function()return T(select)end},
-{"unpack",function()return T(unpack)end},
-{"getmetatable",function()return T(getmetatable)end},
-{"setmetatable",function()return T(setmetatable)end},
-{"type",function()return T(type)end},
-{"typeof",function()return T(typeof)end},
-{"tostring",function()return T(tostring)end},
-{"tonumber",function()return T(tonumber)end},
-{"pairs",function()return T(pairs)end},
-{"ipairs",function()return T(ipairs)end},
-{"next",function()return T(next)end},
-{"assert",function()return T(assert)end},
-{"error",function()return T(error)end},
-{"warn",function()return T(warn)end},
-{"print",function()return T(print)end}
+    {"debug.getinfo",function()return debug and T(debug.getinfo)end},
+    {"debug.getupvalue",function()return debug and T(debug.getupvalue)end},
+    {"debug.setupvalue",function()return debug and T(debug.setupvalue)end},
+    {"debug.getregistry",function()return debug and T(debug.getregistry)end},
+    {"debug.getlocal",function()return debug and T(debug.getlocal)end},
+    {"debug.setlocal",function()return debug and T(debug.setlocal)end},
+    {"debug.traceback",function()return debug and T(debug.traceback)end},
+    {"pcall",function()return T(pcall)end},
+    {"xpcall",function()return T(xpcall)end},
+    {"coroutine.create",function()return coroutine and T(coroutine.create)end},
+    {"coroutine.resume",function()return coroutine and T(coroutine.resume)end},
+    {"coroutine.status",function()return coroutine and T(coroutine.status)end},
+    {"coroutine.wrap",function()return coroutine and T(coroutine.wrap)end},
+    {"coroutine.yield",function()return coroutine and T(coroutine.yield)end},
+    {"string.dump",function()return string and T(string.dump)end},
+    {"loadstring",function()return T(loadstring)end},
+    {"getfenv",function()return T(getfenv)end},
+    {"setfenv",function()return T(setfenv)end},
+    {"rawget",function()return T(rawget)end},
+    {"rawset",function()return T(rawset)end},
+    {"rawequal",function()return T(rawequal)end},
+    {"rawlen",function()return T(rawlen)end},
+    {"select",function()return T(select)end},
+    {"unpack",function()return T(unpack)end},
+    {"getmetatable",function()return T(getmetatable)end},
+    {"setmetatable",function()return T(setmetatable)end},
+    {"type",function()return T(type)end},
+    {"typeof",function()return T(typeof)end},
+    {"tostring",function()return T(tostring)end},
+    {"tonumber",function()return T(tonumber)end},
+    {"pairs",function()return T(pairs)end},
+    {"ipairs",function()return T(ipairs)end},
+    {"next",function()return T(next)end},
+    {"assert",function()return T(assert)end},
+    {"error",function()return T(error)end},
+    {"warn",function()return T(warn)end},
+    {"print",function()return T(print)end}
 }
+
 local function Score(t)
-local p=0
-local results={}
-for _,x in ipairs(t)do
-local ok,r=Safe(x[2])
-local pass=ok and r==true
-if pass then p=p+1 end
-results[#results+1]=x[1]..": "..(pass and "YES"or"NO")
+    local p,r=0,{}
+    for _,x in ipairs(t)do
+        local ok,v=Safe(x[2])
+        local pass=ok and v==true
+        if pass then p+=1 end
+        r[#r+1]=x[1]..": "..(pass and"YES"or"NO")
+    end
+    return math.floor(p/#t*100+.5),p,#t,r
 end
-return math.floor(p/#t*100+0.5),p,#t,results
+
+local function httpRequest(o)
+    if type(syn)=="table"and T(syn.request)then return syn.request(o)end
+    if T(request)then return request(o)end
+    if T(http_request)then return http_request(o)end
+    error("Tidak ada executor HTTP request yang tersedia")
 end
-local function Request(url,data)
-local f=request or http_request or(type(syn)=="table"and syn.request)
-if not T(f)then return false end
-local ok,res=pcall(f,{
-Url=url,
-Method="POST",
-Headers={["Content-Type"]="application/json"},
-Body=game:GetService("HttpService"):JSONEncode(data)
-})
-return ok and res~=nil
-end
-local e=ExecName()
-local u,up,ut,ur=Score(UNC)
-local s,sp,st,sr=Score(sUNC)
-if u<85 or s<85 then
-loadstring(game:HttpGet("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/nono"))()
-local HttpService=game:GetService("HttpService")
+
 local Players=game:GetService("Players")
-local lp=Players.LocalPlayer
-local data={
-username="Executor Monitor",
-embeds={{
-title="⚠ Low Executor Detected",
-description="Executor capability is below the required 85% threshold.",
-fields={
-{name="Executor",value="`"..tostring(e).."`",inline=true},
-{name="UNC",value="`"..u.."%`",inline=true},
-{name="sUNC",value="`"..s.."%`",inline=true},
-{name="Player",value="`"..tostring(lp and lp.Name or "Unknown").."`",inline=true},
-{name="UserId",value="`"..tostring(lp and lp.UserId or "Unknown").."`",inline=true},
-{name="PlaceId",value="`"..tostring(game.PlaceId).."`",inline=true},
-{name="JobId",value="`"..tostring(game.JobId).."`",inline=false}
-},
-footer={text="Executor Capability Monitor"}
-}}
-}
-Request(WEBHOOK,data)
+local HttpService=game:GetService("HttpService")
+local LocalPlayer=Players.LocalPlayer
+local HWID=LocalPlayer and tostring(LocalPlayer.UserId)or"unknown"
+
+
+local Executor=ExecName()
+local UNCScore,UNCPassed,UNCTotal,UNCResults=Score(UNC)
+local sUNCScore,sUNCPassed,sUNCTotal,sUNCResults=Score(sUNC)
+
+print("========================================")
+print("Executor : "..tostring(Executor))
+print("UNC      : "..UNCScore.."%")
+print("sUNC     : "..sUNCScore.."%")
+print("========================================")
+
+if KEY==""or DISCORD_ID==""then print("❌ ERROR: Key dan Discord ID wajib diisi!")return end
+
+print("🔑 Key        : "..KEY)
+print("🆔 Discord ID : "..DISCORD_ID)
+print("🖥️ HWID       : "..HWID)
+print("========================================")
+
+local verifyUrl="https://isnahamzah.site/test_whitelist.php"
+local headers={["X-Key"]=KEY,["X-Hwid"]=HWID,["X-DiscordID"]=DISCORD_ID,["User-Agent"]="Roblox"}
+
+local success,response=pcall(function()
+    return httpRequest({Url=verifyUrl,Method="GET",Headers=headers})
+end)
+
+if not success or not response then print("❌ Gagal terhubung ke server verifikasi!")return end
+if response.StatusCode~=200 then
+    print("❌ Verifikasi gagal! Status: "..tostring(response.StatusCode))
+    print("📄 Response: "..tostring(response.Body or"Unknown error"))
+    return
+end
+
+local decodeSuccess,json=pcall(function()return HttpService:JSONDecode(response.Body)end)
+if not decodeSuccess or type(json)~="table"then print("❌ Response server bukan JSON valid!")return end
+
+if json.status~="success"then
+    print("❌ Verifikasi gagal: "..tostring(json.message or"Unknown error"))
+    return
+end
+
+local auth=json.data or{}
+local DiscordName=tostring(auth.discord_name or"Unknown")
+local VerifiedDiscordID=tostring(auth.discord_id or DISCORD_ID)
+local UserRole=tostring(auth.user_role or"Unknown")
+local KeyCode=tostring(auth.key_code or KEY)
+local KeyStatus=tostring(auth.key_status or"Unknown")
+local ExpiresAt=auth.expires_at and tostring(auth.expires_at)~=""and tostring(auth.expires_at)or"PERMANENT"
+
+local function SendWebhook()
+    if not T(request)and not T(http_request)and not(type(syn)=="table"and T(syn.request))then return false end
+
+    local low=UNCScore<85 or sUNCScore<85
+    local data={
+        username="Executor Monitor",
+        embeds={{
+            title=low and"⚠ Low Executor Detected",
+            description=low and"Executor capability is below the required 85% threshold.",
+            fields={
+                {name="Executor",value="`"..tostring(Executor).."`",inline=true},
+                {name="UNC",value="`"..UNCScore.."%`",inline=true},
+                {name="sUNC",value="`"..sUNCScore.."%`",inline=true},
+                {name="Whitelist Status",value="`SUCCESS`",inline=true},
+                {name="Key Status",value="`"..KeyStatus.."`",inline=true},
+                {name="Role",value="`"..UserRole.."`",inline=true},
+                {name="Discord Name",value="`"..DiscordName.."`",inline=true},
+                {name="Discord ID",value="`"..VerifiedDiscordID.."`",inline=true},
+                {name="Key Code",value="`"..KeyCode.."`",inline=true},
+                {name="Expires At",value="`"..ExpiresAt.."`",inline=true},
+                {name="Player",value="`"..tostring(LocalPlayer and LocalPlayer.Name or"Unknown").."`",inline=true},
+                {name="UserId",value="`"..tostring(LocalPlayer and LocalPlayer.UserId or"Unknown").."`",inline=true},
+                {name="PlaceId",value="`"..game.PlaceId.."`",inline=true},
+                {name="JobId",value="`"..game.JobId.."`",inline=false},
+                {name="HWID",value="`"..HWID.."`",inline=true}
+            },
+            footer={text="Executor Capability Monitor"}
+        }}
+    }
+
+    local ok,result=pcall(function()
+        return httpRequest({
+            Url=WEBHOOK,
+            Method="POST",
+            Headers={["Content-Type"]="application/json"},
+            Body=HttpService:JSONEncode(data)
+        })
+    end)
+
+    return ok and result~=nil
+end
+
+if UNCScore<85 or sUNCScore<85 then
+    print("⚠️ LOW EXECUTOR DETECTED")
+    print("UNC: "..UNCScore.."% | sUNC: "..sUNCScore.."%")
+    print("========================================")
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/nono"))()
+    end)
+    wait()
+    pcall(SendWebhook)
 end

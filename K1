@@ -1,4 +1,4 @@
--- KaizenUI
+-- KaizenUI V2
 local HttpService = game:GetService("HttpService")
 
 if not isfolder("KZN") then
@@ -1379,22 +1379,41 @@ function RcHub:Window(GuiConfig)
             end
 
             local function UpdateSizeSection()
-                if OpenSection then
-                    local SectionSizeYWitdh = 38
-                    for _, v in SectionAdd:GetChildren() do
-                        if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
-                            SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
-                        end
+                if not OpenSection then return end
+
+                local SectionSizeYWitdh = 38
+
+                for _, v in SectionAdd:GetChildren() do
+                    if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+                        SectionSizeYWitdh += v.Size.Y.Offset + 3
                     end
-                    TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 90 }):Play()
-                    TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, SectionSizeYWitdh) })
-                        :Play()
-                    TweenService:Create(SectionAdd, TweenInfo.new(0.5),
-                        { Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38) }):Play()
-                    TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(1, 0, 0, 2) }):Play()
-                    task.wait(0.5)
-                    UpdateSizeScroll()
                 end
+
+                TweenService:Create(
+                    FeatureFrame,
+                    TweenInfo.new(0.5),
+                    {Rotation = 90}
+                ):Play()
+
+                TweenService:Create(
+                    Section,
+                    TweenInfo.new(0.5),
+                    {Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)}
+                ):Play()
+
+                TweenService:Create(
+                    SectionAdd,
+                    TweenInfo.new(0.5),
+                    {Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)}
+                ):Play()
+
+                TweenService:Create(
+                    SectionDecideFrame,
+                    TweenInfo.new(0.5),
+                    {Size = UDim2.new(1, 0, 0, 2)}
+                ):Play()
+
+                task.delay(0.55, UpdateSizeScroll)
             end
 
             if AlwaysOpen == true then
@@ -1442,8 +1461,38 @@ function RcHub:Window(GuiConfig)
                 UpdateSizeScroll()
             end
 
-            SectionAdd.ChildAdded:Connect(UpdateSizeSection)
-            SectionAdd.ChildRemoved:Connect(UpdateSizeSection)
+            local UpdatingSection = false
+            local RefreshQueued = false
+            local function RefreshSection()
+                if RefreshQueued then return end
+                RefreshQueued = true
+                task.delay(0.1, function()
+                    RefreshQueued = false
+                    if UpdatingSection or not OpenSection then return end
+                    UpdatingSection = true
+                    local SectionSizeYWitdh = 38
+                    for _, v in SectionAdd:GetChildren() do
+                        if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+                            SectionSizeYWitdh += v.Size.Y.Offset + 3
+                        end
+                    end
+                    Section.Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
+                    SectionAdd.Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
+                    SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
+                    if FeatureFrame and FeatureFrame.Parent then
+                        FeatureFrame.Rotation = 90
+                    end
+                    UpdateSizeScroll()
+                    task.wait()
+                    UpdatingSection = false
+                end)
+            end
+
+            SectionAdd.ChildAdded:Connect(RefreshSection)
+            SectionAdd.ChildRemoved:Connect(RefreshSection)
+            
+            --SectionAdd.ChildAdded:Connect(UpdateSizeSection)
+            --SectionAdd.ChildRemoved:Connect(UpdateSizeSection)
 
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then

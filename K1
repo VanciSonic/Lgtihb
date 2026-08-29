@@ -1445,7 +1445,8 @@ function RcHub:Window(GuiConfig)
                     end
                 end)
             end
-
+            
+            --[[
             if AlwaysOpen == true or AlwaysOpen == false then
                 OpenSection = true
                 local SectionSizeYWitdh = 38
@@ -1460,6 +1461,7 @@ function RcHub:Window(GuiConfig)
                 SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
                 UpdateSizeScroll()
             end
+            ]]
 
             local UpdatingSection = false
             local RefreshQueued = false

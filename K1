@@ -111,7 +111,34 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
-local CoreGui = game:GetService("CoreGui")
+-- Safe UI root for executor environments.
+-- Prefer gethui(), then cloneref(CoreGui), then the raw CoreGui fallback.
+local function GetSafeUIRoot()
+    if typeof(gethui) == "function" then
+        local ok, ui = pcall(gethui)
+        if ok and ui then
+            return ui
+        end
+    end
+
+    local ok, cg = pcall(function()
+        return game:GetService("CoreGui")
+    end)
+
+    if ok and cg then
+        if typeof(cloneref) == "function" then
+            local cloneOk, cloned = pcall(cloneref, cg)
+            if cloneOk and cloned then
+                return cloned
+            end
+        end
+        return cg
+    end
+
+    return game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+end
+
+local CoreGui = GetSafeUIRoot()
 local viewport = workspace.CurrentCamera.ViewportSize
 
 local function isMobileDevice()
@@ -526,7 +553,7 @@ function RcHub:Window(GuiConfig)
     RCglob.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     RCglob.Name = "RCglob"
     RCglob.ResetOnSpawn = false
-    RCglob.Parent = game:GetService("CoreGui")
+    RCglob.Parent = CoreGui
 
     DropShadowHolder.BackgroundTransparency = 1
     DropShadowHolder.BorderSizePixel = 0
@@ -873,8 +900,8 @@ function RcHub:Window(GuiConfig)
 
         Yes.MouseButton1Click:Connect(function()
             if RCglob then RCglob:Destroy() end
-            if game.CoreGui:FindFirstChild("ToggleUIButton") then
-                game.CoreGui.ToggleUIButton:Destroy()
+            if CoreGui:FindFirstChild("ToggleUIButton") then
+                CoreGui.ToggleUIButton:Destroy()
             end
         end)
 
@@ -895,7 +922,7 @@ function RcHub:Window(GuiConfig)
 
     function GuiFunc:ToggleUI()
         local ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Parent = game:GetService("CoreGui")
+        ScreenGui.Parent = CoreGui
         ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         ScreenGui.Name = "ToggleUIButton"
 

@@ -25,10 +25,38 @@ local function KZN_NewInstance(className, parent)
     end
 
     if parent then
-        obj.Parent = parent
+        local okParent = pcall(function()
+            obj.Parent = parent
+        end)
+        if not okParent then
+            return obj
+        end
     end
 
     return obj
+end
+
+-- ============================================================
+-- EXECUTOR THREAD IDENTITY RE-ASSERTION
+-- Roblox can dispatch UI/input work onto a thread whose executor
+-- identity/capability is different from the loader thread. Keep
+-- the identity captured at library load and restore it before
+-- engine-facing UI mutations.
+-- ============================================================
+local KZN_GetThreadIdentity = getthreadidentity or getidentity
+local KZN_SetThreadIdentity = setthreadidentity or setidentity
+local KZN_LoadIdentity = nil
+
+if type(KZN_GetThreadIdentity) == "function" then
+    pcall(function()
+        KZN_LoadIdentity = KZN_GetThreadIdentity()
+    end)
+end
+
+local function KZN_AssertThreadIdentity()
+    if KZN_LoadIdentity ~= nil and type(KZN_SetThreadIdentity) == "function" then
+        pcall(KZN_SetThreadIdentity, KZN_LoadIdentity)
+    end
 end
 
 local HttpService = game:GetService("HttpService")
@@ -143,7 +171,26 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
-local CoreGui = game:GetService("CoreGui")
+local function KZN_GetUIRoot()
+    if type(gethui) == "function" then
+        local ok, ui = pcall(gethui)
+        if ok and ui then
+            return ui
+        end
+    end
+
+    local player = game:GetService("Players").LocalPlayer
+    if player then
+        local ok, pg = pcall(function() return player:WaitForChild("PlayerGui") end)
+        if ok and pg then
+            return pg
+        end
+    end
+
+    return nil
+end
+
+local UIRoot = KZN_GetUIRoot()
 local viewport = workspace.CurrentCamera.ViewportSize
 
 local function isMobileDevice()
@@ -321,13 +368,13 @@ function RcHub:MakeNotify(NotifyConfig)
     NotifyConfig.Delay = NotifyConfig.Delay or 5
     local NotifyFunction = {}
     spawn(function()
-        if not CoreGui:FindFirstChild("NotifyGui") then
+        if UIRoot and not UIRoot:FindFirstChild("NotifyGui") then
             local NotifyGui = KZN_NewInstance("ScreenGui");
             NotifyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
             NotifyGui.Name = "NotifyGui"
-            NotifyGui.Parent = CoreGui
+            NotifyGui.Parent = UIRoot
         end
-        if not CoreGui.NotifyGui:FindFirstChild("NotifyLayout") then
+        if not UIRoot.NotifyGui:FindFirstChild("NotifyLayout") then
             local NotifyLayout = KZN_NewInstance("Frame");
             NotifyLayout.AnchorPoint = Vector2.new(1, 1)
             NotifyLayout.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -337,11 +384,11 @@ function RcHub:MakeNotify(NotifyConfig)
             NotifyLayout.Position = UDim2.new(1, -30, 1, -30)
             NotifyLayout.Size = UDim2.new(0, 320, 1, 0)
             NotifyLayout.Name = "NotifyLayout"
-            NotifyLayout.Parent = CoreGui.NotifyGui
+            NotifyLayout.Parent = UIRoot.NotifyGui
             local Count = 0
-            CoreGui.NotifyGui.NotifyLayout.ChildRemoved:Connect(function()
+            UIRoot.NotifyGui.NotifyLayout.ChildRemoved:Connect(function()
                 Count = 0
-                for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
+                for i, v in UIRoot.NotifyGui.NotifyLayout:GetChildren() do
                     TweenService:Create(
                         v,
                         TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
@@ -352,7 +399,7 @@ function RcHub:MakeNotify(NotifyConfig)
             end)
         end
         local NotifyPosHeigh = 0
-        for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
+        for i, v in UIRoot.NotifyGui.NotifyLayout:GetChildren() do
             NotifyPosHeigh = -(v.Position.Y.Offset) + v.Size.Y.Offset + 12
         end
         local NotifyFrame = KZN_NewInstance("Frame");
@@ -374,7 +421,7 @@ function RcHub:MakeNotify(NotifyConfig)
         NotifyFrame.Size = UDim2.new(1, 0, 0, 150)
         NotifyFrame.Name = "NotifyFrame"
         NotifyFrame.BackgroundTransparency = 1
-        NotifyFrame.Parent = CoreGui.NotifyGui.NotifyLayout
+        NotifyFrame.Parent = UIRoot.NotifyGui.NotifyLayout
         NotifyFrame.AnchorPoint = Vector2.new(0, 1)
         NotifyFrame.Position = UDim2.new(0, 0, 1, -(NotifyPosHeigh))
 
@@ -520,6 +567,7 @@ function rcchub(msg, delay, color, title, desc)
 end
 
 function RcHub:Window(GuiConfig)
+    KZN_AssertThreadIdentity()
     GuiConfig              = GuiConfig or {}
     GuiConfig.Title        = GuiConfig.Title or "KaizenN"
     GuiConfig.Footer       = GuiConfig.Footer or "KZN <3"
@@ -558,7 +606,7 @@ function RcHub:Window(GuiConfig)
     RCglob.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     RCglob.Name = "RCglob"
     RCglob.ResetOnSpawn = false
-    RCglob.Parent = game:GetService("CoreGui")
+    RCglob.Parent = UIRoot
 
     DropShadowHolder.BackgroundTransparency = 1
     DropShadowHolder.BorderSizePixel = 0
@@ -797,7 +845,7 @@ function RcHub:Window(GuiConfig)
     ScrollTab.ChildRemoved:Connect(UpdateSize1)
 
     function GuiFunc:DestroyGui()
-        if CoreGui:FindFirstChild("RCglob") then
+        if UIRoot and UIRoot:FindFirstChild("RCglob") then
             RCglob:Destroy()
         end
     end
@@ -905,8 +953,8 @@ function RcHub:Window(GuiConfig)
 
         Yes.MouseButton1Click:Connect(function()
             if RCglob then RCglob:Destroy() end
-            if game.CoreGui:FindFirstChild("ToggleUIButton") then
-                game.CoreGui.ToggleUIButton:Destroy()
+            if UIRoot and UIRoot:FindFirstChild("ToggleUIButton") then
+                UIRoot.ToggleUIButton:Destroy()
             end
         end)
 
@@ -927,7 +975,7 @@ function RcHub:Window(GuiConfig)
 
     function GuiFunc:ToggleUI()
         local ScreenGui = KZN_NewInstance("ScreenGui")
-        ScreenGui.Parent = game:GetService("CoreGui")
+        ScreenGui.Parent = UIRoot
         ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         ScreenGui.Name = "ToggleUIButton"
 
@@ -1818,6 +1866,7 @@ function RcHub:Window(GuiConfig)
             end
 
             function Items:AddToggle(ToggleConfig)
+                KZN_AssertThreadIdentity()
                 local ToggleConfig = ToggleConfig or {}
                 ToggleConfig.Title = ToggleConfig.Title or "Title"
                 ToggleConfig.Title2 = ToggleConfig.Title2 or ""
@@ -1848,7 +1897,23 @@ function RcHub:Window(GuiConfig)
                 Toggle.BorderSizePixel = 0
                 Toggle.LayoutOrder = CountItem
                 Toggle.Name = "Toggle"
-                Toggle.Parent = SectionAdd
+                local ToggleParent = SectionAdd
+                if type(cloneref) == "function" then
+                    local okRef, ref = pcall(cloneref, SectionAdd)
+                    if okRef and ref then
+                        ToggleParent = ref
+                    end
+                end
+                KZN_AssertThreadIdentity()
+                local okToggleParent = pcall(function()
+                    Toggle.Parent = ToggleParent
+                end)
+                if not okToggleParent then
+                    KZN_AssertThreadIdentity()
+                    pcall(function()
+                        Toggle.Parent = ToggleParent
+                    end)
+                end
 
                 UICorner20.CornerRadius = UDim.new(0, 4)
                 UICorner20.Parent = Toggle
@@ -1954,6 +2019,7 @@ function RcHub:Window(GuiConfig)
                 UICorner23.Parent = ToggleCircle
 
                 ToggleButton.Activated:Connect(function()
+                    KZN_AssertThreadIdentity()
                     ToggleFunc.Value = not ToggleFunc.Value
                     ToggleFunc:Set(ToggleFunc.Value)
                 end)

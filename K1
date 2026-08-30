@@ -1,4 +1,4 @@
--- KaizenUI
+-- KaizenUI [ section render fixed ]
 
 -- ============================================================
 -- INSTANCE CAPABILITY COMPATIBILITY
@@ -7,6 +7,7 @@
 -- Luau thread a usable reference when the executor supports it.
 -- Keep the fallback so normal Roblox/Luau environments still work.
 -- ============================================================
+
 local function KZN_NewInstance(className, parent)
     local obj = Instance.new(className)
 
@@ -1458,33 +1459,80 @@ function RcHub:Window(GuiConfig)
                 ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, OffsetY)
             end
 
-            local function UpdateSizeSection()
-                if OpenSection then
-                    local SectionSizeYWitdh = 38
-                    for _, v in SectionAdd:GetChildren() do
-                        if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
-                            SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
-                        end
+            local function GetSectionContentHeight()
+                local contentHeight = 0
+                local itemCount = 0
+
+                for _, v in SectionAdd:GetChildren() do
+                    if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+                        contentHeight = contentHeight + v.Size.Y.Offset
+                        itemCount = itemCount + 1
                     end
-                    TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 90 }):Play()
-                    TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, SectionSizeYWitdh) })
-                        :Play()
-                    TweenService:Create(SectionAdd, TweenInfo.new(0.5),
-                        { Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38) }):Play()
-                    TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(1, 0, 0, 2) }):Play()
-                    task.wait(0.5)
-                    UpdateSizeScroll()
                 end
+
+                if itemCount > 0 then
+                    contentHeight = contentHeight + ((itemCount - 1) * 3)
+                end
+
+                return contentHeight
+            end
+
+            -- Refresh the section immediately after an Add* function has
+            -- finished constructing its element. This avoids the original
+            -- bug where ChildAdded fired while the new element still had
+            -- its default size, leaving the section too small until the
+            -- user manually collapsed and reopened it.
+            local function RefreshSectionSize()
+                if not OpenSection then
+                    return
+                end
+
+                local contentHeight = GetSectionContentHeight()
+                local totalHeight = 38 + contentHeight
+
+                if FeatureFrame and FeatureFrame.Parent then
+                    FeatureFrame.Rotation = 90
+                end
+
+                Section.Size = UDim2.new(1, 1, 0, totalHeight)
+                SectionAdd.Size = UDim2.new(1, 0, 0, contentHeight)
+                SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
+                UpdateSizeScroll()
+            end
+
+            local function UpdateSizeSection()
+                if not OpenSection then
+                    return
+                end
+
+                local contentHeight = GetSectionContentHeight()
+                local totalHeight = 38 + contentHeight
+
+                if FeatureFrame and FeatureFrame.Parent then
+                    TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 90 }):Play()
+                end
+                TweenService:Create(Section, TweenInfo.new(0.5), {
+                    Size = UDim2.new(1, 1, 0, totalHeight)
+                }):Play()
+                TweenService:Create(SectionAdd, TweenInfo.new(0.5), {
+                    Size = UDim2.new(1, 0, 0, contentHeight)
+                }):Play()
+                TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), {
+                    Size = UDim2.new(1, 0, 0, 2)
+                }):Play()
+
+                task.delay(0.5, UpdateSizeScroll)
             end
 
             if AlwaysOpen == true then
                 SectionButton:Destroy()
                 FeatureFrame:Destroy()
                 OpenSection = true
-                UpdateSizeSection()
             elseif AlwaysOpen == false then
+                -- false = start expanded, but remain collapsible.
+                -- Do not calculate/tween here because Add* elements have
+                -- not been created yet. Each Add* performs a final refresh.
                 OpenSection = true
-                UpdateSizeSection()
             else
                 OpenSection = false
             end
@@ -1509,21 +1557,20 @@ function RcHub:Window(GuiConfig)
 
             if AlwaysOpen == true or AlwaysOpen == false then
                 OpenSection = true
-                local SectionSizeYWitdh = 38
-                for _, v in SectionAdd:GetChildren() do
-                    if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
-                        SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
-                    end
+                -- Initial shell only. The actual content height is applied
+                -- by RefreshSectionSize() after each Add* finishes.
+                if FeatureFrame and FeatureFrame.Parent then
+                    FeatureFrame.Rotation = 90
                 end
-                FeatureFrame.Rotation = 90
-                Section.Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
-                SectionAdd.Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
+                Section.Size = UDim2.new(1, 1, 0, 38)
+                SectionAdd.Size = UDim2.new(1, 0, 0, 0)
                 SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
-                UpdateSizeScroll()
             end
 
-            SectionAdd.ChildAdded:Connect(UpdateSizeSection)
-            SectionAdd.ChildRemoved:Connect(UpdateSizeSection)
+            -- Do NOT use SectionAdd.ChildAdded here. ChildAdded fires as soon
+            -- as an Instance is parented, before AddToggle/AddDropdown/etc.
+            -- finish assigning Size. That was the cause of the original
+            -- startup compression bug.
 
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then
@@ -1643,6 +1690,7 @@ function RcHub:Window(GuiConfig)
                     UpdateSize()
                 end
 
+                RefreshSectionSize()
                 CountItem = CountItem + 1
                 return ParagraphFunc
             end
@@ -1802,6 +1850,7 @@ function RcHub:Window(GuiConfig)
                     return InputBox and InputBox.Text or ""
                 end
 
+                RefreshSectionSize()
                 CountItem = CountItem + 1
                 return PanelFunc
             end
@@ -1862,6 +1911,7 @@ function RcHub:Window(GuiConfig)
                     SubButton.MouseButton1Click:Connect(ButtonConfig.SubCallback)
                 end
 
+                RefreshSectionSize()
                 CountItem = CountItem + 1
             end
 
@@ -2056,6 +2106,7 @@ function RcHub:Window(GuiConfig)
                 end
 
                 ToggleFunc:Set(ToggleFunc.Value, true)
+                RefreshSectionSize()
                 CountItem = CountItem + 1
                 Elements[configKey] = ToggleFunc
                 return ToggleFunc
@@ -2288,6 +2339,7 @@ function RcHub:Window(GuiConfig)
                     end
                 end)
                 SliderFunc:Set(SliderConfig.Default)
+                RefreshSectionSize()
                 CountItem = CountItem + 1
                 Elements[configKey] = SliderFunc
                 return SliderFunc
@@ -2420,6 +2472,7 @@ function RcHub:Window(GuiConfig)
                 InputTextBox.FocusLost:Connect(function()
                     InputFunc:Set(InputTextBox.Text)
                 end)
+                RefreshSectionSize()
                 CountItem = CountItem + 1
                 Elements[configKey] = InputFunc
                 return InputFunc
@@ -2748,6 +2801,7 @@ function RcHub:Window(GuiConfig)
 
                 DropdownFunc:SetValues(DropdownFunc.Options, DropdownFunc.Value, true)
 
+                RefreshSectionSize()
                 CountItem = CountItem + 1
                 CountDropdown = CountDropdown + 1
                 Elements[configKey] = DropdownFunc
@@ -2778,6 +2832,7 @@ function RcHub:Window(GuiConfig)
                 UICorner.CornerRadius = UDim.new(0, 2)
                 UICorner.Parent = Divider
 
+                RefreshSectionSize()
                 CountItem = CountItem + 1
                 return Divider
             end
@@ -2812,6 +2867,7 @@ function RcHub:Window(GuiConfig)
                 Label.TextSize = 12
                 Label.TextXAlignment = Enum.TextXAlignment.Left
 
+                RefreshSectionSize()
                 CountItem = CountItem + 1
                 return SubSection
             end

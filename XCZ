@@ -1,6 +1,6 @@
 local WEBHOOK="https://discord.com/api/webhooks/1542363277030596618/oms4xEFrJaIL6vWzc3PKedzg42kFbFZjntXXOrD6dkpiAGAIda_yFNLZo0-xxHpALCk-"
-local KEY=getgenv().Key or "4jTdjBxbZVaEHolgDQ9JLn5v"
-local DISCORD_ID=getgenv().id or "979693557193523272"
+local KEY=getgenv().Key
+local DISCORD_ID=getgenv().id
 
 local function T(v)return type(v)=="function"end
 local function S(v)return type(v)=="string"end

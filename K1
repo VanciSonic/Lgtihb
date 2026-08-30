@@ -1,4 +1,36 @@
 -- KaizenUI
+
+-- ============================================================
+-- INSTANCE CAPABILITY COMPATIBILITY
+-- Some executor contexts expose Roblox Instances through a
+-- restricted security reference. cloneref() gives the current
+-- Luau thread a usable reference when the executor supports it.
+-- Keep the fallback so normal Roblox/Luau environments still work.
+-- ============================================================
+local function KZN_NewInstance(className, parent)
+    local obj = Instance.new(className)
+
+    if type(cloneref) == "function" then
+        local ok, ref = pcall(cloneref, obj)
+        if ok and ref then
+            obj = ref
+        end
+
+        if parent then
+            local okParent, parentRef = pcall(cloneref, parent)
+            if okParent and parentRef then
+                parent = parentRef
+            end
+        end
+    end
+
+    if parent then
+        obj.Parent = parent
+    end
+
+    return obj
+end
+
 local HttpService = game:GetService("HttpService")
 
 if not isfolder("KZN") then
@@ -192,7 +224,7 @@ local function MakeDraggable(topbarobject, object)
 
         object.Size = UDim2.new(0, defSizeX, 0, defSizeY)
 
-        local changesizeobject = Instance.new("Frame")
+        local changesizeobject = KZN_NewInstance("Frame")
         changesizeobject.AnchorPoint = Vector2.new(1, 1)
         changesizeobject.BackgroundTransparency = 1
         changesizeobject.Size = UDim2.new(0, 40, 0, 40)
@@ -245,7 +277,7 @@ end
 function CircleClick(Button, X, Y)
     spawn(function()
         Button.ClipsDescendants = true
-        local Circle = Instance.new("ImageLabel")
+        local Circle = KZN_NewInstance("ImageLabel")
         Circle.Image = "rbxassetid://79016553645809"
         Circle.ImageColor3 = Color3.fromRGB(80, 80, 80)
         Circle.ImageTransparency = 0.8999999761581421
@@ -290,13 +322,13 @@ function RcHub:MakeNotify(NotifyConfig)
     local NotifyFunction = {}
     spawn(function()
         if not CoreGui:FindFirstChild("NotifyGui") then
-            local NotifyGui = Instance.new("ScreenGui");
+            local NotifyGui = KZN_NewInstance("ScreenGui");
             NotifyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
             NotifyGui.Name = "NotifyGui"
             NotifyGui.Parent = CoreGui
         end
         if not CoreGui.NotifyGui:FindFirstChild("NotifyLayout") then
-            local NotifyLayout = Instance.new("Frame");
+            local NotifyLayout = KZN_NewInstance("Frame");
             NotifyLayout.AnchorPoint = Vector2.new(1, 1)
             NotifyLayout.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             NotifyLayout.BackgroundTransparency = 0.9990000128746033
@@ -323,18 +355,18 @@ function RcHub:MakeNotify(NotifyConfig)
         for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
             NotifyPosHeigh = -(v.Position.Y.Offset) + v.Size.Y.Offset + 12
         end
-        local NotifyFrame = Instance.new("Frame");
-        local NotifyFrameReal = Instance.new("Frame");
-        local UICorner = Instance.new("UICorner");
-        local DropShadowHolder = Instance.new("Frame");
-        local DropShadow = Instance.new("ImageLabel");
-        local Top = Instance.new("Frame");
-        local TextLabel = Instance.new("TextLabel");
-        local UICorner1 = Instance.new("UICorner");
-        local TextLabel1 = Instance.new("TextLabel");
-        local Close = Instance.new("TextButton");
-        local ImageLabel = Instance.new("ImageLabel");
-        local TextLabel2 = Instance.new("TextLabel");
+        local NotifyFrame = KZN_NewInstance("Frame");
+        local NotifyFrameReal = KZN_NewInstance("Frame");
+        local UICorner = KZN_NewInstance("UICorner");
+        local DropShadowHolder = KZN_NewInstance("Frame");
+        local DropShadow = KZN_NewInstance("ImageLabel");
+        local Top = KZN_NewInstance("Frame");
+        local TextLabel = KZN_NewInstance("TextLabel");
+        local UICorner1 = KZN_NewInstance("UICorner");
+        local TextLabel1 = KZN_NewInstance("TextLabel");
+        local Close = KZN_NewInstance("TextButton");
+        local ImageLabel = KZN_NewInstance("ImageLabel");
+        local TextLabel2 = KZN_NewInstance("TextLabel");
 
         NotifyFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         NotifyFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -500,28 +532,28 @@ function RcHub:Window(GuiConfig)
 
     local GuiFunc = {}
 
-    local RCglob = Instance.new("ScreenGui");
-    local DropShadowHolder = Instance.new("Frame");
-    local DropShadow = Instance.new("ImageLabel");
-    local Main = Instance.new("Frame");
-    local UICorner = Instance.new("UICorner");
-    local Top = Instance.new("Frame");
-    local TextLabel = Instance.new("TextLabel");
-    local UICorner1 = Instance.new("UICorner");
-    local TextLabel1 = Instance.new("TextLabel");
-    local Close = Instance.new("TextButton");
-    local ImageLabel1 = Instance.new("ImageLabel");
-    local Min = Instance.new("TextButton");
-    local ImageLabel2 = Instance.new("ImageLabel");
-    local LayersTab = Instance.new("Frame");
-    local UICorner2 = Instance.new("UICorner");
-    local DecideFrame = Instance.new("Frame");
-    local Layers = Instance.new("Frame");
-    local UICorner6 = Instance.new("UICorner");
-    local NameTab = Instance.new("TextLabel");
-    local LayersReal = Instance.new("Frame");
-    local LayersFolder = Instance.new("Folder");
-    local LayersPageLayout = Instance.new("UIPageLayout");
+    local RCglob = KZN_NewInstance("ScreenGui");
+    local DropShadowHolder = KZN_NewInstance("Frame");
+    local DropShadow = KZN_NewInstance("ImageLabel");
+    local Main = KZN_NewInstance("Frame");
+    local UICorner = KZN_NewInstance("UICorner");
+    local Top = KZN_NewInstance("Frame");
+    local TextLabel = KZN_NewInstance("TextLabel");
+    local UICorner1 = KZN_NewInstance("UICorner");
+    local TextLabel1 = KZN_NewInstance("TextLabel");
+    local Close = KZN_NewInstance("TextButton");
+    local ImageLabel1 = KZN_NewInstance("ImageLabel");
+    local Min = KZN_NewInstance("TextButton");
+    local ImageLabel2 = KZN_NewInstance("ImageLabel");
+    local LayersTab = KZN_NewInstance("Frame");
+    local UICorner2 = KZN_NewInstance("UICorner");
+    local DecideFrame = KZN_NewInstance("Frame");
+    local Layers = KZN_NewInstance("Frame");
+    local UICorner6 = KZN_NewInstance("UICorner");
+    local NameTab = KZN_NewInstance("TextLabel");
+    local LayersReal = KZN_NewInstance("Frame");
+    local LayersFolder = KZN_NewInstance("Folder");
+    local LayersPageLayout = KZN_NewInstance("UIPageLayout");
 
     RCglob.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     RCglob.Name = "RCglob"
@@ -559,7 +591,7 @@ function RcHub:Window(GuiConfig)
 
     if GuiConfig.Theme then
         Main:Destroy()
-        Main = Instance.new("ImageLabel")
+        Main = KZN_NewInstance("ImageLabel")
         Main.Image = "rbxassetid://" .. GuiConfig.Theme
         Main.ScaleType = Enum.ScaleType.Crop
         Main.BackgroundTransparency = 1
@@ -733,8 +765,8 @@ function RcHub:Window(GuiConfig)
     LayersPageLayout.EasingDirection = Enum.EasingDirection.InOut
     LayersPageLayout.EasingStyle = Enum.EasingStyle.Quad
 
-    local ScrollTab = Instance.new("ScrollingFrame");
-    local UIListLayout = Instance.new("UIListLayout");
+    local ScrollTab = KZN_NewInstance("ScrollingFrame");
+    local UIListLayout = KZN_NewInstance("UIListLayout");
 
     ScrollTab.CanvasSize = UDim2.new(0, 0, 1.10000002, 0)
     ScrollTab.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
@@ -777,14 +809,14 @@ function RcHub:Window(GuiConfig)
     Close.Activated:Connect(function()
         CircleClick(Close, Mouse.X, Mouse.Y)
 
-        local Overlay = Instance.new("Frame")
+        local Overlay = KZN_NewInstance("Frame")
         Overlay.Size = UDim2.new(1, 0, 1, 0)
         Overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         Overlay.BackgroundTransparency = 0.3
         Overlay.ZIndex = 50
         Overlay.Parent = DropShadowHolder
 
-        local Dialog = Instance.new("ImageLabel")
+        local Dialog = KZN_NewInstance("ImageLabel")
         Dialog.Size = UDim2.new(0, 300, 0, 150)
         Dialog.Position = UDim2.new(0.5, -150, 0.5, -75)
         Dialog.Image = "rbxassetid://9542022979"
@@ -792,10 +824,10 @@ function RcHub:Window(GuiConfig)
         Dialog.BorderSizePixel = 0
         Dialog.ZIndex = 51
         Dialog.Parent = Overlay
-        local UICorner = Instance.new("UICorner", Dialog)
+        local UICorner = KZN_NewInstance("UICorner", Dialog)
         UICorner.CornerRadius = UDim.new(0, 8)
 
-        local DialogGlow = Instance.new("Frame")
+        local DialogGlow = KZN_NewInstance("Frame")
         DialogGlow.Size = UDim2.new(0, 310, 0, 160)
         DialogGlow.Position = UDim2.new(0.5, -155, 0.5, -80)
         DialogGlow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -804,10 +836,10 @@ function RcHub:Window(GuiConfig)
         DialogGlow.ZIndex = 50
         DialogGlow.Parent = Overlay
 
-        local GlowCorner = Instance.new("UICorner", DialogGlow)
+        local GlowCorner = KZN_NewInstance("UICorner", DialogGlow)
         GlowCorner.CornerRadius = UDim.new(0, 10)
 
-        local Gradient = Instance.new("UIGradient")
+        local Gradient = KZN_NewInstance("UIGradient")
         Gradient.Color = ColorSequence.new({
             ColorSequenceKeypoint.new(0.0, Color3.fromRGB(0, 191, 255)),
             ColorSequenceKeypoint.new(0.25, Color3.fromRGB(255, 255, 255)),
@@ -818,7 +850,7 @@ function RcHub:Window(GuiConfig)
         Gradient.Rotation = 90
         Gradient.Parent = DialogGlow
 
-        local Title = Instance.new("TextLabel")
+        local Title = KZN_NewInstance("TextLabel")
         Title.Size = UDim2.new(1, 0, 0, 40)
         Title.Position = UDim2.new(0, 0, 0, 4)
         Title.BackgroundTransparency = 1
@@ -829,7 +861,7 @@ function RcHub:Window(GuiConfig)
         Title.ZIndex = 52
         Title.Parent = Dialog
 
-        local Message = Instance.new("TextLabel")
+        local Message = KZN_NewInstance("TextLabel")
         Message.Size = UDim2.new(1, -20, 0, 60)
         Message.Position = UDim2.new(0, 10, 0, 30)
         Message.BackgroundTransparency = 1
@@ -841,7 +873,7 @@ function RcHub:Window(GuiConfig)
         Message.ZIndex = 52
         Message.Parent = Dialog
 
-        local Yes = Instance.new("TextButton")
+        local Yes = KZN_NewInstance("TextButton")
         Yes.Size = UDim2.new(0.45, -10, 0, 35)
         Yes.Position = UDim2.new(0.05, 0, 1, -55)
         Yes.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -854,9 +886,9 @@ function RcHub:Window(GuiConfig)
         Yes.ZIndex = 52
         Yes.Name = "Yes"
         Yes.Parent = Dialog
-        Instance.new("UICorner", Yes).CornerRadius = UDim.new(0, 6)
+        KZN_NewInstance("UICorner", Yes).CornerRadius = UDim.new(0, 6)
 
-        local Cancel = Instance.new("TextButton")
+        local Cancel = KZN_NewInstance("TextButton")
         Cancel.Size = UDim2.new(0.45, -10, 0, 35)
         Cancel.Position = UDim2.new(0.5, 10, 1, -55)
         Cancel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -869,7 +901,7 @@ function RcHub:Window(GuiConfig)
         Cancel.ZIndex = 52
         Cancel.Name = "Cancel"
         Cancel.Parent = Dialog
-        Instance.new("UICorner", Cancel).CornerRadius = UDim.new(0, 6)
+        KZN_NewInstance("UICorner", Cancel).CornerRadius = UDim.new(0, 6)
 
         Yes.MouseButton1Click:Connect(function()
             if RCglob then RCglob:Destroy() end
@@ -894,12 +926,12 @@ function RcHub:Window(GuiConfig)
     end)
 
     function GuiFunc:ToggleUI()
-        local ScreenGui = Instance.new("ScreenGui")
+        local ScreenGui = KZN_NewInstance("ScreenGui")
         ScreenGui.Parent = game:GetService("CoreGui")
         ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         ScreenGui.Name = "ToggleUIButton"
 
-        local MainButton = Instance.new("ImageLabel")
+        local MainButton = KZN_NewInstance("ImageLabel")
         MainButton.Parent = ScreenGui
         MainButton.Size = UDim2.new(0, 40, 0, 40)
         MainButton.Position = UDim2.new(0, 20, 0, 100)
@@ -907,11 +939,11 @@ function RcHub:Window(GuiConfig)
         MainButton.Image = "rbxassetid://" .. GuiConfig.Image
         MainButton.ScaleType = Enum.ScaleType.Fit
 
-        local UICorner = Instance.new("UICorner")
+        local UICorner = KZN_NewInstance("UICorner")
         UICorner.CornerRadius = UDim.new(0, 6)
         UICorner.Parent = MainButton
 
-        local Button = Instance.new("TextButton")
+        local Button = KZN_NewInstance("TextButton")
         Button.Parent = MainButton
         Button.Size = UDim2.new(1, 0, 1, 0)
         Button.BackgroundTransparency = 1
@@ -961,11 +993,11 @@ function RcHub:Window(GuiConfig)
     DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
     MakeDraggable(Top, DropShadowHolder)
 
-    local MoreBlur = Instance.new("Frame");
-    local DropShadowHolder1 = Instance.new("Frame");
-    local DropShadow1 = Instance.new("ImageLabel");
-    local UICorner28 = Instance.new("UICorner");
-    local ConnectButton = Instance.new("TextButton");
+    local MoreBlur = KZN_NewInstance("Frame");
+    local DropShadowHolder1 = KZN_NewInstance("Frame");
+    local DropShadow1 = KZN_NewInstance("ImageLabel");
+    local UICorner28 = KZN_NewInstance("UICorner");
+    local ConnectButton = KZN_NewInstance("TextButton");
 
     MoreBlur.AnchorPoint = Vector2.new(1, 1)
     MoreBlur.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -1014,12 +1046,12 @@ function RcHub:Window(GuiConfig)
     ConnectButton.Name = "ConnectButton"
     ConnectButton.Parent = MoreBlur
 
-    local DropdownSelect = Instance.new("Frame");
-    local UICorner36 = Instance.new("UICorner");
-    local UIStroke14 = Instance.new("UIStroke");
-    local DropdownSelectReal = Instance.new("Frame");
-    local DropdownFolder = Instance.new("Folder");
-    local DropPageLayout = Instance.new("UIPageLayout");
+    local DropdownSelect = KZN_NewInstance("Frame");
+    local UICorner36 = KZN_NewInstance("UICorner");
+    local UIStroke14 = KZN_NewInstance("UIStroke");
+    local DropdownSelectReal = KZN_NewInstance("Frame");
+    local DropdownFolder = KZN_NewInstance("Folder");
+    local DropPageLayout = KZN_NewInstance("UIPageLayout");
 
     DropdownSelect.AnchorPoint = Vector2.new(1, 0.5)
     DropdownSelect.BackgroundColor3 = Color3.fromRGB(30.00000011175871, 30.00000011175871, 30.00000011175871)
@@ -1079,8 +1111,8 @@ function RcHub:Window(GuiConfig)
         TabConfig.Name = TabConfig.Name or "Tab"
         TabConfig.Icon = TabConfig.Icon or ""
 
-        local ScrolLayers = Instance.new("ScrollingFrame");
-        local UIListLayout1 = Instance.new("UIListLayout");
+        local ScrolLayers = KZN_NewInstance("ScrollingFrame");
+        local UIListLayout1 = KZN_NewInstance("UIListLayout");
 
         ScrolLayers.ScrollBarImageColor3 = Color3.fromRGB(80.00000283122063, 80.00000283122063, 80.00000283122063)
         ScrolLayers.ScrollBarThickness = 0
@@ -1098,13 +1130,13 @@ function RcHub:Window(GuiConfig)
         UIListLayout1.SortOrder = Enum.SortOrder.LayoutOrder
         UIListLayout1.Parent = ScrolLayers
 
-        local Tab = Instance.new("Frame");
-        local UICorner3 = Instance.new("UICorner");
-        local TabButton = Instance.new("TextButton");
-        local TabName = Instance.new("TextLabel")
-        local FeatureImg = Instance.new("ImageLabel");
-        local UIStroke2 = Instance.new("UIStroke");
-        local UICorner4 = Instance.new("UICorner");
+        local Tab = KZN_NewInstance("Frame");
+        local UICorner3 = KZN_NewInstance("UICorner");
+        local TabButton = KZN_NewInstance("TextButton");
+        local TabName = KZN_NewInstance("TextLabel")
+        local FeatureImg = KZN_NewInstance("ImageLabel");
+        local UIStroke2 = KZN_NewInstance("UIStroke");
+        local UICorner4 = KZN_NewInstance("UICorner");
 
         Tab.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         if CountTab == 0 then
@@ -1160,7 +1192,7 @@ function RcHub:Window(GuiConfig)
         if CountTab == 0 then
             LayersPageLayout:JumpToIndex(0)
             NameTab.Text = TabConfig.Name
-            local ChooseFrame = Instance.new("Frame");
+            local ChooseFrame = KZN_NewInstance("Frame");
             ChooseFrame.BackgroundColor3 = GuiConfig.Color
             ChooseFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
             ChooseFrame.BorderSizePixel = 0
@@ -1236,10 +1268,10 @@ function RcHub:Window(GuiConfig)
         local CountSection = 0
         function Sections:AddSection(Title, AlwaysOpen)
             local Title = Title or "Title"
-            local Section = Instance.new("Frame");
-            local SectionDecideFrame = Instance.new("Frame");
-            local UICorner1 = Instance.new("UICorner");
-            local UIGradient = Instance.new("UIGradient");
+            local Section = KZN_NewInstance("Frame");
+            local SectionDecideFrame = KZN_NewInstance("Frame");
+            local UICorner1 = KZN_NewInstance("UICorner");
+            local UIGradient = KZN_NewInstance("UIGradient");
 
             Section.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             Section.BackgroundTransparency = 0.9990000128746033
@@ -1252,13 +1284,13 @@ function RcHub:Window(GuiConfig)
             Section.Name = "Section"
             Section.Parent = ScrolLayers
 
-            local SectionReal = Instance.new("Frame");
-            local UICorner = Instance.new("UICorner");
-            local UIStroke = Instance.new("UIStroke");
-            local SectionButton = Instance.new("TextButton");
-            local FeatureFrame = Instance.new("Frame");
-            local FeatureImg = Instance.new("ImageLabel");
-            local SectionTitle = Instance.new("TextLabel");
+            local SectionReal = KZN_NewInstance("Frame");
+            local UICorner = KZN_NewInstance("UICorner");
+            local UIStroke = KZN_NewInstance("UIStroke");
+            local SectionButton = KZN_NewInstance("TextButton");
+            local FeatureFrame = KZN_NewInstance("Frame");
+            local FeatureImg = KZN_NewInstance("ImageLabel");
+            local SectionTitle = KZN_NewInstance("TextLabel");
 
             SectionReal.AnchorPoint = Vector2.new(0.5, 0)
             SectionReal.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1343,9 +1375,9 @@ function RcHub:Window(GuiConfig)
             UIGradient.Parent = SectionDecideFrame
 
             --// Section Add
-            local SectionAdd = Instance.new("Frame");
-            local UICorner8 = Instance.new("UICorner");
-            local UIListLayout2 = Instance.new("UIListLayout");
+            local SectionAdd = KZN_NewInstance("Frame");
+            local UICorner8 = KZN_NewInstance("UICorner");
+            local UIListLayout2 = KZN_NewInstance("UIListLayout");
 
             SectionAdd.AnchorPoint = Vector2.new(0.5, 0)
             SectionAdd.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1461,10 +1493,10 @@ function RcHub:Window(GuiConfig)
                 ParagraphConfig.Content = ParagraphConfig.Content or "Content"
                 local ParagraphFunc = {}
 
-                local Paragraph = Instance.new("Frame")
-                local UICorner14 = Instance.new("UICorner")
-                local ParagraphTitle = Instance.new("TextLabel")
-                local ParagraphContent = Instance.new("TextLabel")
+                local Paragraph = KZN_NewInstance("Frame")
+                local UICorner14 = KZN_NewInstance("UICorner")
+                local ParagraphTitle = KZN_NewInstance("TextLabel")
+                local ParagraphContent = KZN_NewInstance("TextLabel")
 
                 Paragraph.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Paragraph.BackgroundTransparency = 0.935
@@ -1479,7 +1511,7 @@ function RcHub:Window(GuiConfig)
 
                 local iconOffset = 10
                 if ParagraphConfig.Icon then
-                    local IconImg = Instance.new("ImageLabel")
+                    local IconImg = KZN_NewInstance("ImageLabel")
                     IconImg.Size = UDim2.new(0, 20, 0, 20)
                     IconImg.Position = UDim2.new(0, 8, 0, 12)
                     IconImg.BackgroundTransparency = 1
@@ -1524,7 +1556,7 @@ function RcHub:Window(GuiConfig)
 
                 local ParagraphButton
                 if ParagraphConfig.ButtonText then
-                    ParagraphButton = Instance.new("TextButton")
+                    ParagraphButton = KZN_NewInstance("TextButton")
                     ParagraphButton.Position = UDim2.new(0, 10, 0, 42)
                     ParagraphButton.Size = UDim2.new(1, -22, 0, 28)
                     ParagraphButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1536,7 +1568,7 @@ function RcHub:Window(GuiConfig)
                     ParagraphButton.Text = ParagraphConfig.ButtonText
                     ParagraphButton.Parent = Paragraph
 
-                    local btnCorner = Instance.new("UICorner")
+                    local btnCorner = KZN_NewInstance("UICorner")
                     btnCorner.CornerRadius = UDim.new(0, 6)
                     btnCorner.Parent = ParagraphButton
 
@@ -1598,18 +1630,18 @@ function RcHub:Window(GuiConfig)
                     baseHeight = baseHeight + 36
                 end
 
-                local Panel = Instance.new("Frame")
+                local Panel = KZN_NewInstance("Frame")
                 Panel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Panel.BackgroundTransparency = 0.935
                 Panel.Size = UDim2.new(1, 0, 0, baseHeight)
                 Panel.LayoutOrder = CountItem
                 Panel.Parent = SectionAdd
 
-                local UICorner = Instance.new("UICorner")
+                local UICorner = KZN_NewInstance("UICorner")
                 UICorner.CornerRadius = UDim.new(0, 4)
                 UICorner.Parent = Panel
 
-                local Title = Instance.new("TextLabel")
+                local Title = KZN_NewInstance("TextLabel")
                 Title.Font = Enum.Font.GothamBold
                 Title.Text = PanelConfig.Title
                 Title.TextSize = 13
@@ -1620,7 +1652,7 @@ function RcHub:Window(GuiConfig)
                 Title.Size = UDim2.new(1, -20, 0, 13)
                 Title.Parent = Panel
 
-                local Content = Instance.new("TextLabel")
+                local Content = KZN_NewInstance("TextLabel")
                 Content.Font = Enum.Font.Gotham
                 Content.Text = PanelConfig.Content
                 Content.TextSize = 12
@@ -1635,7 +1667,7 @@ function RcHub:Window(GuiConfig)
 
                 local InputBox
                 if PanelConfig.Placeholder then
-                    local InputFrame = Instance.new("Frame")
+                    local InputFrame = KZN_NewInstance("Frame")
                     InputFrame.AnchorPoint = Vector2.new(0.5, 0)
                     InputFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                     InputFrame.BackgroundTransparency = 0.95
@@ -1643,11 +1675,11 @@ function RcHub:Window(GuiConfig)
                     InputFrame.Size = UDim2.new(1, -20, 0, 30)
                     InputFrame.Parent = Panel
 
-                    local inputCorner = Instance.new("UICorner")
+                    local inputCorner = KZN_NewInstance("UICorner")
                     inputCorner.CornerRadius = UDim.new(0, 4)
                     inputCorner.Parent = InputFrame
 
-                    InputBox = Instance.new("TextBox")
+                    InputBox = KZN_NewInstance("TextBox")
                     InputBox.Font = Enum.Font.GothamBold
                     InputBox.PlaceholderText = PanelConfig.Placeholder
                     InputBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
@@ -1668,7 +1700,7 @@ function RcHub:Window(GuiConfig)
                     yBtn = 48
                 end
 
-                local ButtonMain = Instance.new("TextButton")
+                local ButtonMain = KZN_NewInstance("TextButton")
                 ButtonMain.Font = Enum.Font.GothamBold
                 ButtonMain.Text = PanelConfig.ButtonText
                 ButtonMain.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1680,7 +1712,7 @@ function RcHub:Window(GuiConfig)
                 ButtonMain.Position = UDim2.new(0, 10, 0, yBtn)
                 ButtonMain.Parent = Panel
 
-                local btnCorner = Instance.new("UICorner")
+                local btnCorner = KZN_NewInstance("UICorner")
                 btnCorner.CornerRadius = UDim.new(0, 6)
                 btnCorner.Parent = ButtonMain
 
@@ -1689,7 +1721,7 @@ function RcHub:Window(GuiConfig)
                 end)
 
                 if PanelConfig.SubButtonText then
-                    local SubButton = Instance.new("TextButton")
+                    local SubButton = KZN_NewInstance("TextButton")
                     SubButton.Font = Enum.Font.GothamBold
                     SubButton.Text = PanelConfig.SubButtonText
                     SubButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1701,7 +1733,7 @@ function RcHub:Window(GuiConfig)
                     SubButton.Position = UDim2.new(0.5, 2, 0, yBtn)
                     SubButton.Parent = Panel
 
-                    local subCorner = Instance.new("UICorner")
+                    local subCorner = KZN_NewInstance("UICorner")
                     subCorner.CornerRadius = UDim.new(0, 6)
                     subCorner.Parent = SubButton
 
@@ -1733,18 +1765,18 @@ function RcHub:Window(GuiConfig)
                 ButtonConfig.SubTitle = ButtonConfig.SubTitle or nil
                 ButtonConfig.SubCallback = ButtonConfig.SubCallback or function() end
 
-                local Button = Instance.new("Frame")
+                local Button = KZN_NewInstance("Frame")
                 Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Button.BackgroundTransparency = 0.935
                 Button.Size = UDim2.new(1, 0, 0, 40)
                 Button.LayoutOrder = CountItem
                 Button.Parent = SectionAdd
 
-                local UICorner = Instance.new("UICorner")
+                local UICorner = KZN_NewInstance("UICorner")
                 UICorner.CornerRadius = UDim.new(0, 4)
                 UICorner.Parent = Button
 
-                local MainButton = Instance.new("TextButton")
+                local MainButton = KZN_NewInstance("TextButton")
                 MainButton.Font = Enum.Font.GothamBold
                 MainButton.Text = ButtonConfig.Title
                 MainButton.TextSize = 12
@@ -1756,14 +1788,14 @@ function RcHub:Window(GuiConfig)
                 MainButton.Position = UDim2.new(0, 6, 0, 5)
                 MainButton.Parent = Button
 
-                local mainCorner = Instance.new("UICorner")
+                local mainCorner = KZN_NewInstance("UICorner")
                 mainCorner.CornerRadius = UDim.new(0, 4)
                 mainCorner.Parent = MainButton
 
                 MainButton.MouseButton1Click:Connect(ButtonConfig.Callback)
 
                 if ButtonConfig.SubTitle then
-                    local SubButton = Instance.new("TextButton")
+                    local SubButton = KZN_NewInstance("TextButton")
                     SubButton.Font = Enum.Font.GothamBold
                     SubButton.Text = ButtonConfig.SubTitle
                     SubButton.TextSize = 12
@@ -1775,7 +1807,7 @@ function RcHub:Window(GuiConfig)
                     SubButton.Position = UDim2.new(0.5, 2, 0, 5)
                     SubButton.Parent = Button
 
-                    local subCorner = Instance.new("UICorner")
+                    local subCorner = KZN_NewInstance("UICorner")
                     subCorner.CornerRadius = UDim.new(0, 4)
                     subCorner.Parent = SubButton
 
@@ -1800,53 +1832,23 @@ function RcHub:Window(GuiConfig)
 
                 local ToggleFunc = { Value = ToggleConfig.Default }
 
-                local Toggle = Instance.new("Frame")
-                local UICorner20 = Instance.new("UICorner")
-                local ToggleTitle = Instance.new("TextLabel")
-                local ToggleContent = Instance.new("TextLabel")
-                local ToggleButton = Instance.new("TextButton")
-                local FeatureFrame2 = Instance.new("Frame")
-                local UICorner22 = Instance.new("UICorner")
-                local UIStroke8 = Instance.new("UIStroke")
-                local ToggleCircle = Instance.new("Frame")
-                local UICorner23 = Instance.new("UICorner")
+                local Toggle = KZN_NewInstance("Frame")
+                local UICorner20 = KZN_NewInstance("UICorner")
+                local ToggleTitle = KZN_NewInstance("TextLabel")
+                local ToggleContent = KZN_NewInstance("TextLabel")
+                local ToggleButton = KZN_NewInstance("TextButton")
+                local FeatureFrame2 = KZN_NewInstance("Frame")
+                local UICorner22 = KZN_NewInstance("UICorner")
+                local UIStroke8 = KZN_NewInstance("UIStroke")
+                local ToggleCircle = KZN_NewInstance("Frame")
+                local UICorner23 = KZN_NewInstance("UICorner")
 
                 Toggle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Toggle.BackgroundTransparency = 0.935
                 Toggle.BorderSizePixel = 0
                 Toggle.LayoutOrder = CountItem
                 Toggle.Name = "Toggle"
-
-                -- Safe parent assignment:
-                -- Some executor/Roblox thread contexts can reject direct Instance access
-                -- with "lacking capability Plugin". Try a cloned reference first,
-                -- then retry the parent assignment from a fresh task context.
-                
-                local ToggleParent = SectionAdd
-                if type(cloneref) == "function" then
-                    local okClone, cloned = pcall(cloneref, SectionAdd)
-                    if okClone and cloned then
-                        ToggleParent = cloned
-                    end
-                end
-
-                local parentOK = pcall(function()
-                    Toggle.Parent = ToggleParent
-                end)
-
-                if not parentOK then
-                    task.spawn(function()
-                        for _ = 1, 10 do
-                            local okRetry = pcall(function()
-                                Toggle.Parent = ToggleParent
-                            end)
-                            if okRetry then
-                                return
-                            end
-                            task.wait(0.05)
-                        end
-                    end)
-                end
+                Toggle.Parent = SectionAdd
 
                 UICorner20.CornerRadius = UDim.new(0, 4)
                 UICorner20.Parent = Toggle
@@ -1863,7 +1865,7 @@ function RcHub:Window(GuiConfig)
                 ToggleTitle.Name = "ToggleTitle"
                 ToggleTitle.Parent = Toggle
 
-                local ToggleTitle2 = Instance.new("TextLabel")
+                local ToggleTitle2 = KZN_NewInstance("TextLabel")
                 ToggleTitle2.Font = Enum.Font.GothamBold
                 ToggleTitle2.Text = ToggleConfig.Title2
                 ToggleTitle2.TextSize = 12
@@ -2010,22 +2012,22 @@ function RcHub:Window(GuiConfig)
 
                 local SliderFunc = { Value = SliderConfig.Default }
 
-                local Slider = Instance.new("Frame");
-                local UICorner15 = Instance.new("UICorner");
-                local SliderTitle = Instance.new("TextLabel");
-                local SliderContent = Instance.new("TextLabel");
-                local SliderInput = Instance.new("Frame");
-                local UICorner16 = Instance.new("UICorner");
-                local TextBox = Instance.new("TextBox");
-                local SliderFrame = Instance.new("Frame");
-                local UICorner17 = Instance.new("UICorner");
-                local SliderDraggable = Instance.new("Frame");
-                local UICorner18 = Instance.new("UICorner");
-                local UIStroke5 = Instance.new("UIStroke");
-                local SliderCircle = Instance.new("Frame");
-                local UICorner19 = Instance.new("UICorner");
-                local UIStroke6 = Instance.new("UIStroke");
-                local UIStroke7 = Instance.new("UIStroke");
+                local Slider = KZN_NewInstance("Frame");
+                local UICorner15 = KZN_NewInstance("UICorner");
+                local SliderTitle = KZN_NewInstance("TextLabel");
+                local SliderContent = KZN_NewInstance("TextLabel");
+                local SliderInput = KZN_NewInstance("Frame");
+                local UICorner16 = KZN_NewInstance("UICorner");
+                local TextBox = KZN_NewInstance("TextBox");
+                local SliderFrame = KZN_NewInstance("Frame");
+                local UICorner17 = KZN_NewInstance("UICorner");
+                local SliderDraggable = KZN_NewInstance("Frame");
+                local UICorner18 = KZN_NewInstance("UICorner");
+                local UIStroke5 = KZN_NewInstance("UIStroke");
+                local SliderCircle = KZN_NewInstance("Frame");
+                local UICorner19 = KZN_NewInstance("UICorner");
+                local UIStroke6 = KZN_NewInstance("UIStroke");
+                local UIStroke7 = KZN_NewInstance("UIStroke");
 
                 Slider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Slider.BackgroundTransparency = 0.9350000023841858
@@ -2239,13 +2241,13 @@ function RcHub:Window(GuiConfig)
 
                 local InputFunc = { Value = InputConfig.Default }
 
-                local Input = Instance.new("Frame");
-                local UICorner12 = Instance.new("UICorner");
-                local InputTitle = Instance.new("TextLabel");
-                local InputContent = Instance.new("TextLabel");
-                local InputFrame = Instance.new("Frame");
-                local UICorner13 = Instance.new("UICorner");
-                local InputTextBox = Instance.new("TextBox");
+                local Input = KZN_NewInstance("Frame");
+                local UICorner12 = KZN_NewInstance("UICorner");
+                local InputTitle = KZN_NewInstance("TextLabel");
+                local InputContent = KZN_NewInstance("TextLabel");
+                local InputFrame = KZN_NewInstance("Frame");
+                local UICorner13 = KZN_NewInstance("UICorner");
+                local InputTextBox = KZN_NewInstance("TextBox");
 
                 Input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Input.BackgroundTransparency = 0.9350000023841858
@@ -2373,15 +2375,15 @@ function RcHub:Window(GuiConfig)
 
                 local DropdownFunc = { Value = DropdownConfig.Default, Options = DropdownConfig.Options }
 
-                local Dropdown = Instance.new("Frame")
-                local DropdownButton = Instance.new("TextButton")
-                local UICorner10 = Instance.new("UICorner")
-                local DropdownTitle = Instance.new("TextLabel")
-                local DropdownContent = Instance.new("TextLabel")
-                local SelectOptionsFrame = Instance.new("Frame")
-                local UICorner11 = Instance.new("UICorner")
-                local OptionSelecting = Instance.new("TextLabel")
-                local OptionImg = Instance.new("ImageLabel")
+                local Dropdown = KZN_NewInstance("Frame")
+                local DropdownButton = KZN_NewInstance("TextButton")
+                local UICorner10 = KZN_NewInstance("UICorner")
+                local DropdownTitle = KZN_NewInstance("TextLabel")
+                local DropdownContent = KZN_NewInstance("TextLabel")
+                local SelectOptionsFrame = KZN_NewInstance("Frame")
+                local UICorner11 = KZN_NewInstance("UICorner")
+                local OptionSelecting = KZN_NewInstance("TextLabel")
+                local OptionImg = KZN_NewInstance("ImageLabel")
 
                 Dropdown.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Dropdown.BackgroundTransparency = 0.935
@@ -2467,12 +2469,12 @@ function RcHub:Window(GuiConfig)
                 OptionImg.Name = "OptionImg"
                 OptionImg.Parent = SelectOptionsFrame
 
-                local DropdownContainer = Instance.new("Frame")
+                local DropdownContainer = KZN_NewInstance("Frame")
                 DropdownContainer.Size = UDim2.new(1, 0, 1, 0)
                 DropdownContainer.BackgroundTransparency = 1
                 DropdownContainer.Parent = DropdownFolder
 
-                local SearchBox = Instance.new("TextBox")
+                local SearchBox = KZN_NewInstance("TextBox")
                 SearchBox.PlaceholderText = "Search"
                 SearchBox.Font = Enum.Font.Gotham
                 SearchBox.Text = ""
@@ -2487,7 +2489,7 @@ function RcHub:Window(GuiConfig)
                 SearchBox.Name = "SearchBox"
                 SearchBox.Parent = DropdownContainer
 
-                local ScrollSelect = Instance.new("ScrollingFrame")
+                local ScrollSelect = KZN_NewInstance("ScrollingFrame")
                 ScrollSelect.Size = UDim2.new(1, 0, 1, -30)
                 ScrollSelect.Position = UDim2.new(0, 0, 0, 30)
                 ScrollSelect.ScrollBarImageTransparency = 1
@@ -2498,7 +2500,7 @@ function RcHub:Window(GuiConfig)
                 ScrollSelect.Name = "ScrollSelect"
                 ScrollSelect.Parent = DropdownContainer
 
-                local UIListLayout4 = Instance.new("UIListLayout")
+                local UIListLayout4 = KZN_NewInstance("UIListLayout")
                 UIListLayout4.Padding = UDim.new(0, 3)
                 UIListLayout4.SortOrder = Enum.SortOrder.LayoutOrder
                 UIListLayout4.Parent = ScrollSelect
@@ -2542,13 +2544,13 @@ function RcHub:Window(GuiConfig)
                         value = option
                     end
 
-                    local Option = Instance.new("Frame")
-                    local OptionButton = Instance.new("TextButton")
-                    local OptionText = Instance.new("TextLabel")
-                    local ChooseFrame = Instance.new("Frame")
-                    local UIStroke15 = Instance.new("UIStroke")
-                    local UICorner38 = Instance.new("UICorner")
-                    local UICorner37 = Instance.new("UICorner")
+                    local Option = KZN_NewInstance("Frame")
+                    local OptionButton = KZN_NewInstance("TextButton")
+                    local OptionText = KZN_NewInstance("TextLabel")
+                    local ChooseFrame = KZN_NewInstance("Frame")
+                    local UIStroke15 = KZN_NewInstance("UIStroke")
+                    local UICorner38 = KZN_NewInstance("UICorner")
+                    local UICorner37 = KZN_NewInstance("UICorner")
 
                     Option.BackgroundTransparency = 1
                     Option.Size = UDim2.new(1, 0, 0, 30)
@@ -2687,7 +2689,7 @@ function RcHub:Window(GuiConfig)
             end
 
             function Items:AddDivider()
-                local Divider = Instance.new("Frame")
+                local Divider = KZN_NewInstance("Frame")
                 Divider.Name = "Divider"
                 Divider.Parent = SectionAdd
                 Divider.AnchorPoint = Vector2.new(0.5, 0)
@@ -2698,7 +2700,7 @@ function RcHub:Window(GuiConfig)
                 Divider.BorderSizePixel = 0
                 Divider.LayoutOrder = CountItem
 
-                local UIGradient = Instance.new("UIGradient")
+                local UIGradient = KZN_NewInstance("UIGradient")
                 UIGradient.Color = ColorSequence.new {
                     ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 20)),
                     ColorSequenceKeypoint.new(0.5, GuiConfig.Color),
@@ -2706,7 +2708,7 @@ function RcHub:Window(GuiConfig)
                 }
                 UIGradient.Parent = Divider
 
-                local UICorner = Instance.new("UICorner")
+                local UICorner = KZN_NewInstance("UICorner")
                 UICorner.CornerRadius = UDim.new(0, 2)
                 UICorner.Parent = Divider
 
@@ -2717,22 +2719,22 @@ function RcHub:Window(GuiConfig)
             function Items:AddSubSection(title)
                 title = title or "Sub Section"
 
-                local SubSection = Instance.new("Frame")
+                local SubSection = KZN_NewInstance("Frame")
                 SubSection.Name = "SubSection"
                 SubSection.Parent = SectionAdd
                 SubSection.BackgroundTransparency = 1
                 SubSection.Size = UDim2.new(1, 0, 0, 22)
                 SubSection.LayoutOrder = CountItem
 
-                local Background = Instance.new("Frame")
+                local Background = KZN_NewInstance("Frame")
                 Background.Parent = SubSection
                 Background.Size = UDim2.new(1, 0, 1, 0)
                 Background.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Background.BackgroundTransparency = 0.935
                 Background.BorderSizePixel = 0
-                Instance.new("UICorner", Background).CornerRadius = UDim.new(0, 6)
+                KZN_NewInstance("UICorner", Background).CornerRadius = UDim.new(0, 6)
 
-                local Label = Instance.new("TextLabel")
+                local Label = KZN_NewInstance("TextLabel")
                 Label.Parent = SubSection
                 Label.AnchorPoint = Vector2.new(0, 0.5)
                 Label.Position = UDim2.new(0, 10, 0.5, 0)

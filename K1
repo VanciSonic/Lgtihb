@@ -111,34 +111,8 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
--- Safe UI root for executor environments.
--- Prefer gethui(), then cloneref(CoreGui), then the raw CoreGui fallback.
-local function GetSafeUIRoot()
-    if typeof(gethui) == "function" then
-        local ok, ui = pcall(gethui)
-        if ok and ui then
-            return ui
-        end
-    end
-
-    local ok, cg = pcall(function()
-        return game:GetService("CoreGui")
-    end)
-
-    if ok and cg then
-        if typeof(cloneref) == "function" then
-            local cloneOk, cloned = pcall(cloneref, cg)
-            if cloneOk and cloned then
-                return cloned
-            end
-        end
-        return cg
-    end
-
-    return game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-end
-
-local CoreGui = GetSafeUIRoot()
+-- UI root: PlayerGui only; no CoreGui/Plugin capability dependency.
+local UIParent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 local viewport = workspace.CurrentCamera.ViewportSize
 
 local function isMobileDevice()
@@ -316,13 +290,13 @@ function RcHub:MakeNotify(NotifyConfig)
     NotifyConfig.Delay = NotifyConfig.Delay or 5
     local NotifyFunction = {}
     spawn(function()
-        if not CoreGui:FindFirstChild("NotifyGui") then
+        if not UIParent:FindFirstChild("NotifyGui") then
             local NotifyGui = Instance.new("ScreenGui");
             NotifyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
             NotifyGui.Name = "NotifyGui"
-            NotifyGui.Parent = CoreGui
+            NotifyGui.Parent = UIParent
         end
-        if not CoreGui.NotifyGui:FindFirstChild("NotifyLayout") then
+        if not UIParent.NotifyGui:FindFirstChild("NotifyLayout") then
             local NotifyLayout = Instance.new("Frame");
             NotifyLayout.AnchorPoint = Vector2.new(1, 1)
             NotifyLayout.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -332,11 +306,11 @@ function RcHub:MakeNotify(NotifyConfig)
             NotifyLayout.Position = UDim2.new(1, -30, 1, -30)
             NotifyLayout.Size = UDim2.new(0, 320, 1, 0)
             NotifyLayout.Name = "NotifyLayout"
-            NotifyLayout.Parent = CoreGui.NotifyGui
+            NotifyLayout.Parent = UIParent.NotifyGui
             local Count = 0
-            CoreGui.NotifyGui.NotifyLayout.ChildRemoved:Connect(function()
+            UIParent.NotifyGui.NotifyLayout.ChildRemoved:Connect(function()
                 Count = 0
-                for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
+                for i, v in UIParent.NotifyGui.NotifyLayout:GetChildren() do
                     TweenService:Create(
                         v,
                         TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
@@ -347,7 +321,7 @@ function RcHub:MakeNotify(NotifyConfig)
             end)
         end
         local NotifyPosHeigh = 0
-        for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
+        for i, v in UIParent.NotifyGui.NotifyLayout:GetChildren() do
             NotifyPosHeigh = -(v.Position.Y.Offset) + v.Size.Y.Offset + 12
         end
         local NotifyFrame = Instance.new("Frame");
@@ -369,7 +343,7 @@ function RcHub:MakeNotify(NotifyConfig)
         NotifyFrame.Size = UDim2.new(1, 0, 0, 150)
         NotifyFrame.Name = "NotifyFrame"
         NotifyFrame.BackgroundTransparency = 1
-        NotifyFrame.Parent = CoreGui.NotifyGui.NotifyLayout
+        NotifyFrame.Parent = UIParent.NotifyGui.NotifyLayout
         NotifyFrame.AnchorPoint = Vector2.new(0, 1)
         NotifyFrame.Position = UDim2.new(0, 0, 1, -(NotifyPosHeigh))
 
@@ -553,7 +527,7 @@ function RcHub:Window(GuiConfig)
     RCglob.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     RCglob.Name = "RCglob"
     RCglob.ResetOnSpawn = false
-    RCglob.Parent = CoreGui
+    RCglob.Parent = UIParent
 
     DropShadowHolder.BackgroundTransparency = 1
     DropShadowHolder.BorderSizePixel = 0
@@ -792,7 +766,7 @@ function RcHub:Window(GuiConfig)
     ScrollTab.ChildRemoved:Connect(UpdateSize1)
 
     function GuiFunc:DestroyGui()
-        if CoreGui:FindFirstChild("RCglob") then
+        if UIParent:FindFirstChild("RCglob") then
             RCglob:Destroy()
         end
     end
@@ -900,8 +874,8 @@ function RcHub:Window(GuiConfig)
 
         Yes.MouseButton1Click:Connect(function()
             if RCglob then RCglob:Destroy() end
-            if CoreGui:FindFirstChild("ToggleUIButton") then
-                CoreGui.ToggleUIButton:Destroy()
+            if UIParent:FindFirstChild("ToggleUIButton") then
+                UIParent.ToggleUIButton:Destroy()
             end
         end)
 
@@ -922,7 +896,7 @@ function RcHub:Window(GuiConfig)
 
     function GuiFunc:ToggleUI()
         local ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Parent = CoreGui
+        ScreenGui.Parent = UIParent
         ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         ScreenGui.Name = "ToggleUIButton"
 

@@ -1,4 +1,4 @@
--- KaizenUI V2 [BackUp]
+-- KaizenUI
 local HttpService = game:GetService("HttpService")
 
 if not isfolder("KZN") then

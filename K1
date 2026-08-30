@@ -1,4 +1,4 @@
--- KaizenUI V2
+-- KaizenUI V2 [BackUp]
 local HttpService = game:GetService("HttpService")
 
 if not isfolder("KZN") then
@@ -111,8 +111,7 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
--- UI root: PlayerGui only; no CoreGui/Plugin capability dependency.
-local UIParent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+local CoreGui = game:GetService("CoreGui")
 local viewport = workspace.CurrentCamera.ViewportSize
 
 local function isMobileDevice()
@@ -290,13 +289,13 @@ function RcHub:MakeNotify(NotifyConfig)
     NotifyConfig.Delay = NotifyConfig.Delay or 5
     local NotifyFunction = {}
     spawn(function()
-        if not UIParent:FindFirstChild("NotifyGui") then
+        if not CoreGui:FindFirstChild("NotifyGui") then
             local NotifyGui = Instance.new("ScreenGui");
             NotifyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
             NotifyGui.Name = "NotifyGui"
-            NotifyGui.Parent = UIParent
+            NotifyGui.Parent = CoreGui
         end
-        if not UIParent.NotifyGui:FindFirstChild("NotifyLayout") then
+        if not CoreGui.NotifyGui:FindFirstChild("NotifyLayout") then
             local NotifyLayout = Instance.new("Frame");
             NotifyLayout.AnchorPoint = Vector2.new(1, 1)
             NotifyLayout.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -306,11 +305,11 @@ function RcHub:MakeNotify(NotifyConfig)
             NotifyLayout.Position = UDim2.new(1, -30, 1, -30)
             NotifyLayout.Size = UDim2.new(0, 320, 1, 0)
             NotifyLayout.Name = "NotifyLayout"
-            NotifyLayout.Parent = UIParent.NotifyGui
+            NotifyLayout.Parent = CoreGui.NotifyGui
             local Count = 0
-            UIParent.NotifyGui.NotifyLayout.ChildRemoved:Connect(function()
+            CoreGui.NotifyGui.NotifyLayout.ChildRemoved:Connect(function()
                 Count = 0
-                for i, v in UIParent.NotifyGui.NotifyLayout:GetChildren() do
+                for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
                     TweenService:Create(
                         v,
                         TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
@@ -321,7 +320,7 @@ function RcHub:MakeNotify(NotifyConfig)
             end)
         end
         local NotifyPosHeigh = 0
-        for i, v in UIParent.NotifyGui.NotifyLayout:GetChildren() do
+        for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
             NotifyPosHeigh = -(v.Position.Y.Offset) + v.Size.Y.Offset + 12
         end
         local NotifyFrame = Instance.new("Frame");
@@ -343,7 +342,7 @@ function RcHub:MakeNotify(NotifyConfig)
         NotifyFrame.Size = UDim2.new(1, 0, 0, 150)
         NotifyFrame.Name = "NotifyFrame"
         NotifyFrame.BackgroundTransparency = 1
-        NotifyFrame.Parent = UIParent.NotifyGui.NotifyLayout
+        NotifyFrame.Parent = CoreGui.NotifyGui.NotifyLayout
         NotifyFrame.AnchorPoint = Vector2.new(0, 1)
         NotifyFrame.Position = UDim2.new(0, 0, 1, -(NotifyPosHeigh))
 
@@ -527,7 +526,7 @@ function RcHub:Window(GuiConfig)
     RCglob.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     RCglob.Name = "RCglob"
     RCglob.ResetOnSpawn = false
-    RCglob.Parent = UIParent
+    RCglob.Parent = game:GetService("CoreGui")
 
     DropShadowHolder.BackgroundTransparency = 1
     DropShadowHolder.BorderSizePixel = 0
@@ -766,7 +765,7 @@ function RcHub:Window(GuiConfig)
     ScrollTab.ChildRemoved:Connect(UpdateSize1)
 
     function GuiFunc:DestroyGui()
-        if UIParent:FindFirstChild("RCglob") then
+        if CoreGui:FindFirstChild("RCglob") then
             RCglob:Destroy()
         end
     end
@@ -874,8 +873,8 @@ function RcHub:Window(GuiConfig)
 
         Yes.MouseButton1Click:Connect(function()
             if RCglob then RCglob:Destroy() end
-            if UIParent:FindFirstChild("ToggleUIButton") then
-                UIParent.ToggleUIButton:Destroy()
+            if game.CoreGui:FindFirstChild("ToggleUIButton") then
+                game.CoreGui.ToggleUIButton:Destroy()
             end
         end)
 
@@ -896,7 +895,7 @@ function RcHub:Window(GuiConfig)
 
     function GuiFunc:ToggleUI()
         local ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Parent = UIParent
+        ScreenGui.Parent = game:GetService("CoreGui")
         ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         ScreenGui.Name = "ToggleUIButton"
 
@@ -1380,41 +1379,22 @@ function RcHub:Window(GuiConfig)
             end
 
             local function UpdateSizeSection()
-                if not OpenSection then return end
-
-                local SectionSizeYWitdh = 38
-
-                for _, v in SectionAdd:GetChildren() do
-                    if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
-                        SectionSizeYWitdh += v.Size.Y.Offset + 3
+                if OpenSection then
+                    local SectionSizeYWitdh = 38
+                    for _, v in SectionAdd:GetChildren() do
+                        if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+                            SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
+                        end
                     end
+                    TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 90 }):Play()
+                    TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, SectionSizeYWitdh) })
+                        :Play()
+                    TweenService:Create(SectionAdd, TweenInfo.new(0.5),
+                        { Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38) }):Play()
+                    TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(1, 0, 0, 2) }):Play()
+                    task.wait(0.5)
+                    UpdateSizeScroll()
                 end
-
-                TweenService:Create(
-                    FeatureFrame,
-                    TweenInfo.new(0.5),
-                    {Rotation = 90}
-                ):Play()
-
-                TweenService:Create(
-                    Section,
-                    TweenInfo.new(0.5),
-                    {Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)}
-                ):Play()
-
-                TweenService:Create(
-                    SectionAdd,
-                    TweenInfo.new(0.5),
-                    {Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)}
-                ):Play()
-
-                TweenService:Create(
-                    SectionDecideFrame,
-                    TweenInfo.new(0.5),
-                    {Size = UDim2.new(1, 0, 0, 2)}
-                ):Play()
-
-                task.delay(0.55, UpdateSizeScroll)
             end
 
             if AlwaysOpen == true then
@@ -1446,8 +1426,7 @@ function RcHub:Window(GuiConfig)
                     end
                 end)
             end
-            
-            --[[
+
             if AlwaysOpen == true or AlwaysOpen == false then
                 OpenSection = true
                 local SectionSizeYWitdh = 38
@@ -1462,40 +1441,9 @@ function RcHub:Window(GuiConfig)
                 SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
                 UpdateSizeScroll()
             end
-            ]]
 
-            local UpdatingSection = false
-            local RefreshQueued = false
-            local function RefreshSection()
-                if RefreshQueued then return end
-                RefreshQueued = true
-                task.delay(0.1, function()
-                    RefreshQueued = false
-                    if UpdatingSection or not OpenSection then return end
-                    UpdatingSection = true
-                    local SectionSizeYWitdh = 38
-                    for _, v in SectionAdd:GetChildren() do
-                        if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
-                            SectionSizeYWitdh += v.Size.Y.Offset + 3
-                        end
-                    end
-                    Section.Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
-                    SectionAdd.Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
-                    SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
-                    if FeatureFrame and FeatureFrame.Parent then
-                        FeatureFrame.Rotation = 90
-                    end
-                    UpdateSizeScroll()
-                    task.wait()
-                    UpdatingSection = false
-                end)
-            end
-
-            SectionAdd.ChildAdded:Connect(RefreshSection)
-            SectionAdd.ChildRemoved:Connect(RefreshSection)
-            
-            --SectionAdd.ChildAdded:Connect(UpdateSizeSection)
-            --SectionAdd.ChildRemoved:Connect(UpdateSizeSection)
+            SectionAdd.ChildAdded:Connect(UpdateSizeSection)
+            SectionAdd.ChildRemoved:Connect(UpdateSizeSection)
 
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then

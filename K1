@@ -1816,7 +1816,37 @@ function RcHub:Window(GuiConfig)
                 Toggle.BorderSizePixel = 0
                 Toggle.LayoutOrder = CountItem
                 Toggle.Name = "Toggle"
-                Toggle.Parent = SectionAdd
+
+                -- Safe parent assignment:
+                -- Some executor/Roblox thread contexts can reject direct Instance access
+                -- with "lacking capability Plugin". Try a cloned reference first,
+                -- then retry the parent assignment from a fresh task context.
+                
+                local ToggleParent = SectionAdd
+                if type(cloneref) == "function" then
+                    local okClone, cloned = pcall(cloneref, SectionAdd)
+                    if okClone and cloned then
+                        ToggleParent = cloned
+                    end
+                end
+
+                local parentOK = pcall(function()
+                    Toggle.Parent = ToggleParent
+                end)
+
+                if not parentOK then
+                    task.spawn(function()
+                        for _ = 1, 10 do
+                            local okRetry = pcall(function()
+                                Toggle.Parent = ToggleParent
+                            end)
+                            if okRetry then
+                                return
+                            end
+                            task.wait(0.05)
+                        end
+                    end)
+                end
 
                 UICorner20.CornerRadius = UDim.new(0, 4)
                 UICorner20.Parent = Toggle

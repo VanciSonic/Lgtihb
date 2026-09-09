@@ -1,8 +1,97 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local SCRIPT_NAME = "Ghub Free"
+local SCRIPT_NAME = "Ganteng Hub"
 local COUNT_FILE = "GHFree.txt"
+
+local SERVER =
+    "https://gantengserver.nickelachmad.workers.dev"
+
+local API_KEY =
+    "GANTENGHUB_SECRET_2026"
+
+
+local function GetRequest()
+    return
+        request
+        or http_request
+        or syn and syn.request
+        or fluxus and fluxus.request
+end
+
+
+local function SendHeartbeat()
+    local req = GetRequest()
+
+    if not req then
+        warn("[GantengHub] HTTP request function tidak tersedia")
+        return false
+    end
+
+    local data = {
+        userId = tostring(LocalPlayer.UserId),
+        username = LocalPlayer.Name
+    }
+
+
+    local success, response = pcall(function()
+
+        return req({
+            Url = SERVER .. "/heartbeat",
+
+            Method = "POST",
+
+            Headers = {
+                ["Content-Type"] =
+                    "application/json",
+
+                ["Authorization"] =
+                    "Bearer " .. API_KEY
+            },
+
+            Body =
+                HttpService:JSONEncode(data)
+        })
+
+    end)
+
+
+    if not success then
+        warn(
+            "[GantengHub] Heartbeat error:",
+            response
+        )
+
+        return false
+    end
+
+
+    if response then
+
+        local ok, result =
+            pcall(function()
+
+                return HttpService:JSONDecode(
+                    response.Body
+                )
+
+            end)
+
+
+        if ok and result then
+            return true
+        end
+    end
+
+    return false
+end
+
+task.spawn(function()
+    while true do
+        SendHeartbeat()
+        task.wait(15)
+    end
+end)
 
 return function(WEBHOOK_URL)
     local function httpRequest(url)

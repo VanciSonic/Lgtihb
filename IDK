@@ -3,7 +3,6 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local SCRIPT_NAME = "Ganteng Hub"
 local COUNT_FILE = "GHFree.txt"
---[[
 local SERVER = "https://ganteng-online-tracker.onrender.com"
 local API_KEY = "GANTENGHUB_SECRET_2026"
 
@@ -52,7 +51,6 @@ task.spawn(function()
         task.wait(15)
     end
 end)
-]]--
 return function(WEBHOOK_URL)
     local function httpRequest(url)
         local req = (syn and syn.request)

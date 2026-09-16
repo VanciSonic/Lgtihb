@@ -4,7 +4,7 @@ local LocalPlayer = Players.LocalPlayer
 local SCRIPT_NAME = "Ganteng Hub"
 local COUNT_FILE = "GHFree.txt"
 --[[
-local SERVER = "https://gantengserver.nickelachmad.workers.dev"
+local SERVER = "https://ganteng-online-tracker.onrender.com"
 local API_KEY = "GANTENGHUB_SECRET_2026"
 
 local function GetRequest()

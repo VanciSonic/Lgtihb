@@ -436,7 +436,7 @@ return function(API_KEY)
     - Toggle: Auto Magnet Event
     - Toggle: Auto Gacha Magnet Event
 
-    [Item & Quest > Secret Quest [Beta]]
+    [Item & Quest > Secret Quest [Beta]
     - Dropdown: Select Island — Pilih island yang ingin di-clear sampai full star.
     - Toggle: Start Auto Secret — Clear semua secret di island yang dipilih sampai 3/3 ⭐.
 
@@ -661,7 +661,7 @@ return function(API_KEY)
     - Button: No Fog
     - Toggle: Anti Ban
 
-    [Sea Event > Sea Event [ Follow ]]
+    [Sea Event > Sea Event [ Follow ]
     - Dropdown: Select Boat — Select player boat to follow
     - Button: Refresh Boat List — Refresh player boat + owner list
     - Toggle: Follow Boat — Automatically move to the selected boat and keep seated
@@ -810,7 +810,6 @@ return function(API_KEY)
     SUMBER FEATURE GUIDE:
     Feature guide berikut dibuat dari struktur UI Ganteng Hub yang diberikan. Gunakan ini sebagai sumber utama.
 
-    ]]
     ]]
 
     local function AddHistory(role, content)

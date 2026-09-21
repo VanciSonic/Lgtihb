@@ -12,13 +12,12 @@ return function(API_KEY)
 
     -- ============================================================
     -- GANTENG ASISTEN (Blox Fruits)
-    -- Diedit oleh: [Nama Anda]
-    -- Deskripsi: Asisten AI untuk menjelaskan feature dan cara pakai Ganteng Hub
     -- ============================================================
 
     local Players = game:GetService("Players")
     local HttpService = game:GetService("HttpService")
     local TweenService = game:GetService("TweenService")
+    local UserInputService = game:GetService("UserInputService")
     local CoreGui = game:GetService("CoreGui")
 
     local Player = Players.LocalPlayer
@@ -64,6 +63,7 @@ return function(API_KEY)
     ToggleBtn.Text = "💬"
     ToggleBtn.TextSize = 20
     ToggleBtn.Font = Enum.Font.GothamBold
+    ToggleBtn.Active = true
     ToggleBtn.Parent = GantengGui
 
     local ToggleCorner = Instance.new("UICorner")
@@ -210,13 +210,71 @@ return function(API_KEY)
     SendScale.Parent = SendBtn
 
     -- ============================================================
-    -- WINDOW TOGGLE
+    -- DRAG + WINDOW TOGGLE
     -- ============================================================
 
     local isOpen = false
 
-    ToggleBtn.MouseButton1Click:Connect(function()
+    local dragging = false
+    local dragInput = nil
+    local dragStart = nil
+    local startPosition = nil
+    local dragMoved = false
 
+    local DRAG_THRESHOLD = 8
+
+    local function UpdateTogglePosition(input)
+        if not dragStart or not startPosition then
+            return
+        end
+
+        local delta = input.Position - dragStart
+
+        if delta.Magnitude >= DRAG_THRESHOLD then
+            dragMoved = true
+        end
+
+        ToggleBtn.Position = UDim2.new(
+            startPosition.X.Scale,
+            startPosition.X.Offset + delta.X,
+            startPosition.Y.Scale,
+            startPosition.Y.Offset + delta.Y
+        )
+    end
+
+    ToggleBtn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
+
+            dragging = true
+            dragMoved = false
+
+            dragStart = input.Position
+            startPosition = ToggleBtn.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    ToggleBtn.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch then
+
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input == dragInput then
+            UpdateTogglePosition(input)
+        end
+    end)
+
+    local function ToggleWindow()
         ToggleBtn.Rotation = 0
 
         TweenService:Create(
@@ -266,14 +324,24 @@ return function(API_KEY)
             )
 
             tweenOut:Play()
-            tweenOut.Completed:Wait()
 
-            if not isOpen then
-                MainGroup.Visible = false
-            end
+            task.spawn(function()
+                tweenOut.Completed:Wait()
 
+                if not isOpen then
+                    MainGroup.Visible = false
+                end
+            end)
+        end
+    end
+
+    ToggleBtn.MouseButton1Click:Connect(function()
+        if dragMoved then
+            dragMoved = false
+            return
         end
 
+        ToggleWindow()
     end)
 
     -- ============================================================
@@ -350,6 +418,7 @@ return function(API_KEY)
 
         task.defer(function()
             task.wait()
+
             ChatScroll.CanvasPosition =
                 Vector2.new(
                     0,
@@ -359,13 +428,10 @@ return function(API_KEY)
                     )
                 )
         end)
-
     end
 
     -- ============================================================
     -- GANTENG ASISTEN ENGINE
-    -- Hanya untuk menjelaskan feature + cara pakai Ganteng Hub.
-    -- Tidak boleh menjalankan code, inspection, web search, atau Dev Panel.
     -- ============================================================
 
     local COOLDOWN = 6
@@ -825,7 +891,11 @@ return function(API_KEY)
 
     local function AskAI(question)
         if not req then
-            CreateBubble("❌ Executor tidak mendukung HTTP Request.", false)
+            CreateBubble(
+                "❌ Executor tidak mendukung HTTP Request.",
+                false
+            )
+
             isProcessing = false
             return
         end
@@ -869,24 +939,37 @@ return function(API_KEY)
         end)
 
         if not success then
-            CreateBubble("❌ Request error:\n" .. tostring(result), false)
+            CreateBubble(
+                "❌ Request error:\n" .. tostring(result),
+                false
+            )
+
             isProcessing = false
             return
         end
 
         if not result then
-            CreateBubble("❌ Tidak ada response dari Ganteng Asisten.", false)
+            CreateBubble(
+                "❌ Tidak ada response dari Ganteng Asisten.",
+                false
+            )
+
             isProcessing = false
             return
         end
 
         if tonumber(result.StatusCode) ~= 200 then
-            local errorBody = tostring(result.Body or ""):sub(1, 2500)
+            local errorBody =
+                tostring(result.Body or ""):sub(1, 2500)
+
             CreateBubble(
-                "❌ AI HTTP Error: " .. tostring(result.StatusCode) ..
-                "\n\n" .. errorBody,
+                "❌ AI HTTP Error: " ..
+                tostring(result.StatusCode) ..
+                "\n\n" ..
+                errorBody,
                 false
             )
+
             isProcessing = false
             return
         end
@@ -900,12 +983,20 @@ return function(API_KEY)
             or not data.choices
             or not data.choices[1]
             or not data.choices[1].message then
-            CreateBubble("❌ Gagal membaca response Ganteng Asisten.", false)
+
+            CreateBubble(
+                "❌ Gagal membaca response Ganteng Asisten.",
+                false
+            )
+
             isProcessing = false
             return
         end
 
-        local response = tostring(data.choices[1].message.content or "")
+        local response =
+            tostring(
+                data.choices[1].message.content or ""
+            )
 
         AddHistory("user", question)
         AddHistory("assistant", response)
@@ -913,7 +1004,10 @@ return function(API_KEY)
         if response ~= "" then
             CreateBubble(response, false)
         else
-            CreateBubble("❌ Response kosong.", false)
+            CreateBubble(
+                "❌ Response kosong.",
+                false
+            )
         end
 
         isProcessing = false
@@ -933,13 +1027,17 @@ return function(API_KEY)
         end
 
         local now = os.clock()
-        local remaining = COOLDOWN - (now - LastAskAt)
+        local remaining =
+            COOLDOWN - (now - LastAskAt)
 
         if remaining > 0 then
             CreateBubble(
-                "⏳ Tunggu " .. string.format("%.1f", remaining) .. " detik sebelum bertanya lagi.",
+                "⏳ Tunggu " ..
+                string.format("%.1f", remaining) ..
+                " detik sebelum bertanya lagi.",
                 false
             )
+
             return
         end
 
@@ -947,16 +1045,28 @@ return function(API_KEY)
 
         TweenService:Create(
             SendScale,
-            TweenInfo.new(0.1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
-            {Scale = 0.8}
+            TweenInfo.new(
+                0.1,
+                Enum.EasingStyle.Sine,
+                Enum.EasingDirection.Out
+            ),
+            {
+                Scale = 0.8
+            }
         ):Play()
 
         task.wait(0.1)
 
         TweenService:Create(
             SendScale,
-            TweenInfo.new(0.1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
-            {Scale = 1}
+            TweenInfo.new(
+                0.1,
+                Enum.EasingStyle.Sine,
+                Enum.EasingDirection.Out
+            ),
+            {
+                Scale = 1
+            }
         ):Play()
 
         isProcessing = true
@@ -977,9 +1087,14 @@ return function(API_KEY)
         end
     end)
 
+    -- ============================================================
+    -- FIRST MESSAGE
+    -- ============================================================
+
     CreateBubble(
-        "👋 Halo! Saya Ganteng Asisten.\nTanya saya tentang feature Ganteng Hub dan cara pakainya.\nContoh: \"Cara pakai Auto Farm Level?\"",
+        "👋 Halo! Saya Ganteng Asisten.\n" ..
+        "Tanya saya tentang feature Ganteng Hub dan cara pakainya.\n" ..
+        "Contoh: \"Cara pakai Auto Farm Level?\"",
         false
     )
-
 end

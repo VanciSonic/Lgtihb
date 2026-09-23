@@ -129,60 +129,8 @@ end
 local Players=game:GetService("Players")
 local HttpService=game:GetService("HttpService")
 local LocalPlayer=Players.LocalPlayer
+local HWID=LocalPlayer and tostring(LocalPlayer.UserId)or"unknown"
 
--- ============================================================
--- UNIVERSAL HWID GETTER (SAMA dengan Loaderpremiummek.lua)
--- Biar konsisten dengan server, format HWID harus sama.
--- ============================================================
-local function getHWID()
-    -- Prioritas 1: Delta
-    if Delta and type(Delta.getHwid) == "function" then
-        local ok, r = pcall(Delta.getHwid)
-        if ok and r and #tostring(r) > 0 then return tostring(r) end
-    end
-    if delta and type(delta.getHwid) == "function" then
-        local ok, r = pcall(delta.getHwid)
-        if ok and r and #tostring(r) > 0 then return tostring(r) end
-    end
-    -- Prioritas 2: Synapse
-    if syn and type(syn.get_hwid) == "function" then
-        local ok, r = pcall(syn.get_hwid)
-        if ok and r and #tostring(r) > 0 then return tostring(r) end
-    end
-    -- Prioritas 3: Generic
-    if type(gethwid) == "function" then
-        local ok, r = pcall(gethwid)
-        if ok and r and #tostring(r) > 0 then return tostring(r) end
-    end
-    if type(get_hwid) == "function" then
-        local ok, r = pcall(get_hwid)
-        if ok and r and #tostring(r) > 0 then return tostring(r) end
-    end
-    if type(getHWID) == "function" then
-        local ok, r = pcall(getHWID)
-        if ok and r and #tostring(r) > 0 then return tostring(r) end
-    end
-    if type(GetHwid) == "function" then
-        local ok, r = pcall(GetHwid)
-        if ok and r and #tostring(r) > 0 then return tostring(r) end
-    end
-    if type(getDeviceId) == "function" then
-        local ok, r = pcall(getDeviceId)
-        if ok and r and #tostring(r) > 0 then return tostring(r) end
-    end
-    -- Prioritas 9: game.GetHwid
-    if type(game.GetHwid) == "function" then
-        local ok, r = pcall(game.GetHwid)
-        if ok and r and #tostring(r) > 0 then return tostring(r) end
-    end
-    -- Fallback: UserId (SAMA formatnya dengan loader)
-    if LocalPlayer then
-        return "USERID_FALLBACK_" .. tostring(LocalPlayer.UserId)
-    end
-    return "UNKNOWN_DEVICE"
-end
-
-local HWID = getHWID()
 
 local Executor=ExecName()
 local UNCScore,UNCPassed,UNCTotal,UNCResults=Score(UNC)
@@ -194,11 +142,11 @@ print("UNC      : "..UNCScore.."%")
 print("sUNC     : "..sUNCScore.."%")
 print("========================================")
 
-if KEY==""or DISCORD_ID==""then print("âŒ ERROR: Key dan Discord ID wajib diisi!")return end
+if KEY==""or DISCORD_ID==""then print("❌ ERROR: Key dan Discord ID wajib diisi!")return end
 
-print("ðŸ”‘ Key        : "..KEY)
-print("ðŸ†” Discord ID : "..DISCORD_ID)
-print("ðŸ–¥ï¸ HWID       : "..HWID)
+print("🔑 Key        : "..KEY)
+print("🆔 Discord ID : "..DISCORD_ID)
+print("🖥️ HWID       : "..HWID)
 print("========================================")
 
 local verifyUrl="https://isnahamzah.site/test_whitelist.php"
@@ -208,18 +156,18 @@ local success,response=pcall(function()
     return httpRequest({Url=verifyUrl,Method="GET",Headers=headers})
 end)
 
-if not success or not response then print("âŒ Gagal terhubung ke server verifikasi!")return end
+if not success or not response then print("❌ Gagal terhubung ke server verifikasi!")return end
 if response.StatusCode~=200 then
-    print("âŒ Verifikasi gagal! Status: "..tostring(response.StatusCode))
-    print("ðŸ“„ Response: "..tostring(response.Body or"Unknown error"))
+    print("❌ Verifikasi gagal! Status: "..tostring(response.StatusCode))
+    print("📄 Response: "..tostring(response.Body or"Unknown error"))
     return
 end
 
 local decodeSuccess,json=pcall(function()return HttpService:JSONDecode(response.Body)end)
-if not decodeSuccess or type(json)~="table"then print("âŒ Response server bukan JSON valid!")return end
+if not decodeSuccess or type(json)~="table"then print("❌ Response server bukan JSON valid!")return end
 
 if json.status~="success"then
-    print("âŒ Verifikasi gagal: "..tostring(json.message or"Unknown error"))
+    print("❌ Verifikasi gagal: "..tostring(json.message or"Unknown error"))
     return
 end
 
@@ -238,7 +186,7 @@ local function SendWebhook()
     local data={
         username="Executor Monitor",
         embeds={{
-            title=low and"âš  Low Executor Detected",
+            title=low and"⚠ Low Executor Detected",
             description=low and"Executor capability is below the required 85% threshold.",
             fields={
                 {name="Executor",value="`"..tostring(Executor).."`",inline=true},
@@ -274,7 +222,7 @@ local function SendWebhook()
 end
 
 if UNCScore<85 or sUNCScore<85 then
-    print("âš ï¸ LOW EXECUTOR DETECTED")
+    print("⚠️ LOW EXECUTOR DETECTED")
     print("UNC: "..UNCScore.."% | sUNC: "..sUNCScore.."%")
     print("========================================")
     pcall(function()

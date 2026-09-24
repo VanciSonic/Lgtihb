@@ -6,7 +6,7 @@ local COUNT_FILE = "GHFree.txt"
 local SERVER = "https://ganteng-online-tracker.onrender.com"
 local API_KEY = "GANTENGHUB_SECRET_2026"
 local gasis = loadstring(game:HttpGet("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis"))() 
-gasis("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")
+gasis("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")
 
 local function GetRequest()
     return request

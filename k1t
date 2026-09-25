@@ -817,6 +817,17 @@ function RcHub:Window(GuiConfig)
     local ScrollTab = KZN_NewInstance("ScrollingFrame");
     local UIListLayout = KZN_NewInstance("UIListLayout");
 
+    --// Search state / forward declarations
+    local SearchItems = {}
+    local SearchBox
+    local SearchResults
+    local SearchResultScroll
+    local SearchResultLayout
+    local KZN_SearchNormalize
+    local KZN_SearchRegister
+    local KZN_SearchClearResults
+    local KZN_SearchShowResults
+
     ScrollTab.CanvasSize = UDim2.new(0, 0, 1.10000002, 0)
     ScrollTab.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
     ScrollTab.ScrollBarThickness = 0
@@ -1259,13 +1270,7 @@ function RcHub:Window(GuiConfig)
     local CountDropdown = 0
 
     --// Global search system
-    local SearchItems = {}
-    local SearchBox
-    local SearchResults
-    local SearchResultScroll
-    local SearchResultLayout
-
-    local function KZN_SearchNormalize(value)
+    KZN_SearchNormalize = function(value)
         local text = tostring(value or ""):lower()
         text = text:gsub("%s+", " ")
         text = text:gsub("^%s+", "")
@@ -1273,7 +1278,7 @@ function RcHub:Window(GuiConfig)
         return text
     end
 
-    local function KZN_SearchRegister(title, tabName, sectionName, frame, focusCallback)
+    KZN_SearchRegister = function(title, tabName, sectionName, frame, focusCallback)
         title = tostring(title or "")
         if title == "" or not frame then
             return
@@ -1291,7 +1296,7 @@ function RcHub:Window(GuiConfig)
         })
     end
 
-    local function KZN_SearchClearResults()
+    KZN_SearchClearResults = function()
         if SearchResultScroll then
             for _, child in SearchResultScroll:GetChildren() do
                 if child.Name ~= "SearchResultLayout" then
@@ -1305,7 +1310,7 @@ function RcHub:Window(GuiConfig)
         end
     end
 
-    local function KZN_SearchShowResults(query)
+    KZN_SearchShowResults = function(query)
         query = KZN_SearchNormalize(query)
         if query == "" then
             KZN_SearchClearResults()
@@ -3170,7 +3175,7 @@ function RcHub:Window(GuiConfig)
 
                     local targetFrame
                     for _, child in SectionAdd:GetChildren() do
-                        if child.Name ~= "UIListLayout" and child.LayoutOrder == targetOrder then
+                        if child:IsA("GuiObject") and child.LayoutOrder == targetOrder then
                             targetFrame = child
                             break
                         end

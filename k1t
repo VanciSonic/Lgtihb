@@ -1740,13 +1740,18 @@ function RcHub:Window(GuiConfig)
             local OpenSection = false
 
             local function UpdateSizeScroll()
-                local OffsetY = 0
-                for _, child in ScrolLayers:GetChildren() do
-                    if child.Name ~= "UIListLayout" then
-                        OffsetY = OffsetY + 3 + child.Size.Y.Offset
-                    end
+                local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
+                if not layout then
+                    return
                 end
-                ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, OffsetY)
+
+                local canvasHeight = layout.AbsoluteContentSize.Y + 10
+                ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, canvasHeight)
+
+                local maxY = math.max(0, canvasHeight - ScrolLayers.AbsoluteWindowSize.Y)
+                if ScrolLayers.CanvasPosition.Y > maxY then
+                    ScrolLayers.CanvasPosition = Vector2.new(0, maxY)
+                end
             end
 
             local function GetSectionContentHeight()
@@ -1864,10 +1869,10 @@ function RcHub:Window(GuiConfig)
 
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then
-                layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
-                end)
+                layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateSizeScroll)
             end
+
+            task.defer(UpdateSizeScroll)
 
             local Items = {}
             local CountItem = 0
@@ -1968,6 +1973,12 @@ function RcHub:Window(GuiConfig)
                         totalHeight = totalHeight + ParagraphButton.Size.Y.Offset + 5
                     end
                     Paragraph.Size = UDim2.new(1, 0, 0, totalHeight)
+
+                    task.defer(function()
+                        if Paragraph.Parent and SectionAdd.Parent then
+                            RefreshSectionSize()
+                        end
+                    end)
                 end
 
                 UpdateSize()

@@ -1617,7 +1617,7 @@ function RcHub:Window(GuiConfig)
             Section.BorderColor3 = Color3.fromRGB(0, 0, 0)
             Section.BorderSizePixel = 0
             Section.LayoutOrder = CountSection
-            Section.ClipsDescendants = false
+            Section.ClipsDescendants = true
             Section.LayoutOrder = 1
             Section.Size = UDim2.new(1, 0, 0, 30)
             Section.Name = "Section"
@@ -1723,7 +1723,7 @@ function RcHub:Window(GuiConfig)
             SectionAdd.BackgroundTransparency = 0.9990000128746033
             SectionAdd.BorderColor3 = Color3.fromRGB(0, 0, 0)
             SectionAdd.BorderSizePixel = 0
-            SectionAdd.ClipsDescendants = false
+            SectionAdd.ClipsDescendants = true
             SectionAdd.LayoutOrder = 1
             SectionAdd.Position = UDim2.new(0.5, 0, 0, 38)
             SectionAdd.Size = UDim2.new(1, 0, 0, 100)
@@ -1740,21 +1740,38 @@ function RcHub:Window(GuiConfig)
             local OpenSection = false
 
             local function UpdateSizeScroll()
-                local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
-                if not layout then
-                    return
+                local OffsetY = 0
+                for _, child in ScrolLayers:GetChildren() do
+                    if child.Name ~= "UIListLayout" then
+                        OffsetY = OffsetY + 3 + child.Size.Y.Offset
+                    end
                 end
-
-                local canvasHeight = layout.AbsoluteContentSize.Y + 12
-                ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, canvasHeight)
-                ScrolLayers.ScrollingEnabled = true
-                ScrolLayers.ScrollingDirection = Enum.ScrollingDirection.Y
+                ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, OffsetY)
             end
 
             local function GetSectionContentHeight()
-                return UIListLayout2.AbsoluteContentSize.Y
+                local contentHeight = 0
+                local itemCount = 0
+
+                for _, v in SectionAdd:GetChildren() do
+                    if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+                        contentHeight = contentHeight + v.Size.Y.Offset
+                        itemCount = itemCount + 1
+                    end
+                end
+
+                if itemCount > 0 then
+                    contentHeight = contentHeight + ((itemCount - 1) * 3)
+                end
+
+                return contentHeight
             end
 
+            -- Refresh the section immediately after an Add* function has
+            -- finished constructing its element. This avoids the original
+            -- bug where ChildAdded fired while the new element still had
+            -- its default size, leaving the section too small until the
+            -- user manually collapsed and reopened it.
             local function RefreshSectionSize()
                 if not OpenSection then
                     return
@@ -1767,8 +1784,8 @@ function RcHub:Window(GuiConfig)
                     FeatureFrame.Rotation = 90
                 end
 
-                SectionAdd.Size = UDim2.new(1, 0, 0, contentHeight)
                 Section.Size = UDim2.new(1, 1, 0, totalHeight)
+                SectionAdd.Size = UDim2.new(1, 0, 0, contentHeight)
                 SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
                 UpdateSizeScroll()
             end
@@ -1794,7 +1811,7 @@ function RcHub:Window(GuiConfig)
                     Size = UDim2.new(1, 0, 0, 2)
                 }):Play()
 
-                task.delay(0.55, UpdateSizeScroll)
+                task.delay(0.5, UpdateSizeScroll)
             end
 
             if AlwaysOpen == true then
@@ -1802,6 +1819,9 @@ function RcHub:Window(GuiConfig)
                 FeatureFrame:Destroy()
                 OpenSection = true
             elseif AlwaysOpen == false then
+                -- false = start expanded, but remain collapsible.
+                -- Do not calculate/tween here because Add* elements have
+                -- not been created yet. Each Add* performs a final refresh.
                 OpenSection = true
             else
                 OpenSection = false
@@ -1813,9 +1833,11 @@ function RcHub:Window(GuiConfig)
                     if OpenSection then
                         TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 0 }):Play()
                         TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, 30) }):Play()
-                        TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(0, 0, 0, 2) }):Play()
+                        TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(0, 0, 0, 2) })
+                            :Play()
                         OpenSection = false
-                        task.delay(0.55, UpdateSizeScroll)
+                        task.wait(0.5)
+                        UpdateSizeScroll()
                     else
                         OpenSection = true
                         UpdateSizeSection()
@@ -1825,6 +1847,8 @@ function RcHub:Window(GuiConfig)
 
             if AlwaysOpen == true or AlwaysOpen == false then
                 OpenSection = true
+                -- Initial shell only. The actual content height is applied
+                -- by RefreshSectionSize() after each Add* finishes.
                 if FeatureFrame and FeatureFrame.Parent then
                     FeatureFrame.Rotation = 90
                 end
@@ -1833,24 +1857,17 @@ function RcHub:Window(GuiConfig)
                 SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
             end
 
+            -- Do NOT use SectionAdd.ChildAdded here. ChildAdded fires as soon
+            -- as an Instance is parented, before AddToggle/AddDropdown/etc.
+            -- finish assigning Size. That was the cause of the original
+            -- startup compression bug.
+
             local layout = ScrolLayers:FindFirstChildOfClass("UIListLayout")
             if layout then
-                layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateSizeScroll)
+                layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                    ScrolLayers.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+                end)
             end
-
-            UIListLayout2:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                if OpenSection then
-                    local contentHeight = UIListLayout2.AbsoluteContentSize.Y
-                    SectionAdd.Size = UDim2.new(1, 0, 0, contentHeight)
-                    Section.Size = UDim2.new(1, 1, 0, 38 + contentHeight)
-                end
-                UpdateSizeScroll()
-            end)
-
-            task.defer(function()
-                RefreshSectionSize()
-                UpdateSizeScroll()
-            end)
 
             local Items = {}
             local CountItem = 0
@@ -1916,11 +1933,11 @@ function RcHub:Window(GuiConfig)
                 ParagraphContent.BackgroundTransparency = 1
                 ParagraphContent.Position = UDim2.new(0, iconOffset, 0, 25)
                 ParagraphContent.Name = "ParagraphContent"
-                ParagraphContent.TextWrapped = true
+                ParagraphContent.TextWrapped = false
                 ParagraphContent.RichText = true
                 ParagraphContent.Parent = Paragraph
 
-                ParagraphContent.Size = UDim2.new(1, -16, 0, 0)
+                ParagraphContent.Size = UDim2.new(1, -16, 0, ParagraphContent.TextBounds.Y)
 
                 local ParagraphButton
                 if ParagraphConfig.ButtonText then
@@ -1946,23 +1963,11 @@ function RcHub:Window(GuiConfig)
                 end
 
                 local function UpdateSize()
-                    task.defer(function()
-                        if not Paragraph.Parent or not SectionAdd.Parent then
-                            return
-                        end
-
-                        ParagraphContent.Size = UDim2.new(1, -16, 0, ParagraphContent.TextBounds.Y)
-
-                        local totalHeight = math.max(46, ParagraphContent.TextBounds.Y + 33)
-                        if ParagraphButton then
-                            ParagraphButton.Position = UDim2.new(0, 10, 0, ParagraphContent.TextBounds.Y + 28)
-                            totalHeight = ParagraphContent.TextBounds.Y + ParagraphButton.Size.Y.Offset + 38
-                        end
-
-                        Paragraph.Size = UDim2.new(1, 0, 0, totalHeight)
-                        RefreshSectionSize()
-                        UpdateSizeScroll()
-                    end)
+                    local totalHeight = ParagraphContent.TextBounds.Y + 33
+                    if ParagraphButton then
+                        totalHeight = totalHeight + ParagraphButton.Size.Y.Offset + 5
+                    end
+                    Paragraph.Size = UDim2.new(1, 0, 0, totalHeight)
                 end
 
                 UpdateSize()

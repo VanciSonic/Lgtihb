@@ -836,25 +836,32 @@ function RcHub:Window(GuiConfig)
     ScrollTab.BackgroundTransparency = 0.9990000128746033
     ScrollTab.BorderColor3 = Color3.fromRGB(0, 0, 0)
     ScrollTab.BorderSizePixel = 0
-    ScrollTab.Size = UDim2.new(1, 0, 1, -33)
-    ScrollTab.Position = UDim2.new(0, 0, 0, 33)
+    --// Search is now in the top bar, so the sidebar tab list uses the full panel.
+    ScrollTab.Size = UDim2.new(1, 0, 1, 0)
+    ScrollTab.Position = UDim2.new(0, 0, 0, 0)
     ScrollTab.Name = "ScrollTab"
     ScrollTab.Parent = LayersTab
 
-    --// Search bar
+    --// Search bar (top bar)
+    --// Kept as the same global search system, only the visual location is moved
+    --// from the left sidebar to the header area marked in the design.
     local SearchBar = KZN_NewInstance("Frame")
     local SearchBarCorner = KZN_NewInstance("UICorner")
     local SearchBarStroke = KZN_NewInstance("UIStroke")
     local SearchIcon = KZN_NewInstance("ImageLabel")
 
+    local SearchBarWidth = isMobile and 135 or 195
+    local SearchBarRightGap = isMobile and 68 or 72
+
     SearchBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     SearchBar.BackgroundTransparency = 0.93
     SearchBar.BorderSizePixel = 0
-    SearchBar.Size = UDim2.new(1, 0, 0, 30)
-    SearchBar.Position = UDim2.new(0, 0, 0, 0)
+    SearchBar.AnchorPoint = Vector2.new(1, 0)
+    SearchBar.Size = UDim2.new(0, SearchBarWidth, 0, 30)
+    SearchBar.Position = UDim2.new(1, -SearchBarRightGap, 0, 4)
     SearchBar.Name = "SearchBar"
-    SearchBar.ZIndex = 20
-    SearchBar.Parent = LayersTab
+    SearchBar.ZIndex = 30
+    SearchBar.Parent = Top
 
     SearchBarCorner.CornerRadius = UDim.new(0, 4)
     SearchBarCorner.Parent = SearchBar
@@ -869,7 +876,7 @@ function RcHub:Window(GuiConfig)
     SearchIcon.ImageTransparency = 0.25
     SearchIcon.Size = UDim2.new(0, 15, 0, 15)
     SearchIcon.Position = UDim2.new(0, 7, 0, 7)
-    SearchIcon.ZIndex = 21
+    SearchIcon.ZIndex = 31
     SearchIcon.Name = "SearchIcon"
     SearchIcon.Parent = SearchBar
 
@@ -886,7 +893,7 @@ function RcHub:Window(GuiConfig)
     SearchBox.BorderSizePixel = 0
     SearchBox.Position = UDim2.new(0, 28, 0, 0)
     SearchBox.Size = UDim2.new(1, -34, 1, 0)
-    SearchBox.ZIndex = 21
+    SearchBox.ZIndex = 31
     SearchBox.Name = "SearchBox"
     SearchBox.Parent = SearchBar
 

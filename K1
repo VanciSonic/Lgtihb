@@ -817,6 +817,17 @@ function RcHub:Window(GuiConfig)
     local ScrollTab = KZN_NewInstance("ScrollingFrame");
     local UIListLayout = KZN_NewInstance("UIListLayout");
 
+    --// Search state / forward declarations
+    local SearchItems = {}
+    local SearchBox
+    local SearchResults
+    local SearchResultScroll
+    local SearchResultLayout
+    local KZN_SearchNormalize
+    local KZN_SearchRegister
+    local KZN_SearchClearResults
+    local KZN_SearchShowResults
+
     ScrollTab.CanvasSize = UDim2.new(0, 0, 1.10000002, 0)
     ScrollTab.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
     ScrollTab.ScrollBarThickness = 0
@@ -825,9 +836,118 @@ function RcHub:Window(GuiConfig)
     ScrollTab.BackgroundTransparency = 0.9990000128746033
     ScrollTab.BorderColor3 = Color3.fromRGB(0, 0, 0)
     ScrollTab.BorderSizePixel = 0
+    --// Search is now in the top bar, so the sidebar tab list uses the full panel.
     ScrollTab.Size = UDim2.new(1, 0, 1, 0)
+    ScrollTab.Position = UDim2.new(0, 0, 0, 0)
     ScrollTab.Name = "ScrollTab"
     ScrollTab.Parent = LayersTab
+
+    --// Search bar (top bar)
+    --// Kept as the same global search system, only the visual location is moved
+    --// from the left sidebar to the header area marked in the design.
+    local SearchBar = KZN_NewInstance("Frame")
+    local SearchBarCorner = KZN_NewInstance("UICorner")
+    local SearchBarStroke = KZN_NewInstance("UIStroke")
+    local SearchIcon = KZN_NewInstance("ImageLabel")
+
+    local SearchBarWidth = isMobile and 135 or 195
+    local SearchBarRightGap = isMobile and 68 or 72
+
+    SearchBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    SearchBar.BackgroundTransparency = 0.93
+    SearchBar.BorderSizePixel = 0
+    SearchBar.AnchorPoint = Vector2.new(1, 0)
+    SearchBar.Size = UDim2.new(0, SearchBarWidth, 0, 30)
+    SearchBar.Position = UDim2.new(1, -SearchBarRightGap, 0, 4)
+    SearchBar.Name = "SearchBar"
+    SearchBar.ZIndex = 30
+    SearchBar.Parent = Top
+
+    SearchBarCorner.CornerRadius = UDim.new(0, 4)
+    SearchBarCorner.Parent = SearchBar
+
+    SearchBarStroke.Color = Color3.fromRGB(255, 255, 255)
+    SearchBarStroke.Transparency = 0.93
+    SearchBarStroke.Thickness = 1
+    SearchBarStroke.Parent = SearchBar
+
+    SearchIcon.BackgroundTransparency = 1
+    SearchIcon.Image = Icons.scan
+    SearchIcon.ImageTransparency = 0.25
+    SearchIcon.Size = UDim2.new(0, 15, 0, 15)
+    SearchIcon.Position = UDim2.new(0, 7, 0, 7)
+    SearchIcon.ZIndex = 31
+    SearchIcon.Name = "SearchIcon"
+    SearchIcon.Parent = SearchBar
+
+    SearchBox = KZN_NewInstance("TextBox")
+    SearchBox.ClearTextOnFocus = false
+    SearchBox.Font = Enum.Font.GothamBold
+    SearchBox.PlaceholderText = "Search..."
+    SearchBox.Text = ""
+    SearchBox.PlaceholderColor3 = Color3.fromRGB(145, 145, 145)
+    SearchBox.TextColor3 = Color3.fromRGB(235, 235, 235)
+    SearchBox.TextSize = 11
+    SearchBox.TextXAlignment = Enum.TextXAlignment.Left
+    SearchBox.BackgroundTransparency = 1
+    SearchBox.BorderSizePixel = 0
+    SearchBox.Position = UDim2.new(0, 28, 0, 0)
+    SearchBox.Size = UDim2.new(1, -34, 1, 0)
+    SearchBox.ZIndex = 31
+    SearchBox.Name = "SearchBox"
+    SearchBox.Parent = SearchBar
+
+    --// Search results overlay
+    SearchResults = KZN_NewInstance("Frame")
+    SearchResultScroll = KZN_NewInstance("ScrollingFrame")
+    SearchResultLayout = KZN_NewInstance("UIListLayout")
+
+    SearchResults.BackgroundColor3 = Color3.fromRGB(8, 12, 20)
+    SearchResults.BackgroundTransparency = 0.08
+    SearchResults.BorderSizePixel = 0
+    SearchResults.Position = Layers.Position
+    SearchResults.Size = Layers.Size
+    SearchResults.Visible = false
+    SearchResults.ZIndex = 40
+    SearchResults.ClipsDescendants = true
+    SearchResults.Name = "SearchResults"
+    SearchResults.Parent = Main
+
+    local SearchResultsCorner = KZN_NewInstance("UICorner")
+    SearchResultsCorner.CornerRadius = UDim.new(0, 4)
+    SearchResultsCorner.Parent = SearchResults
+
+    SearchResultScroll.BackgroundTransparency = 1
+    SearchResultScroll.BorderSizePixel = 0
+    SearchResultScroll.ScrollBarThickness = 0
+    SearchResultScroll.Active = true
+    SearchResultScroll.Position = UDim2.new(0, 8, 0, 8)
+    SearchResultScroll.Size = UDim2.new(1, -16, 1, -16)
+    SearchResultScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    SearchResultScroll.ZIndex = 41
+    SearchResultScroll.Name = "SearchResultScroll"
+    SearchResultScroll.Parent = SearchResults
+
+    SearchResultLayout.Padding = UDim.new(0, 4)
+    SearchResultLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    SearchResultLayout.Name = "SearchResultLayout"
+    SearchResultLayout.Parent = SearchResultScroll
+
+    SearchResultLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        SearchResultScroll.CanvasSize = UDim2.new(0, 0, 0, SearchResultLayout.AbsoluteContentSize.Y + 8)
+    end)
+
+    SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+        KZN_SearchShowResults(SearchBox.Text)
+    end)
+
+    SearchBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            KZN_SearchShowResults(SearchBox.Text)
+        elseif KZN_SearchNormalize(SearchBox.Text) == "" then
+            KZN_SearchClearResults()
+        end
+    end)
 
     UIListLayout.Padding = UDim.new(0, 3)
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -1155,6 +1275,176 @@ function RcHub:Window(GuiConfig)
     local Tabs = {}
     local CountTab = 0
     local CountDropdown = 0
+
+    --// Global search system
+    KZN_SearchNormalize = function(value)
+        local text = tostring(value or ""):lower()
+        text = text:gsub("%s+", " ")
+        text = text:gsub("^%s+", "")
+        text = text:gsub("%s+$", "")
+        return text
+    end
+
+    KZN_SearchRegister = function(title, tabName, sectionName, frame, focusCallback)
+        title = tostring(title or "")
+        if title == "" or not frame then
+            return
+        end
+
+        table.insert(SearchItems, {
+            Title = title,
+            SearchTitle = KZN_SearchNormalize(title),
+            TabName = tostring(tabName or ""),
+            SearchTab = KZN_SearchNormalize(tabName),
+            SectionName = tostring(sectionName or ""),
+            SearchSection = KZN_SearchNormalize(sectionName),
+            Frame = frame,
+            Focus = focusCallback
+        })
+    end
+
+    KZN_SearchClearResults = function()
+        if SearchResultScroll then
+            for _, child in SearchResultScroll:GetChildren() do
+                if child.Name ~= "SearchResultLayout" then
+                    child:Destroy()
+                end
+            end
+            SearchResultScroll.CanvasPosition = Vector2.new(0, 0)
+        end
+        if SearchResults then
+            SearchResults.Visible = false
+        end
+    end
+
+    KZN_SearchShowResults = function(query)
+        query = KZN_SearchNormalize(query)
+        if query == "" then
+            KZN_SearchClearResults()
+            return
+        end
+
+        if not SearchResultScroll or not SearchResults then
+            return
+        end
+
+        for _, child in SearchResultScroll:GetChildren() do
+            if child.Name ~= "SearchResultLayout" then
+                child:Destroy()
+            end
+        end
+
+        local resultCount = 0
+        local maxResults = 50
+        for _, item in ipairs(SearchItems) do
+            local found = string.find(item.SearchTitle, query, 1, true)
+                or string.find(item.SearchSection, query, 1, true)
+                or string.find(item.SearchTab, query, 1, true)
+
+            if found then
+                resultCount = resultCount + 1
+                if resultCount <= maxResults then
+                    local Result = KZN_NewInstance("TextButton")
+                    local ResultTitle = KZN_NewInstance("TextLabel")
+                    local ResultPath = KZN_NewInstance("TextLabel")
+                    local ResultArrow = KZN_NewInstance("TextLabel")
+                    local ResultCorner = KZN_NewInstance("UICorner")
+
+                    Result.AutoButtonColor = false
+                    Result.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    Result.BackgroundTransparency = 0.94
+                    Result.BorderSizePixel = 0
+                    Result.LayoutOrder = resultCount
+                    Result.Size = UDim2.new(1, -8, 0, 46)
+                    Result.Name = "SearchResult"
+                    Result.Text = ""
+                    Result.Parent = SearchResultScroll
+
+                    ResultCorner.CornerRadius = UDim.new(0, 5)
+                    ResultCorner.Parent = Result
+
+                    ResultTitle.Font = Enum.Font.GothamBold
+                    ResultTitle.Text = item.Title
+                    ResultTitle.TextColor3 = Color3.fromRGB(235, 235, 235)
+                    ResultTitle.TextSize = 12
+                    ResultTitle.TextXAlignment = Enum.TextXAlignment.Left
+                    ResultTitle.BackgroundTransparency = 1
+                    ResultTitle.Position = UDim2.new(0, 10, 0, 6)
+                    ResultTitle.Size = UDim2.new(1, -34, 0, 15)
+                    ResultTitle.Name = "ResultTitle"
+                    ResultTitle.Parent = Result
+
+                    ResultPath.Font = Enum.Font.Gotham
+                    ResultPath.Text = item.TabName .. "  >  " .. item.SectionName
+                    ResultPath.TextColor3 = Color3.fromRGB(145, 145, 145)
+                    ResultPath.TextSize = 10
+                    ResultPath.TextXAlignment = Enum.TextXAlignment.Left
+                    ResultPath.BackgroundTransparency = 1
+                    ResultPath.Position = UDim2.new(0, 10, 0, 23)
+                    ResultPath.Size = UDim2.new(1, -34, 0, 13)
+                    ResultPath.TextTruncate = Enum.TextTruncate.AtEnd
+                    ResultPath.Name = "ResultPath"
+                    ResultPath.Parent = Result
+
+                    ResultArrow.Font = Enum.Font.GothamBold
+                    ResultArrow.Text = ">"
+                    ResultArrow.TextColor3 = GuiConfig.Color
+                    ResultArrow.TextSize = 13
+                    ResultArrow.TextXAlignment = Enum.TextXAlignment.Center
+                    ResultArrow.BackgroundTransparency = 1
+                    ResultArrow.AnchorPoint = Vector2.new(1, 0.5)
+                    ResultArrow.Position = UDim2.new(1, -8, 0.5, 0)
+                    ResultArrow.Size = UDim2.new(0, 14, 0, 20)
+                    ResultArrow.Name = "ResultArrow"
+                    ResultArrow.Parent = Result
+
+                    Result.MouseEnter:Connect(function()
+                        TweenService:Create(Result, TweenInfo.new(0.15), {
+                            BackgroundTransparency = 0.88
+                        }):Play()
+                    end)
+
+                    Result.MouseLeave:Connect(function()
+                        TweenService:Create(Result, TweenInfo.new(0.15), {
+                            BackgroundTransparency = 0.94
+                        }):Play()
+                    end)
+
+                    Result.Activated:Connect(function()
+                        if item.Focus then
+                            task.spawn(function()
+                                item.Focus()
+                            end)
+                        end
+                        if SearchBox then
+                            SearchBox.Text = ""
+                        end
+                        KZN_SearchClearResults()
+                        if SearchBox then
+                            SearchBox:ReleaseFocus()
+                        end
+                    end)
+                end
+            end
+        end
+
+        if resultCount == 0 then
+            local Empty = KZN_NewInstance("TextLabel")
+            Empty.BackgroundTransparency = 1
+            Empty.Size = UDim2.new(1, 0, 0, 40)
+            Empty.Font = Enum.Font.Gotham
+            Empty.Text = "No element found"
+            Empty.TextColor3 = Color3.fromRGB(145, 145, 145)
+            Empty.TextSize = 12
+            Empty.TextXAlignment = Enum.TextXAlignment.Center
+            Empty.TextYAlignment = Enum.TextYAlignment.Center
+            Empty.Name = "SearchEmpty"
+            Empty.Parent = SearchResultScroll
+        end
+
+        SearchResults.Visible = true
+        SearchResultScroll.CanvasPosition = Vector2.new(0, 0)
+    end
     function Tabs:AddTab(TabConfig)
         local TabConfig = TabConfig or {}
         TabConfig.Name = TabConfig.Name or "Tab"
@@ -1199,6 +1489,13 @@ function RcHub:Window(GuiConfig)
         Tab.Size = UDim2.new(1, 0, 0, 30)
         Tab.Name = "Tab"
         Tab.Parent = ScrollTab
+
+        --// The old Active tab slot becomes the search bar when Active is the first tab.
+        if CountTab == 0 and KZN_SearchNormalize(TabConfig.Name) == "active" then
+            Tab.Visible = false
+            ScrollTab.Position = UDim2.new(0, 0, 0, 0)
+            ScrollTab.Size = UDim2.new(1, 0, 1, 0)
+        end
 
         UICorner3.CornerRadius = UDim.new(0, 4)
         UICorner3.Parent = Tab
@@ -2871,6 +3168,130 @@ function RcHub:Window(GuiConfig)
                 CountItem = CountItem + 1
                 return SubSection
             end
+
+            --// Register normal Add* elements into the global search index.
+            local function WrapSearchItem(methodName, getTitle)
+                local original = Items[methodName]
+                if type(original) ~= "function" then
+                    return
+                end
+
+                Items[methodName] = function(self, config)
+                    local targetOrder = CountItem
+                    local result = original(self, config)
+
+                    local targetFrame
+                    for _, child in SectionAdd:GetChildren() do
+                        if child:IsA("GuiObject") and child.LayoutOrder == targetOrder then
+                            targetFrame = child
+                            break
+                        end
+                    end
+
+                    if targetFrame then
+                        local title = getTitle(config)
+                        if title and tostring(title) ~= "" then
+                            KZN_SearchRegister(
+                                title,
+                                TabConfig.Name,
+                                Title,
+                                targetFrame,
+                                function()
+                                    if TabButton and TabButton.Parent then
+                                        pcall(function()
+                                            TabButton:Activate()
+                                        end)
+                                    end
+
+                                    pcall(function()
+                                        LayersPageLayout:JumpToIndex(Tab.LayoutOrder)
+                                        NameTab.Text = TabConfig.Name
+                                    end)
+
+                                    task.wait(0.35)
+
+                                    if not OpenSection then
+                                        OpenSection = true
+                                        UpdateSizeSection()
+                                        task.wait(0.55)
+                                    else
+                                        task.wait(0.1)
+                                    end
+
+                                    if not targetFrame or not targetFrame.Parent then
+                                        return
+                                    end
+
+                                    local currentY = targetFrame.AbsolutePosition.Y - ScrolLayers.AbsolutePosition.Y
+                                    local targetY = ScrolLayers.CanvasPosition.Y + currentY - 8
+                                    local maxY = math.max(0, ScrolLayers.AbsoluteCanvasSize.Y - ScrolLayers.AbsoluteWindowSize.Y)
+                                    targetY = math.clamp(targetY, 0, maxY)
+                                    ScrolLayers.CanvasPosition = Vector2.new(0, targetY)
+
+                                    local oldHighlight = targetFrame:FindFirstChild("KZN_SearchHighlight")
+                                    if oldHighlight then
+                                        oldHighlight:Destroy()
+                                    end
+
+                                    local highlight = KZN_NewInstance("UIStroke")
+                                    highlight.Name = "KZN_SearchHighlight"
+                                    highlight.Color = GuiConfig.Color
+                                    highlight.Thickness = 2
+                                    highlight.Transparency = 0
+                                    highlight.Parent = targetFrame
+
+                                    TweenService:Create(highlight, TweenInfo.new(1.2), {
+                                        Transparency = 1
+                                    }):Play()
+
+                                    task.delay(1.25, function()
+                                        if highlight and highlight.Parent then
+                                            highlight:Destroy()
+                                        end
+                                    end)
+                                end
+                            )
+                        end
+                    end
+
+                    return result
+                end
+            end
+
+            WrapSearchItem("AddParagraph", function(config)
+                config = config or {}
+                return config.Title or "Title"
+            end)
+
+            WrapSearchItem("AddPanel", function(config)
+                config = config or {}
+                return config.Title or "Title"
+            end)
+
+            WrapSearchItem("AddButton", function(config)
+                config = config or {}
+                return config.Title or "Confirm"
+            end)
+
+            WrapSearchItem("AddToggle", function(config)
+                config = config or {}
+                return config.Title or "Title"
+            end)
+
+            WrapSearchItem("AddSlider", function(config)
+                config = config or {}
+                return config.Title or "Slider"
+            end)
+
+            WrapSearchItem("AddInput", function(config)
+                config = config or {}
+                return config.Title or "Title"
+            end)
+
+            WrapSearchItem("AddDropdown", function(config)
+                config = config or {}
+                return config.Title or "Title"
+            end)
 
             CountSection = CountSection + 1
             return Items

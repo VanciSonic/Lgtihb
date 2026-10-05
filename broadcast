@@ -1,0 +1,31 @@
+local BROADCAST_URL = "https://raw.githubusercontent.com/USERNAME/REPO/main/broadcast.txt"
+local lastBroadcast = ""
+
+local function checkBroadcast()
+    local ok, text = pcall(function()
+        return game:HttpGet(BROADCAST_URL)
+    end)
+
+    if not ok or not text then
+        return
+    end
+
+    text = text:gsub("^%s+", ""):gsub("%s+$", "")
+
+    if text == "" or text == lastBroadcast then
+        return
+    end
+
+    lastBroadcast = text
+
+    -- taruh fungsi popup/notifikasi lu di sini
+    print("[BROADCAST]", text)
+end
+
+task.spawn(function()
+    while task.wait(5) do
+        checkBroadcast()
+    end
+end)
+
+checkBroadcast()

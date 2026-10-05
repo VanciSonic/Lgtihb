@@ -1,31 +1,422 @@
-local BROADCAST_URL = "https://raw.githubusercontent.com/USERNAME/REPO/main/broadcast.txt"
-local lastBroadcast = ""
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
 
-local function checkBroadcast()
-    local ok, text = pcall(function()
-        return game:HttpGet(BROADCAST_URL)
-    end)
+local BROADCAST_URL = "https://raw.githubusercontent.com/VanciSonic/Lgtihb/main/textbc"
+local CHECK_INTERVAL = 1
+local BROADCAST_STATE_FILE = "CyberBroadcast_LastText.txt"
 
-    if not ok or not text then
-        return
-    end
+local LastBroadcastText = ""
+local CurrentNotification = nil
 
-    text = text:gsub("^%s+", ""):gsub("%s+$", "")
+_G.CyberBroadcastRunId = (_G.CyberBroadcastRunId or 0) + 1
+local CyberBroadcastRunId = _G.CyberBroadcastRunId
 
-    if text == "" or text == lastBroadcast then
-        return
-    end
+pcall(function()
+    if isfile and isfile(BROADCAST_STATE_FILE) then
+        local saved = readfile(BROADCAST_STATE_FILE)
 
-    lastBroadcast = text
-
-    -- taruh fungsi popup/notifikasi lu di sini
-    print("[BROADCAST]", text)
-end
-
-task.spawn(function()
-    while task.wait(5) do
-        checkBroadcast()
+        if type(saved) == "string" then
+            LastBroadcastText = saved
+        end
     end
 end)
 
-checkBroadcast()
+pcall(function()
+    local old = CoreGui:FindFirstChild("CyberBroadcast")
+
+    if old then
+        old:Destroy()
+    end
+end)
+
+local BroadcastGui = Instance.new("ScreenGui")
+BroadcastGui.Name = "CyberBroadcast"
+BroadcastGui.ResetOnSpawn = false
+BroadcastGui.IgnoreGuiInset = true
+BroadcastGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+BroadcastGui.Parent = CoreGui
+
+local function SaveLastBroadcast(text)
+    LastBroadcastText = text
+
+    pcall(function()
+        if writefile then
+            writefile(BROADCAST_STATE_FILE, text)
+        end
+    end)
+end
+
+local function CloseBroadcast(holder)
+    if not holder or not holder.Parent then
+        return
+    end
+
+    if holder:GetAttribute("Closing") then
+        return
+    end
+
+    holder:SetAttribute("Closing", true)
+
+    local move = TweenService:Create(
+        holder,
+        TweenInfo.new(
+            0.42,
+            Enum.EasingStyle.Quint,
+            Enum.EasingDirection.In
+        ),
+        {
+            Position = UDim2.new(0.5, 0, 0, -135),
+            BackgroundTransparency = 1
+        }
+    )
+
+    move:Play()
+
+    for _, obj in ipairs(holder:GetDescendants()) do
+        if obj:IsA("TextLabel") or obj:IsA("TextButton") then
+            TweenService:Create(
+                obj,
+                TweenInfo.new(0.22),
+                {
+                    TextTransparency = 1
+                }
+            ):Play()
+
+        elseif obj:IsA("UIStroke") then
+            TweenService:Create(
+                obj,
+                TweenInfo.new(0.22),
+                {
+                    Transparency = 1
+                }
+            ):Play()
+
+        elseif obj:IsA("Frame") then
+            TweenService:Create(
+                obj,
+                TweenInfo.new(0.22),
+                {
+                    BackgroundTransparency = 1
+                }
+            ):Play()
+        end
+    end
+
+    move.Completed:Wait()
+
+    if holder and holder.Parent then
+        holder:Destroy()
+    end
+
+    if CurrentNotification == holder then
+        CurrentNotification = nil
+    end
+end
+
+local function ShowBroadcast(data)
+    local title = tostring(data.title or "SYSTEM")
+    local text = tostring(data.text or "")
+    local mode = tostring(data.mode or "duration"):lower()
+    local duration = tonumber(data.duration) or 5
+
+    if text == "" then
+        return
+    end
+
+    if mode ~= "duration" and mode ~= "button" then
+        mode = "duration"
+    end
+
+    if CurrentNotification and CurrentNotification.Parent then
+        local oldNotification = CurrentNotification
+
+        task.spawn(function()
+            CloseBroadcast(oldNotification)
+        end)
+
+        task.wait(0.08)
+    end
+
+    local Holder = Instance.new("Frame")
+    Holder.Name = "Broadcast"
+    Holder.AnchorPoint = Vector2.new(0.5, 0)
+    Holder.Position = UDim2.new(0.5, 0, 0, -135)
+    Holder.Size = UDim2.new(0.84, 0, 0, 108)
+    Holder.BackgroundColor3 = Color3.fromRGB(5, 10, 18)
+    Holder.BackgroundTransparency = 0.08
+    Holder.BorderSizePixel = 0
+    Holder.ClipsDescendants = true
+    Holder.Parent = BroadcastGui
+
+    local SizeConstraint = Instance.new("UISizeConstraint")
+    SizeConstraint.MinSize = Vector2.new(250, 88)
+    SizeConstraint.MaxSize = Vector2.new(620, 108)
+    SizeConstraint.Parent = Holder
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 10)
+    Corner.Parent = Holder
+
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Color = Color3.fromRGB(0, 255, 220)
+    Stroke.Thickness = 1.4
+    Stroke.Transparency = 0.05
+    Stroke.Parent = Holder
+
+    local Glow = Instance.new("UIStroke")
+    Glow.Color = Color3.fromRGB(0, 130, 255)
+    Glow.Thickness = 5
+    Glow.Transparency = 0.72
+    Glow.Parent = Holder
+
+    local Accent = Instance.new("Frame")
+    Accent.Position = UDim2.new(0, 0, 0, 0)
+    Accent.Size = UDim2.new(0, 3, 1, 0)
+    Accent.BackgroundColor3 = Color3.fromRGB(0, 255, 220)
+    Accent.BorderSizePixel = 0
+    Accent.Parent = Holder
+
+    local TopLine = Instance.new("Frame")
+    TopLine.AnchorPoint = Vector2.new(0.5, 0)
+    TopLine.Position = UDim2.new(0.5, 0, 0, 0)
+    TopLine.Size = UDim2.new(0.72, 0, 0, 2)
+    TopLine.BackgroundColor3 = Color3.fromRGB(0, 255, 220)
+    TopLine.BorderSizePixel = 0
+    TopLine.Parent = Holder
+
+    local TopLeft = Instance.new("Frame")
+    TopLeft.Position = UDim2.new(0, 15, 0, 17)
+    TopLeft.Size = UDim2.new(0, 22, 0, 1)
+    TopLeft.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
+    TopLeft.BorderSizePixel = 0
+    TopLeft.Parent = Holder
+
+    local Header = Instance.new("TextLabel")
+    Header.Name = "Title"
+    Header.BackgroundTransparency = 1
+    Header.Position = UDim2.new(0, 45, 0, 7)
+    Header.Size = UDim2.new(1, -90, 0, 24)
+    Header.Font = Enum.Font.Code
+    Header.Text = title
+    Header.TextColor3 = Color3.fromRGB(0, 255, 220)
+    Header.TextSize = 12
+    Header.TextXAlignment = Enum.TextXAlignment.Left
+    Header.TextYAlignment = Enum.TextYAlignment.Center
+    Header.TextTruncate = Enum.TextTruncate.AtEnd
+    Header.Parent = Holder
+
+    local Transmission = Instance.new("TextLabel")
+    Transmission.Name = "Transmission"
+    Transmission.BackgroundTransparency = 1
+    Transmission.Position = UDim2.new(0, 15, 0, 29)
+    Transmission.Size = UDim2.new(1, -30, 0, 14)
+    Transmission.Font = Enum.Font.Code
+    Transmission.Text = "// INCOMING TRANSMISSION"
+    Transmission.TextColor3 = Color3.fromRGB(80, 150, 180)
+    Transmission.TextSize = 8
+    Transmission.TextXAlignment = Enum.TextXAlignment.Left
+    Transmission.Parent = Holder
+
+    local Message = Instance.new("TextLabel")
+    Message.Name = "Message"
+    Message.BackgroundTransparency = 1
+    Message.Position = UDim2.new(0, 15, 0, 44)
+    Message.Size = UDim2.new(1, -65, 0, 50)
+    Message.Font = Enum.Font.Code
+    Message.Text = text
+    Message.TextColor3 = Color3.fromRGB(230, 250, 255)
+    Message.TextSize = 14
+    Message.TextWrapped = true
+    Message.TextXAlignment = Enum.TextXAlignment.Left
+    Message.TextYAlignment = Enum.TextYAlignment.Center
+    Message.Parent = Holder
+
+    if mode == "button" then
+        local Close = Instance.new("TextButton")
+        Close.Name = "Close"
+        Close.BackgroundTransparency = 1
+        Close.AnchorPoint = Vector2.new(1, 0)
+        Close.Position = UDim2.new(1, -10, 0, 8)
+        Close.Size = UDim2.new(0, 30, 0, 30)
+        Close.Font = Enum.Font.Code
+        Close.Text = "X"
+        Close.TextColor3 = Color3.fromRGB(255, 70, 120)
+        Close.TextSize = 16
+        Close.AutoButtonColor = false
+        Close.Parent = Holder
+
+        Close.MouseButton1Click:Connect(function()
+            task.spawn(function()
+                CloseBroadcast(Holder)
+            end)
+        end)
+
+        Close.MouseEnter:Connect(function()
+            TweenService:Create(
+                Close,
+                TweenInfo.new(0.15),
+                {
+                    TextColor3 = Color3.fromRGB(255, 255, 255),
+                    TextSize = 18
+                }
+            ):Play()
+        end)
+
+        Close.MouseLeave:Connect(function()
+            TweenService:Create(
+                Close,
+                TweenInfo.new(0.15),
+                {
+                    TextColor3 = Color3.fromRGB(255, 70, 120),
+                    TextSize = 16
+                }
+            ):Play()
+        end)
+    end
+
+    CurrentNotification = Holder
+
+    local Entry = TweenService:Create(
+        Holder,
+        TweenInfo.new(
+            0.72,
+            Enum.EasingStyle.Quint,
+            Enum.EasingDirection.Out
+        ),
+        {
+            Position = UDim2.new(0.5, 0, 0, 18)
+        }
+    )
+
+    Entry:Play()
+
+    task.spawn(function()
+        Entry.Completed:Wait()
+
+        if not Holder.Parent then
+            return
+        end
+
+        TweenService:Create(
+            Glow,
+            TweenInfo.new(
+                0.65,
+                Enum.EasingStyle.Sine,
+                Enum.EasingDirection.InOut,
+                -1,
+                true
+            ),
+            {
+                Transparency = 0.45
+            }
+        ):Play()
+    end)
+
+    if mode == "duration" then
+        task.delay(math.max(duration, 0.1), function()
+            if Holder and Holder.Parent then
+                CloseBroadcast(Holder)
+            end
+        end)
+    end
+end
+
+local function FetchBroadcast()
+    local stamp = tostring(math.floor(os.clock() * 1000000))
+
+    local urls = {
+        BROADCAST_URL .. "?cb=" .. stamp,
+        BROADCAST_URL .. "?t=" .. tostring(os.time()) .. "&x=" .. stamp
+    }
+
+    local req =
+        (syn and syn.request)
+        or (http and http.request)
+        or request
+        or (http_request)
+
+    if req then
+        for _, url in ipairs(urls) do
+            local ok, response = pcall(function()
+                return req({
+                    Url = url,
+                    Method = "GET",
+                    Headers = {
+                        ["Cache-Control"] = "no-cache, no-store, max-age=0",
+                        ["Pragma"] = "no-cache",
+                        ["Expires"] = "0",
+                        ["Accept"] = "application/json, text/plain, */*"
+                    }
+                })
+            end)
+
+            if ok and response then
+                local code = tonumber(
+                    response.StatusCode
+                    or response.status_code
+                    or 200
+                )
+
+                local body =
+                    response.Body
+                    or response.body
+
+                if code >= 200
+                and code < 300
+                and body
+                and body ~= "" then
+                    return body
+                end
+            end
+        end
+    end
+
+    local ok, body = pcall(function()
+        return game:HttpGet(
+            BROADCAST_URL .. "?cb=" .. stamp
+        )
+    end)
+
+    if ok and body and body ~= "" then
+        return body
+    end
+
+    return nil
+end
+
+local function CheckBroadcast()
+    local Result = FetchBroadcast()
+
+    if not Result then
+        return
+    end
+
+    local DecodeSuccess, Data = pcall(function()
+        return HttpService:JSONDecode(Result)
+    end)
+
+    if not DecodeSuccess or type(Data) ~= "table" then
+        return
+    end
+
+    local text = tostring(Data.text or "")
+
+    if text == "" then
+        return
+    end
+
+    if text == LastBroadcastText then
+        return
+    end
+
+    SaveLastBroadcast(text)
+    ShowBroadcast(Data)
+end
+
+task.spawn(function()
+    while _G.CyberBroadcastRunId == CyberBroadcastRunId do
+        CheckBroadcast()
+        task.wait(CHECK_INTERVAL)
+    end
+end)

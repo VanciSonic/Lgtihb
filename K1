@@ -80,12 +80,14 @@ Elements         = {}
 CURRENT_VERSION  = nil
 
 local _saveScheduled = false
+local KZN_SettingsResetInProgress = false
 function SaveConfig()
-    if not writefile then return end
+    if not writefile or KZN_SettingsResetInProgress then return end
     if _saveScheduled then return end
     _saveScheduled = true
     task.delay(0.75, function()
         _saveScheduled = false
+        if KZN_SettingsResetInProgress then return end
         ConfigData._version = CURRENT_VERSION
         pcall(function()
             writefile(ConfigFile, HttpService:JSONEncode(ConfigData))
@@ -94,7 +96,7 @@ function SaveConfig()
 end
 
 function SaveConfigNow()
-    if not writefile then return end
+    if not writefile or KZN_SettingsResetInProgress then return end
     _saveScheduled = false
     ConfigData._version = CURRENT_VERSION
     pcall(function()
@@ -172,6 +174,106 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
+
+--// Global tween stop controller. Stop Tween is latched until the script is reloaded.
+local KZN_TweenControl = _G.GantengHub_TweenControl
+if type(KZN_TweenControl) ~= "table" then
+    KZN_TweenControl = {
+        Stopped = false,
+        Tweens = setmetatable({}, { __mode = "k" }),
+        CreateHooked = false,
+        NamecallHooked = false,
+    }
+    _G.GantengHub_TweenControl = KZN_TweenControl
+end
+KZN_TweenControl.Stopped = false
+KZN_TweenControl.Tweens = KZN_TweenControl.Tweens or setmetatable({}, { __mode = "k" })
+_G.GantengHub_StopTween = false
+
+local function KZN_TrackTween(tween)
+    if not tween then return end
+    KZN_TweenControl.Tweens[tween] = true
+    pcall(function()
+        tween.Completed:Connect(function()
+            KZN_TweenControl.Tweens[tween] = nil
+        end)
+    end)
+end
+
+-- Track tweens created after this UI library loads, so Stop Tween can cancel them.
+if not KZN_TweenControl.CreateHooked and type(hookfunction) == "function" then
+    local OriginalTweenCreate
+    local CreateHook = function(self, ...)
+        local tween = OriginalTweenCreate(self, ...)
+        KZN_TrackTween(tween)
+        return tween
+    end
+    if type(newcclosure) == "function" then
+        CreateHook = newcclosure(CreateHook)
+    end
+    local hookOK, original = pcall(function()
+        return hookfunction(TweenService.Create, CreateHook)
+    end)
+    if hookOK and type(original) == "function" then
+        OriginalTweenCreate = original
+        KZN_TweenControl.CreateHooked = true
+    end
+end
+
+-- Also intercept direct Tween:Play() and legacy GuiObject tween methods.
+-- When stopped, new tweens are immediately cancelled and legacy tweens are blocked.
+if not KZN_TweenControl.NamecallHooked
+    and type(hookmetamethod) == "function"
+    and type(getnamecallmethod) == "function" then
+    local OriginalNamecall
+    local NamecallHook = function(self, ...)
+        local method = getnamecallmethod()
+        if KZN_TweenControl.Stopped then
+            if method == "Play" then
+                local isTween = false
+                pcall(function()
+                    isTween = self:IsA("Tween")
+                end)
+                if isTween then
+                    local result = OriginalNamecall(self, ...)
+                    pcall(function() self:Cancel() end)
+                    return result
+                end
+            elseif method == "TweenPosition" or method == "TweenSize"
+                or method == "TweenSizeAndPosition" or method == "TweenPositionAndSize" then
+                local isGuiObject = false
+                pcall(function()
+                    isGuiObject = self:IsA("GuiObject")
+                end)
+                if isGuiObject then
+                    return false
+                end
+            end
+        end
+        return OriginalNamecall(self, ...)
+    end
+    if type(newcclosure) == "function" then
+        NamecallHook = newcclosure(NamecallHook)
+    end
+    local hookOK, original = pcall(function()
+        return hookmetamethod(game, "__namecall", NamecallHook)
+    end)
+    if hookOK and type(original) == "function" then
+        OriginalNamecall = original
+        KZN_TweenControl.NamecallHooked = true
+    end
+end
+
+local function KZN_StopAllTweens()
+    KZN_TweenControl.Stopped = true
+    _G.GantengHub_StopTween = true
+    for tween in pairs(KZN_TweenControl.Tweens) do
+        pcall(function()
+            tween:Cancel()
+        end)
+        KZN_TweenControl.Tweens[tween] = nil
+    end
+end
 local function KZN_GetUIRoot()
     if type(gethui) == "function" then
         local ok, ui = pcall(gethui)
@@ -750,7 +852,7 @@ function RcHub:Window(GuiConfig)
     LayersTab.BorderColor3 = Color3.fromRGB(0, 0, 0)
     LayersTab.BorderSizePixel = 0
     LayersTab.Position = UDim2.new(0, 9, 0, 50)
-    LayersTab.Size = UDim2.new(0, GuiConfig["Tab Width"], 1, -59)
+    LayersTab.Size = UDim2.new(0, GuiConfig["Tab Width"], 1, -90)
     LayersTab.Name = "LayersTab"
     LayersTab.Parent = Main
 
@@ -772,7 +874,7 @@ function RcHub:Window(GuiConfig)
     Layers.BorderColor3 = Color3.fromRGB(0, 0, 0)
     Layers.BorderSizePixel = 0
     Layers.Position = UDim2.new(0, GuiConfig["Tab Width"] + 18, 0, 50)
-    Layers.Size = UDim2.new(1, -(GuiConfig["Tab Width"] + 9 + 18), 1, -59)
+    Layers.Size = UDim2.new(1, -(GuiConfig["Tab Width"] + 9 + 18), 1, -90)
     Layers.Name = "Layers"
     Layers.Parent = Main
 
@@ -1161,6 +1263,231 @@ function RcHub:Window(GuiConfig)
 
     DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
     MakeDraggable(Top, DropShadowHolder)
+
+    --// Persistent footer controls (outside the scrollable tab content).
+    local StopTweenButton = KZN_NewInstance("TextButton")
+    StopTweenButton.Name = "GantengHubStopTweenButton"
+    StopTweenButton.Text = "Stop Tween"
+    StopTweenButton.Font = Enum.Font.GothamBold
+    StopTweenButton.TextSize = 12
+    StopTweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    StopTweenButton.TextTransparency = 0
+    StopTweenButton.BackgroundColor3 = Color3.fromRGB(28, 105, 174)
+    StopTweenButton.BackgroundTransparency = 0.08
+    StopTweenButton.BorderSizePixel = 0
+    StopTweenButton.AutoButtonColor = true
+    StopTweenButton.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 30)
+    StopTweenButton.Position = UDim2.new(0, 9, 1, -37)
+    StopTweenButton.ZIndex = 25
+    StopTweenButton.Parent = Main
+    KZN_NewInstance("UICorner", StopTweenButton).CornerRadius = UDim.new(0, 4)
+
+    StopTweenButton.Activated:Connect(function()
+        KZN_StopAllTweens()
+        StopTweenButton.BackgroundColor3 = Color3.fromRGB(20, 75, 122)
+        StopTweenButton.Text = "Stop Tween"
+    end)
+
+    local ResetSettingButton = KZN_NewInstance("TextButton")
+    ResetSettingButton.Name = "GantengHubResetSettingButton"
+    ResetSettingButton.Text = "Reset Setting"
+    ResetSettingButton.Font = Enum.Font.GothamBold
+    ResetSettingButton.TextSize = 12
+    ResetSettingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ResetSettingButton.TextTransparency = 0
+    ResetSettingButton.BackgroundColor3 = Color3.fromRGB(133, 47, 54)
+    ResetSettingButton.BackgroundTransparency = 0.08
+    ResetSettingButton.BorderSizePixel = 0
+    ResetSettingButton.AutoButtonColor = true
+    ResetSettingButton.Size = UDim2.new(0, 125, 0, 30)
+    ResetSettingButton.Position = UDim2.new(0, GuiConfig["Tab Width"] + 18, 1, -37)
+    ResetSettingButton.ZIndex = 25
+    ResetSettingButton.Parent = Main
+    KZN_NewInstance("UICorner", ResetSettingButton).CornerRadius = UDim.new(0, 4)
+
+    local function KZN_DeleteSettingsPath(path, depth)
+        depth = depth or 0
+        if depth > 12 or type(path) ~= "string" then return end
+
+        local isDirectory = false
+        if type(isfolder) == "function" then
+            pcall(function()
+                isDirectory = isfolder(path) == true
+            end)
+        end
+
+        if isDirectory then
+            if type(listfiles) == "function" then
+                local okList, children = pcall(listfiles, path)
+                if okList and type(children) == "table" then
+                    for _, childPath in ipairs(children) do
+                        KZN_DeleteSettingsPath(childPath, depth + 1)
+                    end
+                end
+            end
+            if type(delfolder) == "function" then
+                pcall(delfolder, path)
+            end
+            return
+        end
+
+        if type(delfile) == "function" then
+            pcall(function()
+                if type(isfile) ~= "function" or isfile(path) then
+                    delfile(path)
+                end
+            end)
+        end
+    end
+
+    local function KZN_OpenResetWarning()
+        if Main:FindFirstChild("GantengHubResetWarning") then return end
+
+        local Overlay = KZN_NewInstance("Frame")
+        Overlay.Name = "GantengHubResetWarning"
+        Overlay.Size = UDim2.new(1, 0, 1, 0)
+        Overlay.Position = UDim2.new(0, 0, 0, 0)
+        Overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        Overlay.BackgroundTransparency = 0.28
+        Overlay.BorderSizePixel = 0
+        Overlay.Active = true
+        Overlay.ZIndex = 90
+        Overlay.Parent = Main
+
+        local Dialog = KZN_NewInstance("Frame")
+        Dialog.Name = "Dialog"
+        Dialog.AnchorPoint = Vector2.new(0.5, 0.5)
+        Dialog.Position = UDim2.new(0.5, 0, 0.5, 0)
+        Dialog.Size = UDim2.new(0, 340, 0, 195)
+        Dialog.BackgroundColor3 = Color3.fromRGB(21, 27, 39)
+        Dialog.BackgroundTransparency = 0.02
+        Dialog.BorderSizePixel = 0
+        Dialog.ZIndex = 91
+        Dialog.Parent = Overlay
+        KZN_NewInstance("UICorner", Dialog).CornerRadius = UDim.new(0, 8)
+
+        local DialogStroke = KZN_NewInstance("UIStroke")
+        DialogStroke.Color = Color3.fromRGB(105, 112, 126)
+        DialogStroke.Transparency = 0.45
+        DialogStroke.Thickness = 1
+        DialogStroke.Parent = Dialog
+
+        local Title = KZN_NewInstance("TextLabel")
+        Title.Name = "Title"
+        Title.Position = UDim2.new(0, 14, 0, 10)
+        Title.Size = UDim2.new(1, -28, 0, 25)
+        Title.BackgroundTransparency = 1
+        Title.Font = Enum.Font.GothamBold
+        Title.Text = "Reset Setting?"
+        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Title.TextSize = 17
+        Title.TextXAlignment = Enum.TextXAlignment.Left
+        Title.ZIndex = 92
+        Title.Parent = Dialog
+
+        local Message = KZN_NewInstance("TextLabel")
+        Message.Name = "Message"
+        Message.Position = UDim2.new(0, 14, 0, 39)
+        Message.Size = UDim2.new(1, -28, 0, 99)
+        Message.BackgroundTransparency = 1
+        Message.Font = Enum.Font.Gotham
+        Message.Text = "Reset setting akan mereset seluruh data script Ganteng Hub dan mengembalikannya seperti semula.\n\nSetelah reset, kamu akan dikeluarkan dari game dan harus masuk ulang. Apakah kamu yakin?"
+        Message.TextColor3 = Color3.fromRGB(215, 219, 227)
+        Message.TextSize = 12
+        Message.TextWrapped = true
+        Message.TextXAlignment = Enum.TextXAlignment.Left
+        Message.TextYAlignment = Enum.TextYAlignment.Top
+        Message.ZIndex = 92
+        Message.Parent = Dialog
+
+        local ConfirmReset = KZN_NewInstance("TextButton")
+        ConfirmReset.Name = "ConfirmReset"
+        ConfirmReset.Position = UDim2.new(0, 14, 1, -43)
+        ConfirmReset.Size = UDim2.new(0.5, -21, 0, 30)
+        ConfirmReset.BackgroundColor3 = Color3.fromRGB(190, 43, 50)
+        ConfirmReset.BackgroundTransparency = 0.02
+        ConfirmReset.BorderSizePixel = 0
+        ConfirmReset.AutoButtonColor = true
+        ConfirmReset.Font = Enum.Font.GothamBold
+        ConfirmReset.Text = "Reset"
+        ConfirmReset.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ConfirmReset.TextSize = 13
+        ConfirmReset.ZIndex = 92
+        ConfirmReset.Parent = Dialog
+        KZN_NewInstance("UICorner", ConfirmReset).CornerRadius = UDim.new(0, 5)
+
+        local CancelReset = KZN_NewInstance("TextButton")
+        CancelReset.Name = "CancelReset"
+        CancelReset.Position = UDim2.new(0.5, 7, 1, -43)
+        CancelReset.Size = UDim2.new(0.5, -21, 0, 30)
+        CancelReset.BackgroundColor3 = Color3.fromRGB(63, 70, 83)
+        CancelReset.BackgroundTransparency = 0.08
+        CancelReset.BorderSizePixel = 0
+        CancelReset.AutoButtonColor = true
+        CancelReset.Font = Enum.Font.GothamBold
+        CancelReset.Text = "Tidak"
+        CancelReset.TextColor3 = Color3.fromRGB(255, 255, 255)
+        CancelReset.TextSize = 13
+        CancelReset.ZIndex = 92
+        CancelReset.Parent = Dialog
+        KZN_NewInstance("UICorner", CancelReset).CornerRadius = UDim.new(0, 5)
+
+        local resetConfirmed = false
+        ConfirmReset.Activated:Connect(function()
+            if resetConfirmed then return end
+            resetConfirmed = true
+            ConfirmReset.Active = false
+            CancelReset.Active = false
+            ConfirmReset.Text = "Resetting..."
+
+            KZN_SettingsResetInProgress = true
+            _saveScheduled = false
+            ConfigData = { _version = CURRENT_VERSION }
+
+            local FilesToDelete = {
+                "GantengHub_SkillSettings.json",
+                "GantengHub_SeaEventSettings.json",
+                "GantengHub_MultiFarmSettings.json",
+                "GantengHub_WebhookSettings.json",
+                "KZN/Config",
+            }
+
+            if type(delfile) == "function" then
+                for _, File in ipairs(FilesToDelete) do
+                    if File == "KZN/Config" then
+                        KZN_DeleteSettingsPath(File)
+                        -- Retain the original fallback attempt from the provided reset code.
+                        pcall(function()
+                            if type(isfile) ~= "function" or isfile(File) then
+                                delfile(File)
+                            end
+                        end)
+                    else
+                        pcall(function()
+                            if type(isfile) ~= "function" or isfile(File) then
+                                delfile(File)
+                            end
+                        end)
+                    end
+                end
+            end
+
+            Message.Text = "Reset telah diproses. Kamu akan dikeluarkan dari game sebentar lagi. Masuk ulang agar setting dimuat dari awal."
+            task.delay(0.6, function()
+                pcall(function()
+                    LocalPlayer:Kick("Ganteng Hub: settings di-reset. Silakan masuk ulang ke game.")
+                end)
+            end)
+        end)
+
+        CancelReset.Activated:Connect(function()
+            if not resetConfirmed then
+                Overlay:Destroy()
+            end
+        end)
+    end
+
+    ResetSettingButton.Activated:Connect(KZN_OpenResetWarning)
 
     local MoreBlur = KZN_NewInstance("Frame");
     local DropShadowHolder1 = KZN_NewInstance("Frame");

@@ -175,24 +175,48 @@ local TweenService = game:GetService("TweenService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
---// Global tween stop controller. Stop Tween is latched until the script is reloaded.
-local KZN_TweenControl = _G.GantengHub_TweenControl
-if type(KZN_TweenControl) ~= "table" then
-    KZN_TweenControl = {
-        Stopped = false,
-        Tweens = setmetatable({}, { __mode = "k" }),
-        CreateHooked = false,
-        NamecallHooked = false,
-    }
-    _G.GantengHub_TweenControl = KZN_TweenControl
+--// Global tween stop controller.
+--// Reset the previous latch when this library is reloaded; older executor hooks
+--// may still exist, so their old controller must stay inactive.
+local KZN_PreviousTweenControl = _G.GantengHub_TweenControl
+if type(KZN_PreviousTweenControl) == "table" then
+    pcall(function() KZN_PreviousTweenControl.Stopped = false end)
 end
-KZN_TweenControl.Stopped = false
-KZN_TweenControl.Tweens = KZN_TweenControl.Tweens or setmetatable({}, { __mode = "k" })
+local KZN_TweenControl = {
+    Stopped = false,
+    Tweens = setmetatable({}, { __mode = "k" }),
+    CreateHooked = false,
+    NamecallHooked = false,
+}
+_G.GantengHub_TweenControl = KZN_TweenControl
 _G.GantengHub_StopTween = false
 
-local function KZN_TrackTween(tween)
-    if not tween then return end
-    KZN_TweenControl.Tweens[tween] = true
+-- UI tweens are intentionally exempt: blocking them can break section toggles,
+-- dropdowns and other button interactions. Gameplay/world tweens are still stopped.
+local function KZN_IsUITweenTarget(target)
+    if not target then return false end
+    local isUI = false
+    pcall(function()
+        isUI = target:IsA("GuiObject") or target:IsA("LayerCollector")
+    end)
+    return isUI
+end
+
+-- Carry over active gameplay tweens from a previously loaded version, but never
+-- carry over UI tweens that could interrupt the buttons after Stop Tween is pressed.
+if type(KZN_PreviousTweenControl) == "table" and type(KZN_PreviousTweenControl.Tweens) == "table" then
+    for tween in pairs(KZN_PreviousTweenControl.Tweens) do
+        local target = nil
+        pcall(function() target = tween.Instance end)
+        if not KZN_IsUITweenTarget(target) then
+            KZN_TweenControl.Tweens[tween] = target or true
+        end
+    end
+end
+
+local function KZN_TrackTween(tween, target)
+    if not tween or KZN_IsUITweenTarget(target) then return end
+    KZN_TweenControl.Tweens[tween] = target or true
     pcall(function()
         tween.Completed:Connect(function()
             KZN_TweenControl.Tweens[tween] = nil
@@ -200,12 +224,12 @@ local function KZN_TrackTween(tween)
     end)
 end
 
--- Track tweens created after this UI library loads, so Stop Tween can cancel them.
-if not KZN_TweenControl.CreateHooked and type(hookfunction) == "function" then
+-- Track non-UI tweens created after this UI library loads.
+if type(hookfunction) == "function" then
     local OriginalTweenCreate
-    local CreateHook = function(self, ...)
-        local tween = OriginalTweenCreate(self, ...)
-        KZN_TrackTween(tween)
+    local CreateHook = function(self, target, ...)
+        local tween = OriginalTweenCreate(self, target, ...)
+        KZN_TrackTween(tween, target)
         return tween
     end
     if type(newcclosure) == "function" then
@@ -220,34 +244,21 @@ if not KZN_TweenControl.CreateHooked and type(hookfunction) == "function" then
     end
 end
 
--- Also intercept direct Tween:Play() and legacy GuiObject tween methods.
--- When stopped, new tweens are immediately cancelled and legacy tweens are blocked.
-if not KZN_TweenControl.NamecallHooked
-    and type(hookmetamethod) == "function"
-    and type(getnamecallmethod) == "function" then
+-- Block new non-UI tween playback while allowing all UI animations and clicks.
+if type(hookmetamethod) == "function" and type(getnamecallmethod) == "function" then
     local OriginalNamecall
     local NamecallHook = function(self, ...)
         local method = getnamecallmethod()
-        if KZN_TweenControl.Stopped then
-            if method == "Play" then
-                local isTween = false
-                pcall(function()
-                    isTween = self:IsA("Tween")
-                end)
-                if isTween then
-                    local result = OriginalNamecall(self, ...)
-                    pcall(function() self:Cancel() end)
-                    return result
-                end
-            elseif method == "TweenPosition" or method == "TweenSize"
-                or method == "TweenSizeAndPosition" or method == "TweenPositionAndSize" then
-                local isGuiObject = false
-                pcall(function()
-                    isGuiObject = self:IsA("GuiObject")
-                end)
-                if isGuiObject then
-                    return false
-                end
+        if KZN_TweenControl.Stopped and method == "Play" then
+            local isTween = false
+            local target = nil
+            pcall(function()
+                isTween = self:IsA("Tween")
+                if isTween then target = self.Instance end
+            end)
+            if isTween and not KZN_IsUITweenTarget(target) then
+                pcall(function() self:Cancel() end)
+                return nil
             end
         end
         return OriginalNamecall(self, ...)
@@ -268,9 +279,7 @@ local function KZN_StopAllTweens()
     KZN_TweenControl.Stopped = true
     _G.GantengHub_StopTween = true
     for tween in pairs(KZN_TweenControl.Tweens) do
-        pcall(function()
-            tween:Cancel()
-        end)
+        pcall(function() tween:Cancel() end)
         KZN_TweenControl.Tweens[tween] = nil
     end
 end
@@ -1264,7 +1273,50 @@ function RcHub:Window(GuiConfig)
     DropShadowHolder.Size = UDim2.new(0, 115 + TextLabel.TextBounds.X + 1 + TextLabel1.TextBounds.X, 0, 350)
     MakeDraggable(Top, DropShadowHolder)
 
-    --// Persistent footer controls (outside the scrollable tab content).
+    --// Utility controls docked to the side of the main window.
+    --// If there is no screen margin (small screens / maximized UI), the dock
+    --// sits just inside the nearest edge rather than being clipped off-screen.
+    local UtilityRail = KZN_NewInstance("Frame")
+    UtilityRail.Name = "GantengHubUtilityRail"
+    UtilityRail.Size = UDim2.new(0, 132, 0, 82)
+    UtilityRail.BackgroundTransparency = 1
+    UtilityRail.BorderSizePixel = 0
+    UtilityRail.ZIndex = 45
+    UtilityRail.Parent = DropShadowHolder
+
+    local function KZN_PositionUtilityRail()
+        local camera = workspace.CurrentCamera
+        local viewportWidth = camera and camera.ViewportSize.X or 0
+        local viewportHeight = camera and camera.ViewportSize.Y or 0
+        local windowPosition = DropShadowHolder.AbsolutePosition
+        local windowX = windowPosition.X
+        local windowY = windowPosition.Y
+        local windowWidth = DropShadowHolder.AbsoluteSize.X
+        local rightSpace = viewportWidth - (windowX + windowWidth)
+        local leftSpace = windowX
+        local railY = 58
+        if viewportHeight > 0 then
+            railY = math.clamp(windowY + 58, 8, math.max(8, viewportHeight - 90)) - windowY
+        end
+
+        UtilityRail.AnchorPoint = Vector2.new(0, 0)
+        if rightSpace >= 140 then
+            UtilityRail.Position = UDim2.new(1, 8, 0, railY)
+        elseif leftSpace >= 140 then
+            UtilityRail.AnchorPoint = Vector2.new(1, 0)
+            UtilityRail.Position = UDim2.new(0, -8, 0, railY)
+        else
+            UtilityRail.Position = UDim2.new(1, -140, 0, railY)
+        end
+    end
+
+    DropShadowHolder:GetPropertyChangedSignal("AbsolutePosition"):Connect(KZN_PositionUtilityRail)
+    DropShadowHolder:GetPropertyChangedSignal("AbsoluteSize"):Connect(KZN_PositionUtilityRail)
+    if workspace.CurrentCamera then
+        workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(KZN_PositionUtilityRail)
+    end
+    KZN_PositionUtilityRail()
+
     local StopTweenButton = KZN_NewInstance("TextButton")
     StopTweenButton.Name = "GantengHubStopTweenButton"
     StopTweenButton.Text = "Stop Tween"
@@ -1276,11 +1328,10 @@ function RcHub:Window(GuiConfig)
     StopTweenButton.BackgroundTransparency = 0.04
     StopTweenButton.BorderSizePixel = 0
     StopTweenButton.AutoButtonColor = true
-    -- Keep utility controls attached to the outer window container, below Main.
-    StopTweenButton.Size = UDim2.new(0, 112, 0, 38)
-    StopTweenButton.Position = UDim2.new(0, 12, 1, 8)
-    StopTweenButton.ZIndex = 45
-    StopTweenButton.Parent = DropShadowHolder
+    StopTweenButton.Size = UDim2.new(1, 0, 0, 36)
+    StopTweenButton.Position = UDim2.new(0, 0, 0, 0)
+    StopTweenButton.ZIndex = 46
+    StopTweenButton.Parent = UtilityRail
     KZN_NewInstance("UICorner", StopTweenButton).CornerRadius = UDim.new(0, 4)
 
     StopTweenButton.Activated:Connect(function()
@@ -1300,10 +1351,10 @@ function RcHub:Window(GuiConfig)
     ResetSettingButton.BackgroundTransparency = 0.04
     ResetSettingButton.BorderSizePixel = 0
     ResetSettingButton.AutoButtonColor = true
-    ResetSettingButton.Size = UDim2.new(0, 125, 0, 38)
-    ResetSettingButton.Position = UDim2.new(0, 150, 1, 8)
-    ResetSettingButton.ZIndex = 45
-    ResetSettingButton.Parent = DropShadowHolder
+    ResetSettingButton.Size = UDim2.new(1, 0, 0, 36)
+    ResetSettingButton.Position = UDim2.new(0, 0, 0, 44)
+    ResetSettingButton.ZIndex = 46
+    ResetSettingButton.Parent = UtilityRail
     KZN_NewInstance("UICorner", ResetSettingButton).CornerRadius = UDim.new(0, 4)
 
     local function KZN_DeleteSettingsPath(path, depth)

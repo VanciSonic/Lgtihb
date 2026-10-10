@@ -1272,19 +1272,20 @@ function RcHub:Window(GuiConfig)
     StopTweenButton.TextSize = 12
     StopTweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     StopTweenButton.TextTransparency = 0
-    StopTweenButton.BackgroundColor3 = Color3.fromRGB(28, 105, 174)
-    StopTweenButton.BackgroundTransparency = 0.08
+    StopTweenButton.BackgroundColor3 = Color3.fromRGB(78, 83, 92)
+    StopTweenButton.BackgroundTransparency = 0.04
     StopTweenButton.BorderSizePixel = 0
     StopTweenButton.AutoButtonColor = true
-    StopTweenButton.Size = UDim2.new(0, GuiConfig["Tab Width"], 0, 30)
-    StopTweenButton.Position = UDim2.new(0, 9, 1, -37)
-    StopTweenButton.ZIndex = 25
-    StopTweenButton.Parent = Main
+    -- Keep utility controls attached to the outer window container, below Main.
+    StopTweenButton.Size = UDim2.new(0, 112, 0, 38)
+    StopTweenButton.Position = UDim2.new(0, 12, 1, 8)
+    StopTweenButton.ZIndex = 45
+    StopTweenButton.Parent = DropShadowHolder
     KZN_NewInstance("UICorner", StopTweenButton).CornerRadius = UDim.new(0, 4)
 
     StopTweenButton.Activated:Connect(function()
         KZN_StopAllTweens()
-        StopTweenButton.BackgroundColor3 = Color3.fromRGB(20, 75, 122)
+        StopTweenButton.BackgroundColor3 = Color3.fromRGB(61, 65, 73)
         StopTweenButton.Text = "Stop Tween"
     end)
 
@@ -1295,14 +1296,14 @@ function RcHub:Window(GuiConfig)
     ResetSettingButton.TextSize = 12
     ResetSettingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     ResetSettingButton.TextTransparency = 0
-    ResetSettingButton.BackgroundColor3 = Color3.fromRGB(133, 47, 54)
-    ResetSettingButton.BackgroundTransparency = 0.08
+    ResetSettingButton.BackgroundColor3 = Color3.fromRGB(78, 83, 92)
+    ResetSettingButton.BackgroundTransparency = 0.04
     ResetSettingButton.BorderSizePixel = 0
     ResetSettingButton.AutoButtonColor = true
-    ResetSettingButton.Size = UDim2.new(0, 125, 0, 30)
-    ResetSettingButton.Position = UDim2.new(0, GuiConfig["Tab Width"] + 18, 1, -37)
-    ResetSettingButton.ZIndex = 25
-    ResetSettingButton.Parent = Main
+    ResetSettingButton.Size = UDim2.new(0, 125, 0, 38)
+    ResetSettingButton.Position = UDim2.new(0, 150, 1, 8)
+    ResetSettingButton.ZIndex = 45
+    ResetSettingButton.Parent = DropShadowHolder
     KZN_NewInstance("UICorner", ResetSettingButton).CornerRadius = UDim.new(0, 4)
 
     local function KZN_DeleteSettingsPath(path, depth)
@@ -1404,7 +1405,7 @@ function RcHub:Window(GuiConfig)
         ConfirmReset.Name = "ConfirmReset"
         ConfirmReset.Position = UDim2.new(0, 14, 1, -43)
         ConfirmReset.Size = UDim2.new(0.5, -21, 0, 30)
-        ConfirmReset.BackgroundColor3 = Color3.fromRGB(190, 43, 50)
+        ConfirmReset.BackgroundColor3 = Color3.fromRGB(78, 83, 92)
         ConfirmReset.BackgroundTransparency = 0.02
         ConfirmReset.BorderSizePixel = 0
         ConfirmReset.AutoButtonColor = true
@@ -1420,7 +1421,7 @@ function RcHub:Window(GuiConfig)
         CancelReset.Name = "CancelReset"
         CancelReset.Position = UDim2.new(0.5, 7, 1, -43)
         CancelReset.Size = UDim2.new(0.5, -21, 0, 30)
-        CancelReset.BackgroundColor3 = Color3.fromRGB(63, 70, 83)
+        CancelReset.BackgroundColor3 = Color3.fromRGB(61, 65, 73)
         CancelReset.BackgroundTransparency = 0.08
         CancelReset.BorderSizePixel = 0
         CancelReset.AutoButtonColor = true

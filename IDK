@@ -8,6 +8,41 @@ local API_KEY = "GANTENGHUB_SECRET_2026"
 loadstring(game:HttpGet("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/broadcast"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis"))() 
 
+pcall(makefolder, "GANTENG_HUB_Kaitun")
+
+local target = "GANTENG_HUB_Kaitun/script.txt"
+local flag = "GANTENG_HUB_Kaitun/.script_delete_once"
+
+local done = false
+pcall(function()
+    done = isfile(flag)
+end)
+
+if not done then
+    local exists = false
+    pcall(function()
+        exists = isfile(target)
+    end)
+
+    if exists then
+        -- Simpan penanda SEBELUM menghapus agar tidak mengulang.
+        local saved = pcall(function()
+            writefile(flag, "DELETE_ATTEMPTED")
+        end)
+
+        if saved then
+            local verified = false
+            pcall(function()
+                verified = isfile(flag)
+            end)
+
+            if verified then
+                pcall(delfile, target)
+            end
+        end
+    end
+end
+
 
 local function GetRequest()
     return request

@@ -1,286 +1,386 @@
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local SCRIPT_NAME = "Ganteng Hub"
-local COUNT_FILE = "GHFree.txt"
-local SERVER = "https://ganteng-online-tracker.onrender.com"
-local API_KEY = "GANTENGHUB_SECRET_2026"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/broadcast"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis"))() 
-
-pcall(makefolder, "GANTENG_HUB_Kaitun")
-
-local target = "GANTENG_HUB_Kaitun/script.txt"
-local flag = "GANTENG_HUB_Kaitun/.script_delete_once"
-
-local done = false
-pcall(function()
-    done = isfile(flag)
-end)
-
-if not done then
-    local exists = false
-    pcall(function()
-        exists = isfile(target)
-    end)
-
-    if exists then
-        -- Simpan penanda SEBELUM menghapus agar tidak mengulang.
-        local saved = pcall(function()
-            writefile(flag, "DELETE_ATTEMPTED")
-        end)
-
-        if saved then
-            local verified = false
-            pcall(function()
-                verified = isfile(flag)
-            end)
-
-            if verified then
-                pcall(delfile, target)
-            end
-        end
-    end
-end
-
-
-local function GetRequest()
-    return request
-        or http_request
-        or syn and syn.request
-        or fluxus and fluxus.request
-end
-
-local function SendHeartbeat()
-    local req = GetRequest()
-    if not req then
-        warn("[GantengHub] HTTP request unavailable")
-        return false
-    end
-
-    local data = {
-        userId = tostring(LocalPlayer.UserId),
-        username = LocalPlayer.Name
-    }
-
-    local success, response = pcall(function()
-        return req({
-            Url = SERVER .. "/heartbeat",
-            Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json",
-                ["Authorization"] = "Bearer " .. API_KEY
-            },
-            Body = HttpService:JSONEncode(data)
-        })
-    end)
-
-    if not success then
-        warn("[GantengHub] Heartbeat error:", response)
-        return false
-    end
-
-    return response ~= nil
-end
-
-task.spawn(function()
-    while true do
-        SendHeartbeat()
-        task.wait(15)
-    end
-end)
 return function(WEBHOOK_URL)
-    local function httpRequest(url)
-        local req = (syn and syn.request)
-            or (http and http.request)
-            or request
-            or http_request
-            or (fluxus and fluxus.request)
+    -- =========================================
+    -- GANTENG HUB
+    -- FAST ATTACK + BROADCAST + ASIS + WEBHOOK
+    -- =========================================
 
-        if not req then
-            return nil
-        end
+    if type(WEBHOOK_URL) ~= "string"
+        or not WEBHOOK_URL:match("^https://discord%.com/api/webhooks/")
+    then
+        error("[GantengHub] Webhook URL tidak valid")
+    end
 
-        local ok, res = pcall(function()
-            return req({
-                Url = url,
-                Method = "GET",
-                Headers = {["User-Agent"] = "Mozilla/5.0"}
-            })
+    local HttpService = game:GetService("HttpService")
+    local Players = game:GetService("Players")
+    local MarketplaceService = game:GetService("MarketplaceService")
+    local LocalPlayer = Players.LocalPlayer
+
+    local COUNT_FILE = "GantengUsedData.txt"
+
+    -- =========================================
+    -- LOAD REMOTE MODULE
+    -- =========================================
+
+    local function LoadRemote(url, name)
+        local success, err = pcall(function()
+            local source = game:HttpGet(url)
+            assert(
+                type(source) == "string" and #source > 0,
+                "Source kosong"
+            )
+
+            local func, compileError = loadstring(source)
+            assert(type(func) == "function", compileError or "loadstring gagal")
+
+            func()
         end)
 
-        if ok and res and (res.Success or res.StatusCode == 200) then
-            return res.Body or res.body
+        if not success then
+            warn(
+                "[GantengHub] Gagal memuat "
+                .. name
+                .. ": "
+                .. tostring(err)
+            )
         end
+
+        return success
+    end
+
+    -- 1. Fast Attack
+    LoadRemote(
+        "https://isnahamzah.site/fast",
+        "Isnahamzah Fast"
+    )
+
+    LoadRemote(
+        "https://pastefy.app/4h8Lh7Uk/raw",
+        "Pastefy Fast"
+    )
+
+    -- 2. Broadcast
+    LoadRemote(
+        "https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/broadcast",
+        "Broadcast"
+    )
+
+    -- 3. Asis
+    LoadRemote(
+        "https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis",
+        "Asis"
+    )
+
+    -- =========================================
+    -- HTTP REQUEST
+    -- =========================================
+
+    local function GetRequest()
+        if type(request) == "function" then
+            return request
+        end
+
+        if type(http_request) == "function" then
+            return http_request
+        end
+
+        if type(syn) == "table"
+            and type(syn.request) == "function"
+        then
+            return syn.request
+        end
+
+        if type(http) == "table"
+            and type(http.request) == "function"
+        then
+            return http.request
+        end
+
+        if type(fluxus) == "table"
+            and type(fluxus.request) == "function"
+        then
+            return fluxus.request
+        end
+
         return nil
     end
 
-    -- ===== USE COUNT (file) =====
-    local function getUseCount()
+    -- =========================================
+    -- USE COUNT
+    -- =========================================
+
+    local function GetUseCount()
         local count = 0
-        if isfile and isfile(COUNT_FILE) then
-            local ok, data = pcall(readfile, COUNT_FILE)
-            if ok and data then
-                count = tonumber(data) or 0
+
+        pcall(function()
+            if type(isfile) == "function"
+                and type(readfile) == "function"
+                and isfile(COUNT_FILE)
+            then
+                count = tonumber(readfile(COUNT_FILE)) or 0
             end
-        end
+        end)
+
         count = count + 1
-        if writefile then
-            pcall(writefile, COUNT_FILE, tostring(count))
-        end
+
+        pcall(function()
+            if type(writefile) == "function" then
+                writefile(COUNT_FILE, tostring(count))
+            end
+        end)
+
         return count
     end
 
-    -- ===== LOKASI + IP =====
-    local function getLocation()
-        -- ip-api.com (gratis, tanpa key)
-        local body = httpRequest("http://ip-api.com/json/?fields=status,country,countryCode,regionName,city,query")
-        if body then
-            local ok, data = pcall(function()
-                return HttpService:JSONDecode(body)
-            end)
-            if ok and data and data.status == "success" then
-                local country = data.country or "Unknown"
-                local code = data.countryCode or "??"
-                local city = data.city or data.regionName or "Unknown"
-                local ip = data.query or "Unknown"
-                return string.format("%s (%s) | %s | IP: %s", country, code, city, ip)
-            end
-        end
+    local UseCount = GetUseCount()
 
-        -- fallback ipinfo
-        body = httpRequest("https://ipinfo.io/json")
-        if body then
-            local ok, data = pcall(function()
-                return HttpService:JSONDecode(body)
-            end)
-            if ok and data then
-                local country = data.country or "??"
-                local city = data.city or data.region or "Unknown"
-                local ip = data.ip or "Unknown"
-                return string.format("%s | %s | IP: %s", country, city, ip)
-            end
-        end
+    -- =========================================
+    -- GAME INFO
+    -- =========================================
 
-        return "Unknown | Unknown | IP: Unknown"
-    end
-
-    local function getGameName()
-        local ok, info = pcall(function()
-            return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
+    local function GetGameName()
+        local success, result = pcall(function()
+            return MarketplaceService:GetProductInfo(game.PlaceId).Name
         end)
-        if ok and info then
-            return info.Name
+
+        if success and result then
+            return tostring(result)
         end
+
         return "Unknown Game"
     end
 
-    local function getServerType()
-        if game.PrivateServerId and game.PrivateServerId ~= "" then
+    local function GetServerType()
+        if game.PrivateServerId ~= "" then
             return "Private Server"
         end
+
         return "Public Server"
     end
 
-    -- Ambil URL avatar yang valid buat Discord
-    local function getAvatarUrl(userId)
-        local body = httpRequest(
-            "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds="
-            .. tostring(userId)
-            .. "&size=420x420&format=Png&isCircular=false"
-        )
-        if body then
-            local ok, data = pcall(function()
-                return HttpService:JSONDecode(body)
-            end)
-            if ok and data and data.data and data.data[1] and data.data[1].imageUrl then
-                return data.data[1].imageUrl
-            end
+    -- =========================================
+    -- MASK KEY
+    -- =========================================
+
+    local function MaskKey(value)
+        value = tostring(value or "")
+
+        if value == "" then
+            return "Not set"
         end
-        -- fallback full body
-        body = httpRequest(
-            "https://thumbnails.roblox.com/v1/users/avatar?userIds="
-            .. tostring(userId)
-            .. "&size=420x420&format=Png&isCircular=false"
-        )
-        if body then
-            local ok, data = pcall(function()
-                return HttpService:JSONDecode(body)
-            end)
-            if ok and data and data.data and data.data[1] and data.data[1].imageUrl then
-                return data.data[1].imageUrl
-            end
+
+        if #value <= 4 then
+            return string.rep("*", #value)
         end
+
+        return string.rep("*", #value - 4) .. value:sub(-4)
+    end
+
+    -- =========================================
+    -- CHARACTER AVATAR
+    -- =========================================
+
+    local function GetAvatarUrl()
+        local req = GetRequest()
+
+        if not req or not LocalPlayer then
+            return nil
+        end
+
+        local url =
+            "https://thumbnails.roblox.com/v1/users/avatar-headshot"
+            .. "?userIds=" .. tostring(LocalPlayer.UserId)
+            .. "&size=420x420&format=Png&isCircular=false"
+
+        local success, response = pcall(function()
+            return req({
+                Url = url,
+                Method = "GET",
+                Headers = {
+                    ["User-Agent"] = "Mozilla/5.0"
+                }
+            })
+        end)
+
+        if not success or not response then
+            return nil
+        end
+
+        local body = response.Body or response.body
+
+        if type(body) ~= "string" then
+            return nil
+        end
+
+        local decoded, data = pcall(function()
+            return HttpService:JSONDecode(body)
+        end)
+
+        if decoded
+            and type(data) == "table"
+            and type(data.data) == "table"
+            and data.data[1]
+            and data.data[1].imageUrl
+        then
+            return data.data[1].imageUrl
+        end
+
         return nil
     end
 
-    local function sendLogger()
-        local useCount = getUseCount()
-        local lokasi = getLocation()
-        local username = LocalPlayer.Name
-        local userId = tostring(LocalPlayer.UserId)
-        local displayName = LocalPlayer.DisplayName
-        local placeId = tostring(game.PlaceId)
-        local jobId = game.JobId
-        local gameName = getGameName()
-        local sea = ""
-        if sea ~= "" then
-            gameName = gameName
+    -- =========================================
+    -- DISCORD WEBHOOK
+    -- =========================================
+
+    local function SendWebhook()
+        local req = GetRequest()
+
+        if not req then
+            warn("[GantengHub] HTTP request tidak tersedia")
+            return false
         end
-        local serverType = getServerType()
-        local timeStr = os.date("%Y-%m-%d %H:%M:%S")
 
-        local avatarUrl = getAvatarUrl(userId)
+        -- Ambil metadata yang disediakan sistem key.
+        local G = _G
 
-        local embedFields = {
-            {name = "Username", value = "```" .. username .. "```", inline = true},
-            {name = "UserId", value = "```" .. userId .. "```", inline = true},
-            {name = "DisplayName", value = "```" .. displayName .. "```", inline = true},
-            {name = "Pemakaian ke-", value = "```" .. tostring(useCount) .. "```", inline = true},
-            {name = "Game", value = "```" .. gameName .. "```", inline = true},
-            {name = "PlaceId", value = "```" .. placeId .. "```", inline = true},
+        pcall(function()
+            if type(getgenv) == "function" then
+                local env = getgenv()
+
+                if type(env) == "table" then
+                    G = env
+                end
+            end
+        end)
+
+        local DiscordID = tostring(
+            G.DiscordID or G.id or "Unknown"
+        )
+
+        local DiscordName = tostring(
+            G.DiscordName or "Unknown"
+        )
+
+        local KeyValue = G.KeyCode or G.Key or ""
+        local Expiry = G.ExpiresAt
+
+        if Expiry == nil or tostring(Expiry) == "" then
+            Expiry = "PERMANENT"
+        else
+            Expiry = tostring(Expiry)
+        end
+
+        local AvatarUrl = GetAvatarUrl()
+
+        local Fields = {
+            {
+                name = "Username",
+                value = tostring(LocalPlayer.Name),
+                inline = true
+            },
+            {
+                name = "User ID",
+                value = tostring(LocalPlayer.UserId),
+                inline = true
+            },
+            {
+                name = "Pemakaian ke-",
+                value = tostring(UseCount),
+                inline = true
+            },
             {
                 name = "Server",
-                value = serverType == "Private Server" and "🔒 **Private Server**" or "🌐 **Public Server**",
+                value = GetServerType(),
+                inline = true
+            },
+            {
+                name = "Lokasi perkiraan",
+                value = "Tidak dikumpulkan",
+                inline = true
+            },
+            {
+                name = "Game",
+                value = GetGameName(),
+                inline = true
+            },
+            {
+                name = "JobId",
+                value = tostring(game.JobId),
                 inline = false
             },
-            {name = "Lokasi (perkiraan)", value = "```" .. lokasi .. "```", inline = false},
-            {name = "JobId", value = "```" .. jobId .. "```", inline = false}
+            {
+                name = "Discord ID",
+                value = DiscordID,
+                inline = true
+            },
+            {
+                name = "Discord Name",
+                value = DiscordName,
+                inline = true
+            },
+            {
+                name = "Key",
+                value = MaskKey(KeyValue),
+                inline = true
+            },
+            {
+                name = "Expires At",
+                value = Expiry,
+                inline = true
+            }
         }
 
-        local embed = {
-            username = "Log Data!",
+        local Embed = {
+            username = "Ganteng Hub",
             embeds = {{
-                author = {
-                    name = "Script Logger APP",
-                    icon_url = avatarUrl
-                },
-                title = "Information",
+                title = "Ganteng Hub Usage Log",
                 color = 0x5865F2,
-                fields = embedFields,
+                fields = Fields,
+
+                thumbnail = AvatarUrl and {
+                    url = AvatarUrl
+                } or nil,
+
                 footer = {
-                    text = SCRIPT_NAME .. " • " .. timeStr
+                    text = "Ganteng Hub"
                 },
+
                 timestamp = DateTime.now():ToIsoDate()
             }}
         }
 
-        if avatarUrl then
-            embed.embeds[1].thumbnail = { url = avatarUrl }
+        local success, response = pcall(function()
+            return req({
+                Url = WEBHOOK_URL,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = HttpService:JSONEncode(Embed)
+            })
+        end)
+
+        if not success then
+            warn("[GantengHub] Webhook gagal:", response)
+            return false
         end
 
-        local json = HttpService:JSONEncode(embed)
-        local req = (syn and syn.request) or (http and http.request) or request or http_request
-        if req then
-            pcall(function()
-                req({
-                    Url = WEBHOOK_URL,
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = json
-                })
-            end)
+        local status = response.StatusCode or response.Status or 0
+
+        if status ~= 0 and (status < 200 or status >= 300) then
+            warn("[GantengHub] Webhook HTTP status:", status)
+            return false
         end
+
+        return true
     end
-    sendLogger()
+
+    -- =========================================
+    -- SEND LOG
+    -- =========================================
+
+    local success, err = pcall(SendWebhook)
+
+    if not success then
+        warn("[GantengHub] Kesalahan webhook:", err)
+    end
 end

@@ -17,7 +17,7 @@ return function(WEBHOOK_URL)
     -- Declare endpoint/key before any poller is started (fixes the old ordering bug).
     local SUPABASE_URL = "https://rdbmcmoemsctoxzkpwmx.supabase.co"
     local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Hxe9O2UrGHezIkoz46cayw_kNYVzim0"
-    local API_URL = SUPABASE_URL .. "/functions/v1/gh-admin"
+    local API_URL = SUPABASE_URL .. "/functions/v1/login-log"
     local COUNT_FILE = "GantengUsedData.txt"
     local BROADCAST_POLL_INTERVAL = 3
     local KICK_POLL_INTERVAL = 5

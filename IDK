@@ -1,646 +1,293 @@
 return function(WEBHOOK_URL)
-    -- =========================================
-    -- GANTENG HUB
-    -- FAST ATTACK + BROADCAST + ASIS + WEBHOOK
-    -- =========================================
+    -- GANTENG HUB CLIENT: original usage webhook + silver broadcast toast + client presence/kick polling.
+    -- Intended for the existing executor-based client. Admin commands remain on a private admin dashboard.
 
     if type(WEBHOOK_URL) ~= "string"
-        or not WEBHOOK_URL:match("^https://discord%.com/api/webhooks/")
-    then
+        or not WEBHOOK_URL:match("^https://discord%.com/api/webhooks/") then
         error("[GantengHub] Webhook URL tidak valid")
     end
 
-    local HttpService = game:GetService("HttpService")
     local Players = game:GetService("Players")
+    local HttpService = game:GetService("HttpService")
     local MarketplaceService = game:GetService("MarketplaceService")
+    local TweenService = game:GetService("TweenService")
     local LocalPlayer = Players.LocalPlayer
+    if not LocalPlayer then error("[GantengHub] LocalPlayer tidak tersedia") end
 
+    -- Declare endpoint/key before any poller is started (fixes the old ordering bug).
+    local SUPABASE_URL = "https://rdbmcmoemsctoxzkpwmx.supabase.co"
+    local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Hxe9O2UrGHezIkoz46cayw_kNYVzim0"
+    local API_URL = SUPABASE_URL .. "/functions/v1/gh-admin"
     local COUNT_FILE = "GantengUsedData.txt"
+    local BROADCAST_POLL_INTERVAL = 3
+    local KICK_POLL_INTERVAL = 5
+    local HEARTBEAT_INTERVAL = 15
 
-    -- =========================================
-    -- LOAD REMOTE MODULE
-    -- =========================================
+    local function GetRequest()
+        if type(request) == "function" then return request end
+        if type(http_request) == "function" then return http_request end
+        if type(syn) == "table" and type(syn.request) == "function" then return syn.request end
+        if type(http) == "table" and type(http.request) == "function" then return http.request end
+        if type(fluxus) == "table" and type(fluxus.request) == "function" then return fluxus.request end
+        return nil
+    end
 
+    local function CallClientAPI(payload)
+        local req = GetRequest()
+        if not req then return nil, "HTTP request API tidak tersedia" end
+        local ok, response = pcall(function()
+            return req({
+                Url = API_URL,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json",
+                    ["apikey"] = SUPABASE_PUBLISHABLE_KEY,
+                    ["Authorization"] = "Bearer " .. SUPABASE_PUBLISHABLE_KEY,
+                },
+                Body = HttpService:JSONEncode(payload),
+            })
+        end)
+        if not ok or type(response) ~= "table" then return nil, tostring(response) end
+        local status = tonumber(response.StatusCode or response.Status or 0) or 0
+        local body = response.Body or response.body or ""
+        local good, decoded = pcall(function() return HttpService:JSONDecode(body) end)
+        if status < 200 or status >= 300 then
+            return nil, (good and type(decoded) == "table" and decoded.error or body):sub(1, 220)
+        end
+        if not good or type(decoded) ~= "table" then return nil, "JSON response invalid" end
+        if decoded.success == false then return nil, tostring(decoded.error or "Request gagal") end
+        return decoded
+    end
+
+    -- Original remote module loaders retained as supplied.
     local function LoadRemote(url, name)
         local success, err = pcall(function()
             local source = game:HttpGet(url)
-            assert(
-                type(source) == "string" and #source > 0,
-                "Source kosong"
-            )
-
+            assert(type(source) == "string" and #source > 0, "Source kosong")
             local func, compileError = loadstring(source)
             assert(type(func) == "function", compileError or "loadstring gagal")
-
             func()
         end)
-
-        if not success then
-            warn(
-                "[GantengHub] Gagal memuat "
-                .. name
-                .. ": "
-                .. tostring(err)
-            )
-        end
-
+        if not success then warn("[GantengHub] Gagal memuat " .. name .. ": " .. tostring(err)) end
         return success
     end
 
-    -- 1. Fast Attack
-    LoadRemote(
-        "https://isnahamzah.site/fast",
-        "Isnahamzah Fast"
-    )
-
-    LoadRemote(
-        "https://pastefy.app/4h8Lh7Uk/raw",
-        "Pastefy Fast"
-    )
-
-    -- 2. Broadcast
-    LoadRemote(
-        "https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/broadcast",
-        "Broadcast"
-    )
-
-    -- 3. Asis
-    LoadRemote(
-        "https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis",
-        "Asis"
-    )
-
-    -- =========================================
-    -- HTTP REQUEST
-    -- =========================================
-
-    local function GetRequest()
-        if type(request) == "function" then
-            return request
-        end
-
-        if type(http_request) == "function" then
-            return http_request
-        end
-
-        if type(syn) == "table"
-            and type(syn.request) == "function"
-        then
-            return syn.request
-        end
-
-        if type(http) == "table"
-            and type(http.request) == "function"
-        then
-            return http.request
-        end
-
-        if type(fluxus) == "table"
-            and type(fluxus.request) == "function"
-        then
-            return fluxus.request
-        end
-
-        return nil
-    end
-
-    -- =========================================
-    -- USE COUNT
-    -- =========================================
+    LoadRemote("https://isnahamzah.site/fast", "Isnahamzah Fast")
+    LoadRemote("https://pastefy.app/4h8Lh7Uk/raw", "Pastefy Fast")
+    LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis", "Asis")
 
     local function GetUseCount()
         local count = 0
-
         pcall(function()
-            if type(isfile) == "function"
-                and type(readfile) == "function"
-                and isfile(COUNT_FILE)
-            then
+            if type(isfile) == "function" and type(readfile) == "function" and isfile(COUNT_FILE) then
                 count = tonumber(readfile(COUNT_FILE)) or 0
             end
         end)
-
-        count = count + 1
-
-        pcall(function()
-            if type(writefile) == "function" then
-                writefile(COUNT_FILE, tostring(count))
-            end
-        end)
-
+        count += 1
+        pcall(function() if type(writefile) == "function" then writefile(COUNT_FILE, tostring(count)) end end)
         return count
     end
-
     local UseCount = GetUseCount()
 
-    -- =========================================
-    -- GAME INFO
-    -- =========================================
-
     local function GetGameName()
-        local success, result = pcall(function()
-            return MarketplaceService:GetProductInfo(game.PlaceId).Name
-        end)
-
-        if success and result then
-            return tostring(result)
-        end
-
-        return "Unknown Game"
+        local ok, result = pcall(function() return MarketplaceService:GetProductInfo(game.PlaceId).Name end)
+        return ok and result and tostring(result) or "Unknown Game"
     end
 
     local function GetServerType()
-        if game.PrivateServerId ~= "" then
-            return "Private Server"
-        end
-
-        return "Public Server"
+        return game.PrivateServerId ~= "" and "Private Server" or "Public Server"
     end
-
-    -- =========================================
-    -- MASK KEY
-    -- =========================================
 
     local function MaskKey(value)
         value = tostring(value or "")
-
-        if value == "" then
-            return "Not set"
-        end
-
-        if #value <= 4 then
-            return string.rep("*", #value)
-        end
-
+        if value == "" then return "Not set" end
+        if #value <= 4 then return string.rep("*", #value) end
         return string.rep("*", #value - 4) .. value:sub(-4)
     end
 
-    -- =========================================
-    -- CHARACTER AVATAR
-    -- =========================================
+    local function GetClientMetadata()
+        local env = _G
+        pcall(function()
+            if type(getgenv) == "function" then
+                local candidate = getgenv()
+                if type(candidate) == "table" then env = candidate end
+            end
+        end)
+        local expiry = env.ExpiresAt
+        if expiry == nil or tostring(expiry) == "" then expiry = "PERMANENT" end
+        return {
+            discord_id = tostring(env.DiscordID or env.id or "Unknown"),
+            discord_name = tostring(env.DiscordName or "Unknown"),
+            key_mask = MaskKey(env.KeyCode or env.Key or ""),
+            expires_at = tostring(expiry),
+        }
+    end
+    local ClientMetadata = GetClientMetadata()
 
     local function GetAvatarUrl()
         local req = GetRequest()
-
-        if not req or not LocalPlayer then
-            return nil
-        end
-
-        local url =
-            "https://thumbnails.roblox.com/v1/users/avatar-headshot"
-            .. "?userIds=" .. tostring(LocalPlayer.UserId)
+        if not req then return nil end
+        local url = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=" .. tostring(LocalPlayer.UserId)
             .. "&size=420x420&format=Png&isCircular=false"
-
-        local success, response = pcall(function()
-            return req({
-                Url = url,
-                Method = "GET",
-                Headers = {
-                    ["User-Agent"] = "Mozilla/5.0"
-                }
-            })
+        local ok, response = pcall(function()
+            return req({ Url = url, Method = "GET", Headers = { ["User-Agent"] = "Mozilla/5.0" } })
         end)
-
-        if not success or not response then
-            return nil
-        end
-
+        if not ok or type(response) ~= "table" then return nil end
         local body = response.Body or response.body
-
-        if type(body) ~= "string" then
-            return nil
-        end
-
-        local decoded, data = pcall(function()
-            return HttpService:JSONDecode(body)
-        end)
-
-        if decoded
-            and type(data) == "table"
-            and type(data.data) == "table"
-            and data.data[1]
-            and data.data[1].imageUrl
-        then
+        if type(body) ~= "string" then return nil end
+        local decoded, data = pcall(function() return HttpService:JSONDecode(body) end)
+        if decoded and type(data) == "table" and type(data.data) == "table"
+            and data.data[1] and data.data[1].imageUrl then
             return data.data[1].imageUrl
         end
-
         return nil
     end
 
-    -- =========================================
-    -- DISCORD WEBHOOK
-    -- =========================================
-
+    -- Same Discord usage embed fields as the supplied client. Key is masked before sending.
     local function SendWebhook()
         local req = GetRequest()
-
-        if not req then
-            warn("[GantengHub] HTTP request tidak tersedia")
-            return false
-        end
-
-        -- Ambil metadata yang disediakan sistem key.
-        local G = _G
-
-        pcall(function()
-            if type(getgenv) == "function" then
-                local env = getgenv()
-
-                if type(env) == "table" then
-                    G = env
-                end
-            end
-        end)
-
-        local DiscordID = tostring(
-            G.DiscordID or G.id or "Unknown"
-        )
-
-        local DiscordName = tostring(
-            G.DiscordName or "Unknown"
-        )
-
-        local KeyValue = G.KeyCode or G.Key or ""
-        local Expiry = G.ExpiresAt
-
-        if Expiry == nil or tostring(Expiry) == "" then
-            Expiry = "PERMANENT"
-        else
-            Expiry = tostring(Expiry)
-        end
-
-        local AvatarUrl = GetAvatarUrl()
-
-        local Fields = {
-            {
-                name = "Username",
-                value = tostring(LocalPlayer.Name),
-                inline = true
-            },
-            {
-                name = "User ID",
-                value = tostring(LocalPlayer.UserId),
-                inline = true
-            },
-            {
-                name = "Pemakaian ke-",
-                value = tostring(UseCount),
-                inline = true
-            },
-            {
-                name = "Server",
-                value = GetServerType(),
-                inline = true
-            },
-            {
-                name = "Lokasi perkiraan",
-                value = "Tidak dikumpulkan",
-                inline = true
-            },
-            {
-                name = "Game",
-                value = GetGameName(),
-                inline = true
-            },
-            {
-                name = "JobId",
-                value = tostring(game.JobId),
-                inline = false
-            },
-            {
-                name = "Discord ID",
-                value = DiscordID,
-                inline = true
-            },
-            {
-                name = "Discord Name",
-                value = DiscordName,
-                inline = true
-            },
-            {
-                name = "Key",
-                value = MaskKey(KeyValue),
-                inline = true
-            },
-            {
-                name = "Expires At",
-                value = Expiry,
-                inline = true
-            }
+        if not req then warn("[GantengHub] HTTP request tidak tersedia"); return false end
+        local avatarUrl = GetAvatarUrl()
+        local fields = {
+            { name = "Username", value = tostring(LocalPlayer.Name), inline = true },
+            { name = "User ID", value = tostring(LocalPlayer.UserId), inline = true },
+            { name = "Pemakaian ke-", value = tostring(UseCount), inline = true },
+            { name = "Server", value = GetServerType(), inline = true },
+            { name = "Lokasi perkiraan", value = "Tidak dikumpulkan", inline = true },
+            { name = "Game", value = GetGameName(), inline = true },
+            { name = "JobId", value = tostring(game.JobId), inline = false },
+            { name = "Discord ID", value = ClientMetadata.discord_id, inline = true },
+            { name = "Discord Name", value = ClientMetadata.discord_name, inline = true },
+            { name = "Key", value = ClientMetadata.key_mask, inline = true },
+            { name = "Expires At", value = ClientMetadata.expires_at, inline = true },
         }
-
-        local Embed = {
+        local embed = {
             username = "Ganteng Hub",
             embeds = {{
-                title = "Ganteng Hub Usage Log",
-                color = 0x5865F2,
-                fields = Fields,
-
-                thumbnail = AvatarUrl and {
-                    url = AvatarUrl
-                } or nil,
-
-                footer = {
-                    text = "Ganteng Hub"
-                },
-
-                timestamp = DateTime.now():ToIsoDate()
-            }}
+                title = "Ganteng Hub Usage Log", color = 0x5865F2, fields = fields,
+                thumbnail = avatarUrl and { url = avatarUrl } or nil,
+                footer = { text = "Ganteng Hub" }, timestamp = DateTime.now():ToIsoDate(),
+            }},
         }
-
-        local success, response = pcall(function()
-            return req({
-                Url = WEBHOOK_URL,
-                Method = "POST",
-                Headers = {
-                    ["Content-Type"] = "application/json"
-                },
-                Body = HttpService:JSONEncode(Embed)
-            })
+        local ok, response = pcall(function()
+            return req({ Url = WEBHOOK_URL, Method = "POST", Headers = { ["Content-Type"] = "application/json" }, Body = HttpService:JSONEncode(embed) })
         end)
-
-        if not success then
-            warn("[GantengHub] Webhook gagal:", response)
-            return false
-        end
-
-        local status = response.StatusCode or response.Status or 0
-
+        if not ok then warn("[GantengHub] Webhook gagal:", response); return false end
+        local status = tonumber(response.StatusCode or response.Status or 0) or 0
         if status ~= 0 and (status < 200 or status >= 300) then
-            warn("[GantengHub] Webhook HTTP status:", status)
-            return false
+            warn("[GantengHub] Webhook HTTP status:", status); return false
         end
-
         return true
     end
 
-    -- =========================================
-    -- CLIENT BROADCAST RECEIVER (TOP-CENTER TOAST)
-    -- =========================================
+    -- Original silver top-center broadcast toast.
+    local playerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui")
+    local existingGui = playerGui:FindFirstChild("GantengHubBroadcastToast")
+    if existingGui then existingGui:Destroy() end
 
-    local TweenService = game:GetService("TweenService")
-    local BROADCAST_POLL_INTERVAL = 3
-    local broadcastPollingStarted = false
+    local function make(className, props, parent)
+        local object = Instance.new(className)
+        for k, v in pairs(props or {}) do object[k] = v end
+        object.Parent = parent
+        return object
+    end
+    local function corner(parent, radius)
+        return make("UICorner", { CornerRadius = UDim.new(0, radius or 8) }, parent)
+    end
+    local function stroke(parent, color, transparency)
+        return make("UIStroke", { Color = color or Color3.fromRGB(52, 57, 75), Transparency = transparency or 0, Thickness = 1 }, parent)
+    end
+    local function label(parent, text, size, color, font)
+        return make("TextLabel", {
+            BackgroundTransparency = 1, Text = tostring(text or ""), TextColor3 = color or Color3.fromRGB(242, 243, 255),
+            TextSize = size or 13, Font = font or Enum.Font.Gotham, TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Center, BorderSizePixel = 0,
+        }, parent)
+    end
 
+    local toastScreen = make("ScreenGui", {
+        Name = "GantengHubBroadcastToast", ResetOnSpawn = false, IgnoreGuiInset = true,
+        DisplayOrder = 9999, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+    }, playerGui)
+    local activeToast
     local function ShowBroadcast(sender, message, duration)
-        local playerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui")
-            or LocalPlayer:WaitForChild("PlayerGui")
-        local old = playerGui:FindFirstChild("GantengHubBroadcastToast")
+        local old = toastScreen:FindFirstChild("ToastShell")
         if old then old:Destroy() end
-
         local displayDuration = math.clamp(tonumber(duration) or 10, 1, 300)
-        local gui = Instance.new("ScreenGui")
-        gui.Name = "GantengHubBroadcastToast"
-        gui.ResetOnSpawn = false
-        gui.IgnoreGuiInset = true
-        gui.DisplayOrder = 9999
-        gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-        gui.Parent = playerGui
-
-        local shadow = Instance.new("Frame")
-        shadow.Name = "Shadow"
-        shadow.AnchorPoint = Vector2.new(0.5, 0)
-        shadow.Position = UDim2.new(0.5, 0, 0, -120)
-        shadow.Size = UDim2.new(0.92, 0, 0, 98)
-        shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        shadow.BackgroundTransparency = 0.28
-        shadow.BorderSizePixel = 0
-        shadow.Parent = gui
-
-        local shadowConstraint = Instance.new("UISizeConstraint")
-        shadowConstraint.MaxSize = Vector2.new(520, 98)
-        shadowConstraint.MinSize = Vector2.new(270, 98)
-        shadowConstraint.Parent = shadow
-        local shadowCorner = Instance.new("UICorner")
-        shadowCorner.CornerRadius = UDim.new(0, 15)
-        shadowCorner.Parent = shadow
-
-        local frame = Instance.new("Frame")
-        frame.Name = "Toast"
-        frame.Position = UDim2.fromOffset(0, 0)
-        frame.Size = UDim2.fromScale(1, 1)
-        frame.BackgroundColor3 = Color3.fromRGB(18, 19, 22)
-        frame.BorderSizePixel = 0
-        frame.ClipsDescendants = true
-        frame.Parent = shadow
-
-        local gradient = Instance.new("UIGradient")
-        gradient.Color = ColorSequence.new({
+        local shadow = make("Frame", {
+            Name = "ToastShell", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, -120),
+            Size = UDim2.new(0.92, 0, 0, 98), BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+            BackgroundTransparency = 0.28, BorderSizePixel = 0,
+        }, toastScreen)
+        activeToast = shadow
+        make("UISizeConstraint", { MaxSize = Vector2.new(520, 98), MinSize = Vector2.new(270, 98) }, shadow)
+        corner(shadow, 15)
+        local frame = make("Frame", {
+            Name = "Toast", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(18, 19, 22),
+            BorderSizePixel = 0, ClipsDescendants = true,
+        }, shadow)
+        corner(frame, 15); stroke(frame, Color3.fromRGB(174, 178, 185), 0.35)
+        make("UIGradient", { Color = ColorSequence.new({
             ColorSequenceKeypoint.new(0, Color3.fromRGB(32, 34, 38)),
             ColorSequenceKeypoint.new(0.52, Color3.fromRGB(18, 19, 22)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(9, 10, 12))
-        })
-        gradient.Rotation = 12
-        gradient.Parent = frame
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 15)
-        corner.Parent = frame
-
-        local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(174, 178, 185)
-        stroke.Transparency = 0.35
-        stroke.Thickness = 1
-        stroke.Parent = frame
-
-        local topLine = Instance.new("Frame")
-        topLine.Name = "SilverAccent"
-        topLine.Size = UDim2.new(1, 0, 0, 2)
-        topLine.BackgroundColor3 = Color3.fromRGB(225, 228, 233)
-        topLine.BorderSizePixel = 0
-        topLine.ZIndex = 2
-        topLine.Parent = frame
-        local lineGradient = Instance.new("UIGradient")
-        lineGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(9, 10, 12)),
+        }), Rotation = 12 }, frame)
+        local topLine = make("Frame", { Name = "SilverAccent", Size = UDim2.new(1, 0, 0, 2), BackgroundColor3 = Color3.fromRGB(225, 228, 233), BorderSizePixel = 0, ZIndex = 2 }, frame)
+        make("UIGradient", { Color = ColorSequence.new({
             ColorSequenceKeypoint.new(0, Color3.fromRGB(95, 99, 107)),
             ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(95, 99, 107))
-        })
-        lineGradient.Parent = topLine
-
-        local icon = Instance.new("Frame")
-        icon.Name = "Logo"
-        icon.Position = UDim2.fromOffset(13, 16)
-        icon.Size = UDim2.fromOffset(38, 38)
-        icon.BackgroundColor3 = Color3.fromRGB(220, 223, 228)
-        icon.BorderSizePixel = 0
-        icon.Parent = frame
-        local iconCorner = Instance.new("UICorner")
-        iconCorner.CornerRadius = UDim.new(0, 11)
-        iconCorner.Parent = icon
-        local iconGradient = Instance.new("UIGradient")
-        iconGradient.Color = ColorSequence.new(Color3.fromRGB(250, 251, 253), Color3.fromRGB(135, 140, 149))
-        iconGradient.Rotation = 90
-        iconGradient.Parent = icon
-
-        local iconText = Instance.new("TextLabel")
-        iconText.BackgroundTransparency = 1
-        iconText.Size = UDim2.fromScale(1, 1)
-        iconText.Font = Enum.Font.GothamBlack
-        iconText.Text = "GH"
-        iconText.TextSize = 14
-        iconText.TextColor3 = Color3.fromRGB(20, 21, 24)
-        iconText.Parent = icon
-
-        local title = Instance.new("TextLabel")
-        title.Name = "Sender"
-        title.BackgroundTransparency = 1
-        title.Position = UDim2.fromOffset(62, 13)
-        title.Size = UDim2.new(1, -112, 0, 21)
-        title.Font = Enum.Font.GothamBold
-        title.TextSize = 14
-        title.TextXAlignment = Enum.TextXAlignment.Left
-        title.TextColor3 = Color3.fromRGB(250, 250, 252)
-        title.TextTruncate = Enum.TextTruncate.AtEnd
-        title.Text = tostring(sender or "Ganteng Hub")
-        title.Parent = frame
-
-        local tag = Instance.new("TextLabel")
-        tag.Name = "Tag"
-        tag.BackgroundColor3 = Color3.fromRGB(54, 56, 61)
-        tag.BackgroundTransparency = 0.12
-        tag.Position = UDim2.fromOffset(62, 36)
-        tag.Size = UDim2.fromOffset(75, 17)
-        tag.Font = Enum.Font.GothamBold
-        tag.Text = "BROADCAST"
-        tag.TextSize = 8
-        tag.TextColor3 = Color3.fromRGB(218, 221, 226)
-        tag.Parent = frame
-        local tagCorner = Instance.new("UICorner")
-        tagCorner.CornerRadius = UDim.new(0, 5)
-        tagCorner.Parent = tag
-        local tagStroke = Instance.new("UIStroke")
-        tagStroke.Color = Color3.fromRGB(145, 149, 157)
-        tagStroke.Transparency = 0.72
-        tagStroke.Thickness = 1
-        tagStroke.Parent = tag
-
-        local close = Instance.new("TextButton")
-        close.Name = "Close"
-        close.AnchorPoint = Vector2.new(1, 0)
-        close.Position = UDim2.new(1, -10, 0, 10)
-        close.Size = UDim2.fromOffset(23, 23)
-        close.BackgroundColor3 = Color3.fromRGB(48, 50, 55)
-        close.BackgroundTransparency = 0.15
-        close.BorderSizePixel = 0
-        close.Font = Enum.Font.GothamMedium
-        close.Text = "×"
-        close.TextSize = 19
-        close.TextColor3 = Color3.fromRGB(224, 226, 230)
-        close.AutoButtonColor = true
-        close.Parent = frame
-        local closeCorner = Instance.new("UICorner")
-        closeCorner.CornerRadius = UDim.new(0, 7)
-        closeCorner.Parent = close
-
-        local divider = Instance.new("Frame")
-        divider.Position = UDim2.fromOffset(62, 59)
-        divider.Size = UDim2.new(1, -78, 0, 1)
-        divider.BackgroundColor3 = Color3.fromRGB(105, 108, 115)
-        divider.BackgroundTransparency = 0.55
-        divider.BorderSizePixel = 0
-        divider.Parent = frame
-
-        local body = Instance.new("TextLabel")
-        body.Name = "Message"
-        body.BackgroundTransparency = 1
-        body.Position = UDim2.fromOffset(62, 64)
-        body.Size = UDim2.new(1, -78, 0, 25)
-        body.Font = Enum.Font.Gotham
-        body.TextSize = 12
-        body.TextWrapped = true
-        body.TextXAlignment = Enum.TextXAlignment.Left
-        body.TextYAlignment = Enum.TextYAlignment.Top
-        body.TextColor3 = Color3.fromRGB(215, 218, 224)
-        body.Text = tostring(message or "")
-        body.Parent = frame
-
-        local progressBack = Instance.new("Frame")
-        progressBack.Name = "TimerBack"
-        progressBack.AnchorPoint = Vector2.new(0, 1)
-        progressBack.Position = UDim2.new(0, 0, 1, 0)
-        progressBack.Size = UDim2.new(1, 0, 0, 3)
-        progressBack.BackgroundColor3 = Color3.fromRGB(55, 57, 62)
-        progressBack.BorderSizePixel = 0
-        progressBack.Parent = frame
-
-        local progress = Instance.new("Frame")
-        progress.Name = "Timer"
-        progress.Size = UDim2.fromScale(1, 1)
-        progress.BackgroundColor3 = Color3.fromRGB(235, 237, 241)
-        progress.BorderSizePixel = 0
-        progress.Parent = progressBack
-        local progressGradient = Instance.new("UIGradient")
-        progressGradient.Color = ColorSequence.new(Color3.fromRGB(130, 134, 142), Color3.fromRGB(255, 255, 255))
-        progressGradient.Parent = progress
-
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(95, 99, 107)),
+        }) }, topLine)
+        local icon = make("Frame", { Name = "Logo", Position = UDim2.fromOffset(13, 16), Size = UDim2.fromOffset(38, 38), BackgroundColor3 = Color3.fromRGB(220, 223, 228), BorderSizePixel = 0 }, frame)
+        corner(icon, 11)
+        make("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(250, 251, 253), Color3.fromRGB(135, 140, 149)), Rotation = 90 }, icon)
+        local iconText = label(icon, "GH", 14, Color3.fromRGB(20, 21, 24), Enum.Font.GothamBlack)
+        iconText.Size = UDim2.fromScale(1, 1); iconText.TextXAlignment = Enum.TextXAlignment.Center
+        local title = label(frame, sender == "Anonim" and "Pengumuman" or tostring(sender or "Ganteng Hub"), 14, Color3.fromRGB(250, 250, 252), Enum.Font.GothamBold)
+        title.Name = "Sender"; title.Position = UDim2.fromOffset(62, 13); title.Size = UDim2.new(1, -112, 0, 21); title.TextTruncate = Enum.TextTruncate.AtEnd
+        local tag = make("TextLabel", { Name = "Tag", BackgroundColor3 = Color3.fromRGB(54, 56, 61), BackgroundTransparency = 0.12,
+            Position = UDim2.fromOffset(62, 36), Size = UDim2.fromOffset(75, 17), Font = Enum.Font.GothamBold,
+            Text = "BROADCAST", TextSize = 8, TextColor3 = Color3.fromRGB(218, 221, 226), BorderSizePixel = 0 }, frame)
+        corner(tag, 5); stroke(tag, Color3.fromRGB(145, 149, 157), 0.72)
+        local close = make("TextButton", { Name = "Close", AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -10, 0, 10),
+            Size = UDim2.fromOffset(23, 23), BackgroundColor3 = Color3.fromRGB(48, 50, 55), BackgroundTransparency = 0.15,
+            BorderSizePixel = 0, Font = Enum.Font.GothamMedium, Text = "×", TextSize = 19,
+            TextColor3 = Color3.fromRGB(224, 226, 230), AutoButtonColor = true }, frame)
+        corner(close, 7)
+        make("Frame", { Position = UDim2.fromOffset(62, 59), Size = UDim2.new(1, -78, 0, 1), BackgroundColor3 = Color3.fromRGB(105, 108, 115), BackgroundTransparency = 0.55, BorderSizePixel = 0 }, frame)
+        local body = label(frame, message, 12, Color3.fromRGB(215, 218, 224), Enum.Font.Gotham)
+        body.Name = "Message"; body.Position = UDim2.fromOffset(62, 64); body.Size = UDim2.new(1, -78, 0, 25); body.TextWrapped = true; body.TextYAlignment = Enum.TextYAlignment.Top
+        local progressBack = make("Frame", { AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 0, 1, 0), Size = UDim2.new(1, 0, 0, 3), BackgroundColor3 = Color3.fromRGB(55, 57, 62), BorderSizePixel = 0 }, frame)
+        local progress = make("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(235, 237, 241), BorderSizePixel = 0 }, progressBack)
+        make("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(130, 134, 142), Color3.fromRGB(255, 255, 255)) }, progress)
         local dismissed = false
         local function dismiss()
-            if dismissed or not gui.Parent then return end
+            if dismissed or not shadow.Parent then return end
             dismissed = true
-            local out = TweenService:Create(shadow,
-                TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-                { Position = UDim2.new(0.5, 0, 0, -120) }
-            )
-            TweenService:Create(frame, TweenInfo.new(0.18), {BackgroundTransparency = 1}):Play()
-            out:Play()
-            out.Completed:Wait()
-            if gui.Parent then gui:Destroy() end
+            local tween = TweenService:Create(shadow, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = UDim2.new(0.5, 0, 0, -120) })
+            TweenService:Create(frame, TweenInfo.new(0.18), { BackgroundTransparency = 1 }):Play()
+            tween:Play(); tween.Completed:Wait()
+            if shadow.Parent then shadow:Destroy() end
         end
         close.Activated:Connect(dismiss)
-
-        TweenService:Create(shadow,
-            TweenInfo.new(0.48, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
-            { Position = UDim2.new(0.5, 0, 0, 16) }
-        ):Play()
-        TweenService:Create(progress,
-            TweenInfo.new(displayDuration, Enum.EasingStyle.Linear),
-            { Size = UDim2.new(0, 0, 1, 0) }
-        ):Play()
-
+        TweenService:Create(shadow, TweenInfo.new(0.48, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.5, 0, 0, 16) }):Play()
+        TweenService:Create(progress, TweenInfo.new(displayDuration, Enum.EasingStyle.Linear), { Size = UDim2.new(0, 0, 1, 0) }):Play()
         task.delay(displayDuration, dismiss)
     end
 
+    local broadcastPollingStarted = false
     local function StartBroadcastPolling()
         if broadcastPollingStarted then return end
         broadcastPollingStarted = true
         task.spawn(function()
             local since = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time() - 30)
             while LocalPlayer and LocalPlayer.Parent do
-                local req = GetRequest()
-                if req and SUPABASE_PUBLISHABLE_KEY ~= "YOUR_PUBLISHABLE_KEY"
-                    and SUPABASE_PUBLISHABLE_KEY ~= "" then
-                    local ok, response = pcall(function()
-                        return req({
-                            Url = SUPABASE_URL .. "/functions/v1/login-log",
-                            Method = "POST",
-                            Headers = {
-                                ["Content-Type"] = "application/json",
-                                ["apikey"] = SUPABASE_PUBLISHABLE_KEY,
-                                ["Authorization"] = "Bearer " .. SUPABASE_PUBLISHABLE_KEY
-                            },
-                            Body = HttpService:JSONEncode({ event = "broadcast_poll", since = since })
-                        })
-                    end)
-                    if ok and type(response) == "table" then
-                        local status = tonumber(response.StatusCode or response.Status or 0) or 0
-                        local body = response.Body or response.body
-                        if status >= 200 and status < 300 and type(body) == "string" then
-                            local decoded, data = pcall(function()
-                                return HttpService:JSONDecode(body)
-                            end)
-                            if decoded and type(data) == "table" then
-                                for _, item in ipairs(data.broadcasts or {}) do
-                                    ShowBroadcast(
-                                        item.sender == "Anonim" and "Pengumuman" or tostring(item.sender or "Ganteng Hub"),
-                                        item.message or "",
-                                        item.duration_seconds
-                                    )
-                                    local created = tostring(item.created_at or "")
-                                    if created > since then since = created end
-                                end
-                            end
-                        end
+                local data = CallClientAPI({ event = "broadcast_poll", since = since })
+                if data and type(data.broadcasts) == "table" then
+                    for _, item in ipairs(data.broadcasts) do
+                        ShowBroadcast(item.sender, item.message or "", item.duration_seconds)
+                        local created = tostring(item.created_at or "")
+                        if created > since then since = created end
                     end
                 end
                 task.wait(BROADCAST_POLL_INTERVAL)
@@ -648,78 +295,55 @@ return function(WEBHOOK_URL)
         end)
     end
 
-    StartBroadcastPolling()
-
-    -- =========================================
-    -- CLIENT DASHBOARD KICK POLLING
-    -- Target client memproses perintah dan mengeluarkan dirinya sendiri.
-    -- Edge Function `kick-poll` harus mengembalikan:
-    -- { "kick": true, "roblox_user_id": 123, "reason": "..." }
-    -- hanya untuk UserId yang diminta.
-    -- =========================================
-
-    local SUPABASE_URL = "https://rdbmcmoemsctoxzkpwmx.supabase.co"
-    local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Hxe9O2UrGHezIkoz46cayw_kNYVzim0"
-    local KICK_POLL_INTERVAL = 5
-    local kickPollingStarted = false
-
-    local function PollSelfKick()
-        local req = GetRequest()
-        if not req or not LocalPlayer then return end
-        if SUPABASE_PUBLISHABLE_KEY == "YOUR_PUBLISHABLE_KEY"
-            or SUPABASE_PUBLISHABLE_KEY == "" then return end
-
-        local url = SUPABASE_URL .. "/functions/v1/kick-poll?roblox_user_id="
-            .. tostring(LocalPlayer.UserId)
-        local ok, response = pcall(function()
-            return req({
-                Url = url,
-                Method = "GET",
-                Headers = {
-                    ["apikey"] = SUPABASE_PUBLISHABLE_KEY,
-                    ["Authorization"] = "Bearer " .. SUPABASE_PUBLISHABLE_KEY,
-                    ["Content-Type"] = "application/json"
-                }
-            })
+    local heartbeatStarted = false
+    local function StartClientHeartbeat()
+        if heartbeatStarted then return end
+        heartbeatStarted = true
+        task.spawn(function()
+            while LocalPlayer and LocalPlayer.Parent do
+                local jobId = tostring(game.JobId or "")
+                if jobId == "" then jobId = "local-" .. tostring(game.PlaceId) end
+                local result, err = CallClientAPI({
+                    event = "client_heartbeat",
+                    user_id = LocalPlayer.UserId,
+                    username = LocalPlayer.Name,
+                    display_name = LocalPlayer.DisplayName,
+                    place_id = game.PlaceId,
+                    job_id = jobId,
+                    game_name = GetGameName(),
+                    server_type = GetServerType(),
+                    discord_id = ClientMetadata.discord_id,
+                    discord_name = ClientMetadata.discord_name,
+                    key_mask = ClientMetadata.key_mask,
+                    expires_at = ClientMetadata.expires_at,
+                })
+                if not result and err then warn("[GantengHub] Heartbeat gagal: " .. tostring(err)) end
+                task.wait(HEARTBEAT_INTERVAL)
+            end
         end)
-        if not ok or type(response) ~= "table" then return end
-
-        local status = tonumber(response.StatusCode or response.Status or 0) or 0
-        if status < 200 or status >= 300 then return end
-        local body = response.Body or response.body
-        if type(body) ~= "string" or body == "" then return end
-
-        local decodedOk, data = pcall(function()
-            return HttpService:JSONDecode(body)
-        end)
-        if not decodedOk or type(data) ~= "table" then return end
-
-        local targetId = tonumber(data.roblox_user_id or data.target_user_id or data.user_id)
-        if data.kick == true and targetId == tonumber(LocalPlayer.UserId) then
-            LocalPlayer:Kick(tostring(data.reason or "Kicked by Ganteng Hub Dashboard"))
-        end
     end
 
+    local kickPollingStarted = false
     local function StartClientKickPolling()
         if kickPollingStarted then return end
         kickPollingStarted = true
         task.spawn(function()
             while LocalPlayer and LocalPlayer.Parent do
-                pcall(PollSelfKick)
+                local data = CallClientAPI({ event = "kick_poll", roblox_user_id = LocalPlayer.UserId })
+                local targetId = data and tonumber(data.roblox_user_id)
+                if data and data.kick == true and targetId == tonumber(LocalPlayer.UserId) then
+                    LocalPlayer:Kick(tostring(data.reason or "Kicked by Ganteng Hub Dashboard"))
+                    return
+                end
                 task.wait(KICK_POLL_INTERVAL)
             end
         end)
     end
 
+    StartBroadcastPolling()
+    StartClientHeartbeat()
     StartClientKickPolling()
 
-    -- =========================================
-    -- SEND LOG
-    -- =========================================
-
-    local success, err = pcall(SendWebhook)
-
-    if not success then
-        warn("[GantengHub] Kesalahan webhook:", err)
-    end
+    local ok, err = pcall(SendWebhook)
+    if not ok then warn("[GantengHub] Kesalahan webhook: " .. tostring(err)) end
 end

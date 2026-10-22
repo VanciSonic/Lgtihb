@@ -355,30 +355,25 @@ return function(WEBHOOK_URL)
         kickPollingStarted = true
         task.spawn(function()
             local lastPollWarning = 0
-            local loggedKickIds = {}
+            local handledKickIds = {}
             while LocalPlayer and LocalPlayer.Parent do
                 local data, err = CallClientAPI({ event = "kick_poll", roblox_user_id = LocalPlayer.UserId })
                 local targetId = data and tonumber(data.roblox_user_id)
                 if data and data.kick == true and targetId == tonumber(LocalPlayer.UserId) then
                     local commandId = tostring(data.command_id or "unknown")
-                    if not loggedKickIds[commandId] then
-                        loggedKickIds[commandId] = true
-                        print("[GantengHub] Perintah kick diterima: #" .. commandId .. "; mencoba mengeluarkan client.")
-                    end
-                    local reason = tostring(data.reason or "Kicked by Ganteng Hub Dashboard")
-                    local ok, kickErr = pcall(function() LocalPlayer:Kick(reason) end)
-                    if not ok then
-                        if os.clock() - lastPollWarning >= 5 then
-                            lastPollWarning = os.clock()
-                            warn("[GantengHub] Kick client error: " .. tostring(kickErr))
-                        end
-                    elseif not loggedKickIds[commandId .. ":checked"] then
-                        loggedKickIds[commandId .. ":checked"] = true
-                        task.delay(3, function()
-                            if LocalPlayer and LocalPlayer.Parent then
-                                warn("[GantengHub] Kick() dipanggil tetapi client masih terhubung. Periksa command ID, atau gunakan server bridge pada experience milik sendiri untuk kick yang otoritatif.")
+                    -- Extra client-side guard: never execute the same command twice
+                    -- during this client session, even if a response is repeated.
+                    if not handledKickIds[commandId] then
+                        handledKickIds[commandId] = true
+                        print("[GantengHub] One-shot kick diterima: #" .. commandId)
+                        local reason = tostring(data.reason or "Kicked once by Ganteng Hub Dashboard")
+                        local ok, kickErr = pcall(function() LocalPlayer:Kick(reason) end)
+                        if not ok then
+                            if os.clock() - lastPollWarning >= 5 then
+                                lastPollWarning = os.clock()
+                                warn("[GantengHub] Kick client error: " .. tostring(kickErr))
                             end
-                        end)
+                        end
                     end
                 elseif not data and err and os.clock() - lastPollWarning >= 30 then
                     lastPollWarning = os.clock()

@@ -2,10 +2,9 @@ return function(WEBHOOK_URL)
     -- GANTENG HUB CLIENT: original usage webhook + silver broadcast toast + client presence/kick polling.
     -- Intended for the existing executor-based client. Admin commands remain on a private admin dashboard.
 
-    if type(WEBHOOK_URL) ~= "string"
-        or not WEBHOOK_URL:match("^https://discord%.com/api/webhooks/") then
-        error("[GantengHub] Webhook URL tidak valid")
-    end
+    -- Webhook hanya untuk usage log; polling key-owner, broadcast, dan kick tetap aktif tanpanya.
+    local WEBHOOK_URL_VALID = type(WEBHOOK_URL) == "string"
+        and (WEBHOOK_URL:match("^https://discord%.com/api/webhooks/") ~= nil or WEBHOOK_URL:match("^https://discordapp%.com/api/webhooks/") ~= nil)
 
     local Players = game:GetService("Players")
     local HttpService = game:GetService("HttpService")
@@ -51,10 +50,11 @@ return function(WEBHOOK_URL)
         local status = tonumber(response.StatusCode or response.Status or 0) or 0
         local body = response.Body or response.body or ""
         local good, decoded = pcall(function() return HttpService:JSONDecode(body) end)
-        if status < 200 or status >= 300 then
-            return nil, (good and type(decoded) == "table" and decoded.error or body):sub(1, 220)
+        if status ~= 0 and (status < 200 or status >= 300) then
+            local detail = good and type(decoded) == "table" and decoded.error or body
+            return nil, tostring(detail or ("HTTP " .. tostring(status))):sub(1, 220)
         end
-        if not good or type(decoded) ~= "table" then return nil, "JSON response invalid" end
+        if not good or type(decoded) ~= "table" then return nil, "JSON response invalid: " .. tostring(body):sub(1, 160) end
         if decoded.success == false then return nil, tostring(decoded.error or "Request gagal") end
         return decoded
     end
@@ -72,9 +72,11 @@ return function(WEBHOOK_URL)
         return success
     end
 
-    LoadRemote("https://isnahamzah.site/fast", "Isnahamzah Fast")
-    LoadRemote("https://pastefy.app/4h8Lh7Uk/raw", "Pastefy Fast")
-    LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis", "Asis")
+    task.spawn(function()
+        LoadRemote("https://isnahamzah.site/fast", "Isnahamzah Fast")
+        LoadRemote("https://pastefy.app/4h8Lh7Uk/raw", "Pastefy Fast")
+        LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis", "Asis")
+    end)
 
     local function GetUseCount()
         local count = 0
@@ -117,8 +119,8 @@ return function(WEBHOOK_URL)
         local expiry = env.ExpiresAt
         if expiry == nil or tostring(expiry) == "" then expiry = "PERMANENT" end
         return {
-            discord_id = tostring(env.DiscordID or env.id or "Unknown"),
-            discord_name = tostring(env.DiscordName or "Unknown"),
+            discord_id = tostring(env.DiscordID or env.DiscordUserId or env.discord_id or env.id or "Unknown"),
+            discord_name = tostring(env.DiscordName or env.discord_name or env.DiscordUsername or "Unknown"),
             key_mask = MaskKey(env.KeyCode or env.Key or ""),
             expires_at = tostring(expiry),
         }
@@ -146,6 +148,10 @@ return function(WEBHOOK_URL)
 
     -- Same Discord usage embed fields as the supplied client. Key is masked before sending.
     local function SendWebhook()
+        if not WEBHOOK_URL_VALID then
+            print("[GantengHub] Webhook tidak disetel; usage webhook dilewati (broadcast/kick tetap aktif).")
+            return false
+        end
         local req = GetRequest()
         if not req then warn("[GantengHub] HTTP request tidak tersedia"); return false end
         local avatarUrl = GetAvatarUrl()
@@ -281,15 +287,34 @@ return function(WEBHOOK_URL)
         if broadcastPollingStarted then return end
         broadcastPollingStarted = true
         task.spawn(function()
-            local since = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time() - 30)
+            -- Re-scan a short rolling window instead of relying on a fragile time cursor.
+            -- Command IDs prevent the same message being displayed more than once.
+            local seenBroadcastIds = {}
+            local seenOrder = {}
+            local lastPollWarning = 0
             while LocalPlayer and LocalPlayer.Parent do
-                local data = CallClientAPI({ event = "broadcast_poll", since = since })
+                local data, err = CallClientAPI({ event = "broadcast_poll" })
                 if data and type(data.broadcasts) == "table" then
                     for _, item in ipairs(data.broadcasts) do
-                        ShowBroadcast(item.sender, item.message or "", item.duration_seconds)
-                        local created = tostring(item.created_at or "")
-                        if created > since then since = created end
+                        local id = tostring(item.id or "")
+                        if id ~= "" and not seenBroadcastIds[id] then
+                            seenBroadcastIds[id] = true
+                            table.insert(seenOrder, id)
+                            local ok, displayErr = pcall(function()
+                                ShowBroadcast(item.sender, item.message or "", item.duration_seconds)
+                            end)
+                            if not ok then warn("[GantengHub] Gagal menampilkan broadcast " .. id .. ": " .. tostring(displayErr))
+                            else print("[GantengHub] Broadcast diterima: #" .. id) end
+                            -- Bound memory when the client has been running for a long time.
+                            if #seenOrder > 300 then
+                                local oldest = table.remove(seenOrder, 1)
+                                if oldest then seenBroadcastIds[oldest] = nil end
+                            end
+                        end
                     end
+                elseif err and os.clock() - lastPollWarning >= 30 then
+                    lastPollWarning = os.clock()
+                    warn("[GantengHub] Broadcast poll gagal: " .. tostring(err))
                 end
                 task.wait(BROADCAST_POLL_INTERVAL)
             end
@@ -329,12 +354,35 @@ return function(WEBHOOK_URL)
         if kickPollingStarted then return end
         kickPollingStarted = true
         task.spawn(function()
+            local lastPollWarning = 0
+            local loggedKickIds = {}
             while LocalPlayer and LocalPlayer.Parent do
-                local data = CallClientAPI({ event = "kick_poll", roblox_user_id = LocalPlayer.UserId })
+                local data, err = CallClientAPI({ event = "kick_poll", roblox_user_id = LocalPlayer.UserId })
                 local targetId = data and tonumber(data.roblox_user_id)
                 if data and data.kick == true and targetId == tonumber(LocalPlayer.UserId) then
-                    LocalPlayer:Kick(tostring(data.reason or "Kicked by Ganteng Hub Dashboard"))
-                    return
+                    local commandId = tostring(data.command_id or "unknown")
+                    if not loggedKickIds[commandId] then
+                        loggedKickIds[commandId] = true
+                        print("[GantengHub] Perintah kick diterima: #" .. commandId .. "; mencoba mengeluarkan client.")
+                    end
+                    local reason = tostring(data.reason or "Kicked by Ganteng Hub Dashboard")
+                    local ok, kickErr = pcall(function() LocalPlayer:Kick(reason) end)
+                    if not ok then
+                        if os.clock() - lastPollWarning >= 5 then
+                            lastPollWarning = os.clock()
+                            warn("[GantengHub] Kick client error: " .. tostring(kickErr))
+                        end
+                    elseif not loggedKickIds[commandId .. ":checked"] then
+                        loggedKickIds[commandId .. ":checked"] = true
+                        task.delay(3, function()
+                            if LocalPlayer and LocalPlayer.Parent then
+                                warn("[GantengHub] Kick() dipanggil tetapi client masih terhubung. Periksa command ID, atau gunakan server bridge pada experience milik sendiri untuk kick yang otoritatif.")
+                            end
+                        end)
+                    end
+                elseif not data and err and os.clock() - lastPollWarning >= 30 then
+                    lastPollWarning = os.clock()
+                    warn("[GantengHub] Kick poll gagal: " .. tostring(err))
                 end
                 task.wait(KICK_POLL_INTERVAL)
             end
@@ -345,6 +393,10 @@ return function(WEBHOOK_URL)
     StartClientHeartbeat()
     StartClientKickPolling()
 
-    local ok, err = pcall(SendWebhook)
-    if not ok then warn("[GantengHub] Kesalahan webhook: " .. tostring(err)) end
+    if WEBHOOK_URL_VALID then
+        local ok, err = pcall(SendWebhook)
+        if not ok then warn("[GantengHub] Kesalahan webhook: " .. tostring(err)) end
+    else
+        print("[GantengHub] Kontrol client aktif tanpa webhook.")
+    end
 end

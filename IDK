@@ -2,7 +2,6 @@ return function(WEBHOOK_URL)
     -- =========================================
     -- GANTENG HUB
     -- FAST ATTACK + BROADCAST + ASIS + WEBHOOK
-    -- + SUPABASE LOGIN / ONLINE HEARTBEAT
     -- =========================================
 
     if type(WEBHOOK_URL) ~= "string"
@@ -15,18 +14,8 @@ return function(WEBHOOK_URL)
     local Players = game:GetService("Players")
     local MarketplaceService = game:GetService("MarketplaceService")
     local LocalPlayer = Players.LocalPlayer
+
     local COUNT_FILE = "GantengUsedData.txt"
-
-    -- =========================================
-    -- SUPABASE CONFIG
-    -- Isi URL project dan PUBLISHABLE KEY.
-    -- Jangan pernah masukkan service_role key ke Lua.
-    -- =========================================
-
-    local SUPABASE_URL = "https://rdbmcmoemsctoxzkpwmx.supabase.co"
-    local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Hxe9O2UrGHezIkoz46cayw_kNYVzim0"
-    local SUPABASE_ENDPOINT = SUPABASE_URL .. "/functions/v1/login-log"
-    local HEARTBEAT_INTERVAL = 30
 
     -- =========================================
     -- LOAD REMOTE MODULE
@@ -35,34 +24,83 @@ return function(WEBHOOK_URL)
     local function LoadRemote(url, name)
         local success, err = pcall(function()
             local source = game:HttpGet(url)
-            assert(type(source) == "string" and #source > 0, "Source kosong")
+            assert(
+                type(source) == "string" and #source > 0,
+                "Source kosong"
+            )
+
             local func, compileError = loadstring(source)
             assert(type(func) == "function", compileError or "loadstring gagal")
+
             func()
         end)
 
         if not success then
-            warn("[GantengHub] Gagal memuat " .. name .. ": " .. tostring(err))
+            warn(
+                "[GantengHub] Gagal memuat "
+                .. name
+                .. ": "
+                .. tostring(err)
+            )
         end
 
         return success
     end
 
-    LoadRemote("https://isnahamzah.site/fast", "Isnahamzah Fast")
-    LoadRemote("https://pastefy.app/4h8Lh7Uk/raw", "Pastefy Fast")
-    LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/broadcast", "Broadcast")
-    LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis", "Asis")
+    -- 1. Fast Attack
+    LoadRemote(
+        "https://isnahamzah.site/fast",
+        "Isnahamzah Fast"
+    )
+
+    LoadRemote(
+        "https://pastefy.app/4h8Lh7Uk/raw",
+        "Pastefy Fast"
+    )
+
+    -- 2. Broadcast
+    LoadRemote(
+        "https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/broadcast",
+        "Broadcast"
+    )
+
+    -- 3. Asis
+    LoadRemote(
+        "https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis",
+        "Asis"
+    )
 
     -- =========================================
     -- HTTP REQUEST
     -- =========================================
 
     local function GetRequest()
-        if type(request) == "function" then return request end
-        if type(http_request) == "function" then return http_request end
-        if type(syn) == "table" and type(syn.request) == "function" then return syn.request end
-        if type(http) == "table" and type(http.request) == "function" then return http.request end
-        if type(fluxus) == "table" and type(fluxus.request) == "function" then return fluxus.request end
+        if type(request) == "function" then
+            return request
+        end
+
+        if type(http_request) == "function" then
+            return http_request
+        end
+
+        if type(syn) == "table"
+            and type(syn.request) == "function"
+        then
+            return syn.request
+        end
+
+        if type(http) == "table"
+            and type(http.request) == "function"
+        then
+            return http.request
+        end
+
+        if type(fluxus) == "table"
+            and type(fluxus.request) == "function"
+        then
+            return fluxus.request
+        end
+
         return nil
     end
 
@@ -72,16 +110,24 @@ return function(WEBHOOK_URL)
 
     local function GetUseCount()
         local count = 0
+
         pcall(function()
-            if type(isfile) == "function" and type(readfile) == "function" and isfile(COUNT_FILE) then
+            if type(isfile) == "function"
+                and type(readfile) == "function"
+                and isfile(COUNT_FILE)
+            then
                 count = tonumber(readfile(COUNT_FILE)) or 0
             end
         end)
 
         count = count + 1
+
         pcall(function()
-            if type(writefile) == "function" then writefile(COUNT_FILE, tostring(count)) end
+            if type(writefile) == "function" then
+                writefile(COUNT_FILE, tostring(count))
+            end
         end)
+
         return count
     end
 
@@ -95,12 +141,19 @@ return function(WEBHOOK_URL)
         local success, result = pcall(function()
             return MarketplaceService:GetProductInfo(game.PlaceId).Name
         end)
-        if success and result then return tostring(result) end
+
+        if success and result then
+            return tostring(result)
+        end
+
         return "Unknown Game"
     end
 
     local function GetServerType()
-        if game.PrivateServerId ~= "" then return "Private Server" end
+        if game.PrivateServerId ~= "" then
+            return "Private Server"
+        end
+
         return "Public Server"
     end
 
@@ -110,8 +163,15 @@ return function(WEBHOOK_URL)
 
     local function MaskKey(value)
         value = tostring(value or "")
-        if value == "" then return "Not set" end
-        if #value <= 4 then return string.rep("*", #value) end
+
+        if value == "" then
+            return "Not set"
+        end
+
+        if #value <= 4 then
+            return string.rep("*", #value)
+        end
+
         return string.rep("*", #value - 4) .. value:sub(-4)
     end
 
@@ -121,9 +181,13 @@ return function(WEBHOOK_URL)
 
     local function GetAvatarUrl()
         local req = GetRequest()
-        if not req or not LocalPlayer then return nil end
 
-        local url = "https://thumbnails.roblox.com/v1/users/avatar-headshot"
+        if not req or not LocalPlayer then
+            return nil
+        end
+
+        local url =
+            "https://thumbnails.roblox.com/v1/users/avatar-headshot"
             .. "?userIds=" .. tostring(LocalPlayer.UserId)
             .. "&size=420x420&format=Png&isCircular=false"
 
@@ -131,114 +195,37 @@ return function(WEBHOOK_URL)
             return req({
                 Url = url,
                 Method = "GET",
-                Headers = { ["User-Agent"] = "Mozilla/5.0" }
+                Headers = {
+                    ["User-Agent"] = "Mozilla/5.0"
+                }
             })
         end)
 
-        if not success or not response then return nil end
-        local body = response.Body or response.body
-        if type(body) ~= "string" then return nil end
+        if not success or not response then
+            return nil
+        end
 
-        local decoded, data = pcall(function() return HttpService:JSONDecode(body) end)
-        if decoded and type(data) == "table" and type(data.data) == "table"
-            and data.data[1] and data.data[1].imageUrl then
+        local body = response.Body or response.body
+
+        if type(body) ~= "string" then
+            return nil
+        end
+
+        local decoded, data = pcall(function()
+            return HttpService:JSONDecode(body)
+        end)
+
+        if decoded
+            and type(data) == "table"
+            and type(data.data) == "table"
+            and data.data[1]
+            and data.data[1].imageUrl
+        then
             return data.data[1].imageUrl
         end
+
         return nil
     end
-
-    -- =========================================
-    -- SUPABASE LOGIN + HEARTBEAT
-    -- =========================================
-
-    local function GetEnvironment()
-        local G = _G
-        pcall(function()
-            if type(getgenv) == "function" then
-                local env = getgenv()
-                if type(env) == "table" then G = env end
-            end
-        end)
-        return G
-    end
-
-    local function SendSupabaseEvent(eventName)
-        if SUPABASE_URL:find("YOUR_PROJECT", 1, true)
-            or SUPABASE_PUBLISHABLE_KEY == "YOUR_PUBLISHABLE_KEY" then
-            warn("[GantengHub Stats] Isi SUPABASE_URL dan SUPABASE_PUBLISHABLE_KEY dulu.")
-            return false
-        end
-
-        local req = GetRequest()
-        if not req then
-            warn("[GantengHub Stats] HTTP request API tidak tersedia.")
-            return false
-        end
-
-        local G = GetEnvironment()
-        local discordName = tostring(G.DiscordName or G.discord_name or "")
-        local discordId = tostring(G.DiscordID or G.DiscordId or G.id or G.discord_id or "")
-        local sessionId = G.GantengHubSessionId
-
-        if type(sessionId) ~= "string" or sessionId == "" then
-            sessionId = HttpService:GenerateGUID(false)
-            G.GantengHubSessionId = sessionId
-        end
-
-        if discordName == "" or discordName == "Unknown" then
-            warn("[GantengHub Stats] DiscordName belum tersedia; event tidak dikirim.")
-            return false
-        end
-
-        local payload = {
-            event = eventName,
-            discord_name = discordName,
-            discord_id = discordId,
-            roblox_name = LocalPlayer.Name,
-            roblox_user_id = tostring(LocalPlayer.UserId),
-            session_id = sessionId
-        }
-
-        local success, response = pcall(function()
-            return req({
-                Url = SUPABASE_ENDPOINT,
-                Method = "POST",
-                Headers = {
-                    ["Content-Type"] = "application/json",
-                    ["apikey"] = SUPABASE_PUBLISHABLE_KEY,
-                    ["Authorization"] = "Bearer " .. SUPABASE_PUBLISHABLE_KEY
-                },
-                Body = HttpService:JSONEncode(payload)
-            })
-        end)
-
-        if not success then
-            warn("[GantengHub Stats] Request gagal: " .. tostring(response))
-            return false
-        end
-
-        local status = tonumber(response.StatusCode or response.Status or 0)
-        if status < 200 or status >= 300 then
-            warn("[GantengHub Stats] HTTP " .. tostring(status) .. ": "
-                .. tostring(response.Body or response.body or ""))
-            return false
-        end
-        return true
-    end
-
-    local function StartSupabaseHeartbeat()
-        task.spawn(function()
-            SendSupabaseEvent("login")
-            while LocalPlayer and LocalPlayer.Parent do
-                task.wait(HEARTBEAT_INTERVAL)
-                if not (LocalPlayer and LocalPlayer.Parent) then break end
-                SendSupabaseEvent("heartbeat")
-            end
-        end)
-    end
-
-    -- Start async so webhook and other script behavior aren't blocked.
-    task.spawn(StartSupabaseHeartbeat)
 
     -- =========================================
     -- DISCORD WEBHOOK
@@ -246,14 +233,33 @@ return function(WEBHOOK_URL)
 
     local function SendWebhook()
         local req = GetRequest()
+
         if not req then
             warn("[GantengHub] HTTP request tidak tersedia")
             return false
         end
 
-        local G = GetEnvironment()
-        local DiscordID = tostring(G.DiscordID or G.id or "Unknown")
-        local DiscordName = tostring(G.DiscordName or "Unknown")
+        -- Ambil metadata yang disediakan sistem key.
+        local G = _G
+
+        pcall(function()
+            if type(getgenv) == "function" then
+                local env = getgenv()
+
+                if type(env) == "table" then
+                    G = env
+                end
+            end
+        end)
+
+        local DiscordID = tostring(
+            G.DiscordID or G.id or "Unknown"
+        )
+
+        local DiscordName = tostring(
+            G.DiscordName or "Unknown"
+        )
+
         local KeyValue = G.KeyCode or G.Key or ""
         local Expiry = G.ExpiresAt
 
@@ -264,17 +270,63 @@ return function(WEBHOOK_URL)
         end
 
         local AvatarUrl = GetAvatarUrl()
+
         local Fields = {
-            { name = "Username", value = tostring(LocalPlayer.Name), inline = true },
-            { name = "User ID", value = tostring(LocalPlayer.UserId), inline = true },
-            { name = "Pemakaian ke-", value = tostring(UseCount), inline = true },
-            { name = "Server", value = GetServerType(), inline = true },
-            { name = "Game", value = GetGameName(), inline = true },
-            { name = "JobId", value = tostring(game.JobId), inline = false },
-            { name = "Discord ID", value = DiscordID, inline = true },
-            { name = "Discord Name", value = DiscordName, inline = true },
-            { name = "Key", value = MaskKey(KeyValue), inline = true },
-            { name = "Expires At", value = Expiry, inline = true }
+            {
+                name = "Username",
+                value = tostring(LocalPlayer.Name),
+                inline = true
+            },
+            {
+                name = "User ID",
+                value = tostring(LocalPlayer.UserId),
+                inline = true
+            },
+            {
+                name = "Pemakaian ke-",
+                value = tostring(UseCount),
+                inline = true
+            },
+            {
+                name = "Server",
+                value = GetServerType(),
+                inline = true
+            },
+            {
+                name = "Lokasi perkiraan",
+                value = "Tidak dikumpulkan",
+                inline = true
+            },
+            {
+                name = "Game",
+                value = GetGameName(),
+                inline = true
+            },
+            {
+                name = "JobId",
+                value = tostring(game.JobId),
+                inline = false
+            },
+            {
+                name = "Discord ID",
+                value = DiscordID,
+                inline = true
+            },
+            {
+                name = "Discord Name",
+                value = DiscordName,
+                inline = true
+            },
+            {
+                name = "Key",
+                value = MaskKey(KeyValue),
+                inline = true
+            },
+            {
+                name = "Expires At",
+                value = Expiry,
+                inline = true
+            }
         }
 
         local Embed = {
@@ -283,8 +335,15 @@ return function(WEBHOOK_URL)
                 title = "Ganteng Hub Usage Log",
                 color = 0x5865F2,
                 fields = Fields,
-                thumbnail = AvatarUrl and { url = AvatarUrl } or nil,
-                footer = { text = "Ganteng Hub" },
+
+                thumbnail = AvatarUrl and {
+                    url = AvatarUrl
+                } or nil,
+
+                footer = {
+                    text = "Ganteng Hub"
+                },
+
                 timestamp = DateTime.now():ToIsoDate()
             }}
         }
@@ -293,7 +352,9 @@ return function(WEBHOOK_URL)
             return req({
                 Url = WEBHOOK_URL,
                 Method = "POST",
-                Headers = { ["Content-Type"] = "application/json" },
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
                 Body = HttpService:JSONEncode(Embed)
             })
         end)
@@ -303,19 +364,85 @@ return function(WEBHOOK_URL)
             return false
         end
 
-        local status = tonumber(response.StatusCode or response.Status or 0)
+        local status = response.StatusCode or response.Status or 0
+
         if status ~= 0 and (status < 200 or status >= 300) then
             warn("[GantengHub] Webhook HTTP status:", status)
             return false
         end
+
         return true
     end
+
+    -- =========================================
+    -- CLIENT DASHBOARD KICK POLLING
+    -- Target client memproses perintah dan mengeluarkan dirinya sendiri.
+    -- Edge Function `kick-poll` harus mengembalikan:
+    -- { "kick": true, "roblox_user_id": 123, "reason": "..." }
+    -- hanya untuk UserId yang diminta.
+    -- =========================================
+
+    local SUPABASE_URL = "https://rdbmcmoemsctoxzkpwmx.supabase.co"
+    local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Hxe9O2UrGHezIkoz46cayw_kNYVzim0"
+    local KICK_POLL_INTERVAL = 5
+    local kickPollingStarted = false
+
+    local function PollSelfKick()
+        local req = GetRequest()
+        if not req or not LocalPlayer then return end
+        if SUPABASE_PUBLISHABLE_KEY == "YOUR_PUBLISHABLE_KEY"
+            or SUPABASE_PUBLISHABLE_KEY == "" then return end
+
+        local url = SUPABASE_URL .. "/functions/v1/kick-poll?roblox_user_id="
+            .. tostring(LocalPlayer.UserId)
+        local ok, response = pcall(function()
+            return req({
+                Url = url,
+                Method = "GET",
+                Headers = {
+                    ["apikey"] = SUPABASE_PUBLISHABLE_KEY,
+                    ["Authorization"] = "Bearer " .. SUPABASE_PUBLISHABLE_KEY,
+                    ["Content-Type"] = "application/json"
+                }
+            })
+        end)
+        if not ok or type(response) ~= "table" then return end
+
+        local status = tonumber(response.StatusCode or response.Status or 0) or 0
+        if status < 200 or status >= 300 then return end
+        local body = response.Body or response.body
+        if type(body) ~= "string" or body == "" then return end
+
+        local decodedOk, data = pcall(function()
+            return HttpService:JSONDecode(body)
+        end)
+        if not decodedOk or type(data) ~= "table" then return end
+
+        local targetId = tonumber(data.roblox_user_id or data.target_user_id or data.user_id)
+        if data.kick == true and targetId == tonumber(LocalPlayer.UserId) then
+            LocalPlayer:Kick(tostring(data.reason or "Kicked by Ganteng Hub Dashboard"))
+        end
+    end
+
+    local function StartClientKickPolling()
+        if kickPollingStarted then return end
+        kickPollingStarted = true
+        task.spawn(function()
+            while LocalPlayer and LocalPlayer.Parent do
+                pcall(PollSelfKick)
+                task.wait(KICK_POLL_INTERVAL)
+            end
+        end)
+    end
+
+    StartClientKickPolling()
 
     -- =========================================
     -- SEND LOG
     -- =========================================
 
     local success, err = pcall(SendWebhook)
+
     if not success then
         warn("[GantengHub] Kesalahan webhook:", err)
     end

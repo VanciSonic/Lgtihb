@@ -190,7 +190,8 @@ return function(WEBHOOK_URL)
     -- Original silver top-center broadcast toast.
     local playerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or LocalPlayer:WaitForChild("PlayerGui")
     local existingGui = playerGui:FindFirstChild("GantengHubBroadcastToast")
-    if existingGui then existingGui:Destroy() end
+    local broadcastRunToken = HttpService:GenerateGUID(false)
+    playerGui:SetAttribute("GantengHubBroadcastRunToken", broadcastRunToken)
 
     local function make(className, props, parent)
         local object = Instance.new(className)
@@ -212,10 +213,13 @@ return function(WEBHOOK_URL)
         }, parent)
     end
 
-    local toastScreen = make("ScreenGui", {
-        Name = "GantengHubBroadcastToast", ResetOnSpawn = false, IgnoreGuiInset = true,
-        DisplayOrder = 9999, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-    }, playerGui)
+    local toastScreen = existingGui
+    if not toastScreen then
+        toastScreen = make("ScreenGui", {
+            Name = "GantengHubBroadcastToast", ResetOnSpawn = false, IgnoreGuiInset = true,
+            DisplayOrder = 9999, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        }, playerGui)
+    end
     local activeToast
     local function ShowBroadcast(sender, message, duration)
         local old = toastScreen:FindFirstChild("ToastShell")
@@ -280,6 +284,7 @@ return function(WEBHOOK_URL)
         TweenService:Create(shadow, TweenInfo.new(0.48, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0.5, 0, 0, 16) }):Play()
         TweenService:Create(progress, TweenInfo.new(displayDuration, Enum.EasingStyle.Linear), { Size = UDim2.new(0, 0, 1, 0) }):Play()
         task.delay(displayDuration, dismiss)
+        return displayDuration
     end
 
     local broadcastPollingStarted = false
@@ -287,31 +292,60 @@ return function(WEBHOOK_URL)
         if broadcastPollingStarted then return end
         broadcastPollingStarted = true
         task.spawn(function()
-            -- Re-scan a short rolling window instead of relying on a fragile time cursor.
-            -- Command IDs prevent the same message being displayed more than once.
+            -- Server receipt is the durable dedupe across client restarts/devices;
+            -- this local set also protects against duplicate items within one response.
             local seenBroadcastIds = {}
-            local seenOrder = {}
+            local broadcastQueue = {}
+            local queuedBroadcastIds = {}
+            local queueRunning = false
             local lastPollWarning = 0
-            while LocalPlayer and LocalPlayer.Parent do
-                local data, err = CallClientAPI({ event = "broadcast_poll" })
+
+            local function startQueueWorker()
+                if queueRunning then return end
+                queueRunning = true
+                task.spawn(function()
+                    while #broadcastQueue > 0 do
+                        local item = table.remove(broadcastQueue, 1)
+                        local displayDuration = math.clamp(tonumber(item.duration_seconds) or 10, 1, 300)
+                        local id = tostring(item.id or "")
+                        if id ~= "" then
+                            local ok, displayErr = pcall(function()
+                                ShowBroadcast(item.sender, item.message or "", displayDuration)
+                            end)
+                            if not ok then
+                                warn("[GantengHub] Gagal menampilkan broadcast " .. id .. ": " .. tostring(displayErr))
+                            else
+                                print("[GantengHub] Broadcast ditampilkan sekali: #" .. id)
+                                -- Show for exactly the configured duration, then advance the queue.
+                                task.wait(displayDuration)
+                            end
+                        end
+                        queuedBroadcastIds[id] = nil
+                    end
+                    queueRunning = false
+                end)
+            end
+
+            while LocalPlayer and LocalPlayer.Parent
+                and playerGui:GetAttribute("GantengHubBroadcastRunToken") == broadcastRunToken do
+                local data, err = CallClientAPI({
+                    event = "broadcast_poll",
+                    user_id = LocalPlayer.UserId,
+                })
+                -- If this call began just before this script was relaunched, still
+                -- process its response against the reused GUI; the old loop exits next pass.
                 if data and type(data.broadcasts) == "table" then
                     for _, item in ipairs(data.broadcasts) do
                         local id = tostring(item.id or "")
-                        if id ~= "" and not seenBroadcastIds[id] then
+                        local remaining = tonumber(item.remaining_seconds or item.duration_seconds) or 0
+                        local displayDuration = tonumber(item.duration_seconds) or remaining
+                        if id ~= "" and remaining > 0 and displayDuration > 0 and not seenBroadcastIds[id] and not queuedBroadcastIds[id] then
                             seenBroadcastIds[id] = true
-                            table.insert(seenOrder, id)
-                            local ok, displayErr = pcall(function()
-                                ShowBroadcast(item.sender, item.message or "", item.duration_seconds)
-                            end)
-                            if not ok then warn("[GantengHub] Gagal menampilkan broadcast " .. id .. ": " .. tostring(displayErr))
-                            else print("[GantengHub] Broadcast diterima: #" .. id) end
-                            -- Bound memory when the client has been running for a long time.
-                            if #seenOrder > 300 then
-                                local oldest = table.remove(seenOrder, 1)
-                                if oldest then seenBroadcastIds[oldest] = nil end
-                            end
+                            queuedBroadcastIds[id] = true
+                            table.insert(broadcastQueue, item)
                         end
                     end
+                    startQueueWorker()
                 elseif err and os.clock() - lastPollWarning >= 30 then
                     lastPollWarning = os.clock()
                     warn("[GantengHub] Broadcast poll gagal: " .. tostring(err))

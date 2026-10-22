@@ -95,7 +95,8 @@ return function(WEBHOOK_URL)
     end
 
     local function GetServerType()
-        return game.PrivateServerId ~= "" and "Private Server" or "Public Server"
+        -- PrivateServerId is not reliable/available from the client; avoid client-side warning.
+        return "Not checked (client)"
     end
 
     local function MaskKey(value)

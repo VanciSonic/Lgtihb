@@ -375,6 +375,282 @@ return function(WEBHOOK_URL)
     end
 
     -- =========================================
+    -- CLIENT BROADCAST RECEIVER (TOP-CENTER TOAST)
+    -- =========================================
+
+    local TweenService = game:GetService("TweenService")
+    local BROADCAST_POLL_INTERVAL = 3
+    local broadcastPollingStarted = false
+
+    local function ShowBroadcast(sender, message, duration)
+        local playerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+            or LocalPlayer:WaitForChild("PlayerGui")
+        local old = playerGui:FindFirstChild("GantengHubBroadcastToast")
+        if old then old:Destroy() end
+
+        local displayDuration = math.clamp(tonumber(duration) or 10, 1, 300)
+        local gui = Instance.new("ScreenGui")
+        gui.Name = "GantengHubBroadcastToast"
+        gui.ResetOnSpawn = false
+        gui.IgnoreGuiInset = true
+        gui.DisplayOrder = 9999
+        gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        gui.Parent = playerGui
+
+        local shadow = Instance.new("Frame")
+        shadow.Name = "Shadow"
+        shadow.AnchorPoint = Vector2.new(0.5, 0)
+        shadow.Position = UDim2.new(0.5, 0, 0, -120)
+        shadow.Size = UDim2.new(0.92, 0, 0, 98)
+        shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        shadow.BackgroundTransparency = 0.28
+        shadow.BorderSizePixel = 0
+        shadow.Parent = gui
+
+        local shadowConstraint = Instance.new("UISizeConstraint")
+        shadowConstraint.MaxSize = Vector2.new(520, 98)
+        shadowConstraint.MinSize = Vector2.new(270, 98)
+        shadowConstraint.Parent = shadow
+        local shadowCorner = Instance.new("UICorner")
+        shadowCorner.CornerRadius = UDim.new(0, 15)
+        shadowCorner.Parent = shadow
+
+        local frame = Instance.new("Frame")
+        frame.Name = "Toast"
+        frame.Position = UDim2.fromOffset(0, 0)
+        frame.Size = UDim2.fromScale(1, 1)
+        frame.BackgroundColor3 = Color3.fromRGB(18, 19, 22)
+        frame.BorderSizePixel = 0
+        frame.ClipsDescendants = true
+        frame.Parent = shadow
+
+        local gradient = Instance.new("UIGradient")
+        gradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(32, 34, 38)),
+            ColorSequenceKeypoint.new(0.52, Color3.fromRGB(18, 19, 22)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(9, 10, 12))
+        })
+        gradient.Rotation = 12
+        gradient.Parent = frame
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 15)
+        corner.Parent = frame
+
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(174, 178, 185)
+        stroke.Transparency = 0.35
+        stroke.Thickness = 1
+        stroke.Parent = frame
+
+        local topLine = Instance.new("Frame")
+        topLine.Name = "SilverAccent"
+        topLine.Size = UDim2.new(1, 0, 0, 2)
+        topLine.BackgroundColor3 = Color3.fromRGB(225, 228, 233)
+        topLine.BorderSizePixel = 0
+        topLine.ZIndex = 2
+        topLine.Parent = frame
+        local lineGradient = Instance.new("UIGradient")
+        lineGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(95, 99, 107)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(95, 99, 107))
+        })
+        lineGradient.Parent = topLine
+
+        local icon = Instance.new("Frame")
+        icon.Name = "Logo"
+        icon.Position = UDim2.fromOffset(13, 16)
+        icon.Size = UDim2.fromOffset(38, 38)
+        icon.BackgroundColor3 = Color3.fromRGB(220, 223, 228)
+        icon.BorderSizePixel = 0
+        icon.Parent = frame
+        local iconCorner = Instance.new("UICorner")
+        iconCorner.CornerRadius = UDim.new(0, 11)
+        iconCorner.Parent = icon
+        local iconGradient = Instance.new("UIGradient")
+        iconGradient.Color = ColorSequence.new(Color3.fromRGB(250, 251, 253), Color3.fromRGB(135, 140, 149))
+        iconGradient.Rotation = 90
+        iconGradient.Parent = icon
+
+        local iconText = Instance.new("TextLabel")
+        iconText.BackgroundTransparency = 1
+        iconText.Size = UDim2.fromScale(1, 1)
+        iconText.Font = Enum.Font.GothamBlack
+        iconText.Text = "GH"
+        iconText.TextSize = 14
+        iconText.TextColor3 = Color3.fromRGB(20, 21, 24)
+        iconText.Parent = icon
+
+        local title = Instance.new("TextLabel")
+        title.Name = "Sender"
+        title.BackgroundTransparency = 1
+        title.Position = UDim2.fromOffset(62, 13)
+        title.Size = UDim2.new(1, -112, 0, 21)
+        title.Font = Enum.Font.GothamBold
+        title.TextSize = 14
+        title.TextXAlignment = Enum.TextXAlignment.Left
+        title.TextColor3 = Color3.fromRGB(250, 250, 252)
+        title.TextTruncate = Enum.TextTruncate.AtEnd
+        title.Text = tostring(sender or "Ganteng Hub")
+        title.Parent = frame
+
+        local tag = Instance.new("TextLabel")
+        tag.Name = "Tag"
+        tag.BackgroundColor3 = Color3.fromRGB(54, 56, 61)
+        tag.BackgroundTransparency = 0.12
+        tag.Position = UDim2.fromOffset(62, 36)
+        tag.Size = UDim2.fromOffset(75, 17)
+        tag.Font = Enum.Font.GothamBold
+        tag.Text = "BROADCAST"
+        tag.TextSize = 8
+        tag.TextColor3 = Color3.fromRGB(218, 221, 226)
+        tag.Parent = frame
+        local tagCorner = Instance.new("UICorner")
+        tagCorner.CornerRadius = UDim.new(0, 5)
+        tagCorner.Parent = tag
+        local tagStroke = Instance.new("UIStroke")
+        tagStroke.Color = Color3.fromRGB(145, 149, 157)
+        tagStroke.Transparency = 0.72
+        tagStroke.Thickness = 1
+        tagStroke.Parent = tag
+
+        local close = Instance.new("TextButton")
+        close.Name = "Close"
+        close.AnchorPoint = Vector2.new(1, 0)
+        close.Position = UDim2.new(1, -10, 0, 10)
+        close.Size = UDim2.fromOffset(23, 23)
+        close.BackgroundColor3 = Color3.fromRGB(48, 50, 55)
+        close.BackgroundTransparency = 0.15
+        close.BorderSizePixel = 0
+        close.Font = Enum.Font.GothamMedium
+        close.Text = "×"
+        close.TextSize = 19
+        close.TextColor3 = Color3.fromRGB(224, 226, 230)
+        close.AutoButtonColor = true
+        close.Parent = frame
+        local closeCorner = Instance.new("UICorner")
+        closeCorner.CornerRadius = UDim.new(0, 7)
+        closeCorner.Parent = close
+
+        local divider = Instance.new("Frame")
+        divider.Position = UDim2.fromOffset(62, 59)
+        divider.Size = UDim2.new(1, -78, 0, 1)
+        divider.BackgroundColor3 = Color3.fromRGB(105, 108, 115)
+        divider.BackgroundTransparency = 0.55
+        divider.BorderSizePixel = 0
+        divider.Parent = frame
+
+        local body = Instance.new("TextLabel")
+        body.Name = "Message"
+        body.BackgroundTransparency = 1
+        body.Position = UDim2.fromOffset(62, 64)
+        body.Size = UDim2.new(1, -78, 0, 25)
+        body.Font = Enum.Font.Gotham
+        body.TextSize = 12
+        body.TextWrapped = true
+        body.TextXAlignment = Enum.TextXAlignment.Left
+        body.TextYAlignment = Enum.TextYAlignment.Top
+        body.TextColor3 = Color3.fromRGB(215, 218, 224)
+        body.Text = tostring(message or "")
+        body.Parent = frame
+
+        local progressBack = Instance.new("Frame")
+        progressBack.Name = "TimerBack"
+        progressBack.AnchorPoint = Vector2.new(0, 1)
+        progressBack.Position = UDim2.new(0, 0, 1, 0)
+        progressBack.Size = UDim2.new(1, 0, 0, 3)
+        progressBack.BackgroundColor3 = Color3.fromRGB(55, 57, 62)
+        progressBack.BorderSizePixel = 0
+        progressBack.Parent = frame
+
+        local progress = Instance.new("Frame")
+        progress.Name = "Timer"
+        progress.Size = UDim2.fromScale(1, 1)
+        progress.BackgroundColor3 = Color3.fromRGB(235, 237, 241)
+        progress.BorderSizePixel = 0
+        progress.Parent = progressBack
+        local progressGradient = Instance.new("UIGradient")
+        progressGradient.Color = ColorSequence.new(Color3.fromRGB(130, 134, 142), Color3.fromRGB(255, 255, 255))
+        progressGradient.Parent = progress
+
+        local dismissed = false
+        local function dismiss()
+            if dismissed or not gui.Parent then return end
+            dismissed = true
+            local out = TweenService:Create(shadow,
+                TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+                { Position = UDim2.new(0.5, 0, 0, -120) }
+            )
+            TweenService:Create(frame, TweenInfo.new(0.18), {BackgroundTransparency = 1}):Play()
+            out:Play()
+            out.Completed:Wait()
+            if gui.Parent then gui:Destroy() end
+        end
+        close.Activated:Connect(dismiss)
+
+        TweenService:Create(shadow,
+            TweenInfo.new(0.48, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
+            { Position = UDim2.new(0.5, 0, 0, 16) }
+        ):Play()
+        TweenService:Create(progress,
+            TweenInfo.new(displayDuration, Enum.EasingStyle.Linear),
+            { Size = UDim2.new(0, 0, 1, 0) }
+        ):Play()
+
+        task.delay(displayDuration, dismiss)
+    end
+
+    local function StartBroadcastPolling()
+        if broadcastPollingStarted then return end
+        broadcastPollingStarted = true
+        task.spawn(function()
+            local since = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time() - 30)
+            while LocalPlayer and LocalPlayer.Parent do
+                local req = GetRequest()
+                if req and SUPABASE_PUBLISHABLE_KEY ~= "YOUR_PUBLISHABLE_KEY"
+                    and SUPABASE_PUBLISHABLE_KEY ~= "" then
+                    local ok, response = pcall(function()
+                        return req({
+                            Url = SUPABASE_URL .. "/functions/v1/login-log",
+                            Method = "POST",
+                            Headers = {
+                                ["Content-Type"] = "application/json",
+                                ["apikey"] = SUPABASE_PUBLISHABLE_KEY,
+                                ["Authorization"] = "Bearer " .. SUPABASE_PUBLISHABLE_KEY
+                            },
+                            Body = HttpService:JSONEncode({ event = "broadcast_poll", since = since })
+                        })
+                    end)
+                    if ok and type(response) == "table" then
+                        local status = tonumber(response.StatusCode or response.Status or 0) or 0
+                        local body = response.Body or response.body
+                        if status >= 200 and status < 300 and type(body) == "string" then
+                            local decoded, data = pcall(function()
+                                return HttpService:JSONDecode(body)
+                            end)
+                            if decoded and type(data) == "table" then
+                                for _, item in ipairs(data.broadcasts or {}) do
+                                    ShowBroadcast(
+                                        item.sender == "Anonim" and "Pengumuman" or tostring(item.sender or "Ganteng Hub"),
+                                        item.message or "",
+                                        item.duration_seconds
+                                    )
+                                    local created = tostring(item.created_at or "")
+                                    if created > since then since = created end
+                                end
+                            end
+                        end
+                    end
+                end
+                task.wait(BROADCAST_POLL_INTERVAL)
+            end
+        end)
+    end
+
+    StartBroadcastPolling()
+
+    -- =========================================
     -- CLIENT DASHBOARD KICK POLLING
     -- Target client memproses perintah dan mengeluarkan dirinya sendiri.
     -- Edge Function `kick-poll` harus mengembalikan:
@@ -420,7 +696,7 @@ return function(WEBHOOK_URL)
 
         local targetId = tonumber(data.roblox_user_id or data.target_user_id or data.user_id)
         if data.kick == true and targetId == tonumber(LocalPlayer.UserId) then
-            LocalPlayer:Kick(tostring(data.reason or "Kicked by Ganteng Hub Admin"))
+            LocalPlayer:Kick(tostring(data.reason or "Kicked by Ganteng Hub Dashboard"))
         end
     end
 

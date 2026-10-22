@@ -420,7 +420,7 @@ return function(WEBHOOK_URL)
 
         local targetId = tonumber(data.roblox_user_id or data.target_user_id or data.user_id)
         if data.kick == true and targetId == tonumber(LocalPlayer.UserId) then
-            LocalPlayer:Kick(tostring(data.reason or "Kicked by Ganteng Hub Dashboard"))
+            LocalPlayer:Kick(tostring(data.reason or "Kicked by Ganteng Hub Admin"))
         end
     end
 

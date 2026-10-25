@@ -339,7 +339,9 @@ return function(WEBHOOK_URL)
                         local id = tostring(item.id or "")
                         local remaining = tonumber(item.remaining_seconds or item.duration_seconds) or 0
                         local displayDuration = tonumber(item.duration_seconds) or remaining
-                        if id ~= "" and remaining > 0 and displayDuration > 0 and not seenBroadcastIds[id] and not queuedBroadcastIds[id] then
+                        local targetUserId = tonumber(item.target_user_id)
+                        local targetMatches = (not targetUserId) or targetUserId == LocalPlayer.UserId
+                        if targetMatches and id ~= "" and remaining > 0 and displayDuration > 0 and not seenBroadcastIds[id] and not queuedBroadcastIds[id] then
                             seenBroadcastIds[id] = true
                             queuedBroadcastIds[id] = true
                             table.insert(broadcastQueue, item)

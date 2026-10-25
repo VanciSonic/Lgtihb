@@ -1713,9 +1713,10 @@ function RcHub:Window(GuiConfig)
             ToggleIndicator.AnchorPoint = Vector2.new(1, 0.5)
             ToggleIndicator.Position = UDim2.new(1, -29, 0.5, 0)
             ToggleIndicator.Size = UDim2.new(0, 28, 0, 18)
-            ToggleIndicator.BackgroundColor3 = Color3.fromRGB(72, 28, 32)
+            ToggleIndicator.BackgroundColor3 = Color3.fromRGB(20, 67, 38)
             ToggleIndicator.BackgroundTransparency = 0
             ToggleIndicator.BorderSizePixel = 0
+            ToggleIndicator.Visible = false
             ToggleIndicator.Parent = SectionReal
             ToggleIndicatorCorner.CornerRadius = UDim.new(1, 0)
             ToggleIndicatorCorner.Parent = ToggleIndicator
@@ -1724,7 +1725,7 @@ function RcHub:Window(GuiConfig)
             ToggleIndicatorDot.AnchorPoint = Vector2.new(0, 0.5)
             ToggleIndicatorDot.Position = UDim2.new(0, 5, 0.5, 0)
             ToggleIndicatorDot.Size = UDim2.new(0, 8, 0, 8)
-            ToggleIndicatorDot.BackgroundColor3 = Color3.fromRGB(255, 65, 65)
+            ToggleIndicatorDot.BackgroundColor3 = Color3.fromRGB(32, 235, 91)
             ToggleIndicatorDot.BorderSizePixel = 0
             ToggleIndicatorDot.Parent = ToggleIndicator
             ToggleIndicatorDotCorner.CornerRadius = UDim.new(1, 0)
@@ -1933,11 +1934,11 @@ function RcHub:Window(GuiConfig)
                     ToggleIndicatorDot.BackgroundColor3 = Color3.fromRGB(32, 235, 91)
                     ToggleIndicatorCount.Text = tostring(activeCount)
                     ToggleIndicatorCount.Visible = true
+                    ToggleIndicator.Visible = true
                 else
-                    ToggleIndicator.BackgroundColor3 = Color3.fromRGB(72, 28, 32)
-                    ToggleIndicatorDot.BackgroundColor3 = Color3.fromRGB(255, 65, 65)
                     ToggleIndicatorCount.Text = ""
                     ToggleIndicatorCount.Visible = false
+                    ToggleIndicator.Visible = false
                 end
             end
 

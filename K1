@@ -2003,11 +2003,13 @@ function RcHub:Window(GuiConfig)
                 ParagraphContent.BackgroundTransparency = 1
                 ParagraphContent.Position = UDim2.new(0, iconOffset, 0, 25)
                 ParagraphContent.Name = "ParagraphContent"
-                ParagraphContent.TextWrapped = false
+                -- Wrap long paragraph content so it stays inside the card
+                -- instead of extending beyond the visible area.
+                ParagraphContent.TextWrapped = true
                 ParagraphContent.RichText = true
+                ParagraphContent.AutomaticSize = Enum.AutomaticSize.Y
+                ParagraphContent.Size = UDim2.new(1, -16, 0, 0)
                 ParagraphContent.Parent = Paragraph
-
-                ParagraphContent.Size = UDim2.new(1, -16, 0, ParagraphContent.TextBounds.Y)
 
                 local ParagraphButton
                 if ParagraphConfig.ButtonText then
@@ -2033,21 +2035,30 @@ function RcHub:Window(GuiConfig)
                 end
 
                 local function UpdateSize()
-                    local totalHeight = ParagraphContent.TextBounds.Y + 33
+                    -- TextBounds updates after width/wrapping has been resolved.
+                    local contentHeight = math.max(ParagraphContent.TextBounds.Y, ParagraphContent.AbsoluteSize.Y, 14)
+                    ParagraphContent.Size = UDim2.new(1, -16, 0, contentHeight)
+
+                    local totalHeight = 25 + contentHeight + 10
                     if ParagraphButton then
-                        totalHeight = totalHeight + ParagraphButton.Size.Y.Offset + 5
+                        ParagraphButton.Position = UDim2.new(0, 10, 0, totalHeight)
+                        totalHeight = totalHeight + ParagraphButton.Size.Y.Offset + 8
                     end
                     Paragraph.Size = UDim2.new(1, 0, 0, totalHeight)
+                    RefreshSectionSize()
                 end
 
                 UpdateSize()
 
                 ParagraphContent:GetPropertyChangedSignal("TextBounds"):Connect(UpdateSize)
+                Paragraph:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+                    task.defer(UpdateSize)
+                end)
 
                 function ParagraphFunc:SetContent(content)
                     content = content or "Content"
                     ParagraphContent.Text = content
-                    UpdateSize()
+                    task.defer(UpdateSize)
                 end
 
                 RefreshSectionSize()

@@ -1,0 +1,105 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HRP = Character:WaitForChild("HumanoidRootPart")
+
+local RANGE = 150
+local ATTACK_DELAY = 0.01
+local MAX_TARGETS = 30
+local ENABLED = true
+
+local Net = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Net")
+local RegisterHit = Net:WaitForChild("RE/RegisterHit")
+local RegisterAttack = Net:WaitForChild("RE/RegisterAttack")
+
+local function getHitPart(enemy)
+    for _, n in ipairs({"UpperTorso", "HumanoidRootPart", "Head", "RightUpperLeg", "LeftUpperLeg"}) do
+        local p = enemy:FindFirstChild(n)
+        if p and p:IsA("BasePart") then return p end
+    end
+    return enemy:FindFirstChildWhichIsA("BasePart")
+end
+
+local function getTargets()
+    local list = {}
+    local folder = workspace:FindFirstChild("Enemies")
+    if not folder then return list end
+
+    for _, enemy in ipairs(folder:GetChildren()) do
+        local hum = enemy:FindFirstChildOfClass("Humanoid")
+        local root = enemy:FindFirstChild("HumanoidRootPart")
+        if hum and hum.Health > 0 and root then
+            local dist = (root.Position - HRP.Position).Magnitude
+            if dist <= RANGE then
+                local part = getHitPart(enemy)
+                if part then
+                    table.insert(list, {enemy = enemy, part = part, dist = dist})
+                end
+            end
+        end
+    end
+
+    table.sort(list, function(a, b) return a.dist < b.dist end)
+    return list
+end
+
+task.spawn(function()
+    while true do
+        task.wait(ATTACK_DELAY)
+        if not ENABLED then continue end
+
+        Character = LocalPlayer.Character
+        HRP = Character and Character:FindFirstChild("HumanoidRootPart")
+        if not HRP then continue end
+
+        local targets = getTargets()
+        if #targets == 0 then continue end
+
+        local count = math.min(#targets, MAX_TARGETS)
+        local primary = targets[1]
+
+        -- extra targets (batch) format dari decompile: {rig, hitPart}
+        local batch = {}
+        for i = 2, count do
+            table.insert(batch, {targets[i].enemy, targets[i].part})
+        end
+
+        -- 1x attack
+        pcall(function()
+            RegisterAttack:FireServer(0.1)
+        end)
+
+        -- 1x RegisterHit dengan multi target
+        -- Format A (paling dekat ke decompile)
+        local ok = pcall(function()
+            RegisterHit:FireServer(primary.part, batch)
+        end)
+
+        -- Format B (kalau A gagal)
+        if not ok then
+            pcall(function()
+                RegisterHit:FireServer(primary.part, batch, nil)
+            end)
+        end
+
+        -- Format C (fallback: tetap kirim 1-1 tapi cepat)
+        if not ok then
+            for i = 1, count do
+                pcall(function()
+                    RegisterHit:FireServer(targets[i].part, {})
+                end)
+            end
+        end
+    end
+end)
+
+UserInputService.InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    if input.KeyCode == Enum.KeyCode.P then
+        ENABLED = not ENABLED
+        print(ENABLED and "[ON] Batch Multi Target" or "[OFF]")
+    end
+end)

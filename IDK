@@ -79,7 +79,9 @@ return function(WEBHOOK_URL)
     end
 
     task.spawn(function()
-        LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/fast", "VanciSonic Fast")
+        LoadRemote("https://isnahamzah.site/fast", "Isnahamzah Fast")
+        LoadRemote("https://pastefy.app/4h8Lh7Uk/raw", "Pastefy Fast")
+        --LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/fast", "VanciSonic Fast")
         LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis", "Asis")
     end)
 

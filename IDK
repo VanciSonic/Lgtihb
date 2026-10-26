@@ -1,8 +1,4 @@
 return function(WEBHOOK_URL)
-    -- GANTENG HUB CLIENT: original usage webhook + silver broadcast toast + client presence/kick polling.
-    -- Intended for the existing executor-based client. Admin commands remain on a private admin dashboard.
-
-    -- Webhook hanya untuk usage log; polling key-owner, broadcast, dan kick tetap aktif tanpanya.
     local WEBHOOK_URL_VALID = type(WEBHOOK_URL) == "string"
         and (WEBHOOK_URL:match("^https://discord%.com/api/webhooks/") ~= nil or WEBHOOK_URL:match("^https://discordapp%.com/api/webhooks/") ~= nil)
 
@@ -11,6 +7,16 @@ return function(WEBHOOK_URL)
     local MarketplaceService = game:GetService("MarketplaceService")
     local TweenService = game:GetService("TweenService")
     local LocalPlayer = Players.LocalPlayer
+
+    local BANNED_DISCORD_ID = "1086997355364110356"
+    local discordId = tostring(
+        type(G) == "table" and G.DiscordID or ""
+    )
+    
+    if discordId == BANNED_DISCORD_ID then
+        LocalPlayer:Kick("makannya lain kali jangan banyak bacot. (open ban? dm SonicTuru)")
+        return
+    end
     if not LocalPlayer then error("[GantengHub] LocalPlayer tidak tersedia") end
 
     -- Declare endpoint/key before any poller is started (fixes the old ordering bug).

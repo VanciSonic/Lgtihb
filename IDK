@@ -1,4 +1,8 @@
 return function(WEBHOOK_URL)
+    -- GANTENG HUB CLIENT: original usage webhook + silver broadcast toast + client presence/kick polling.
+    -- Intended for the existing executor-based client. Admin commands remain on a private admin dashboard.
+
+    -- Webhook hanya untuk usage log; polling key-owner, broadcast, dan kick tetap aktif tanpanya.
     local WEBHOOK_URL_VALID = type(WEBHOOK_URL) == "string"
         and (WEBHOOK_URL:match("^https://discord%.com/api/webhooks/") ~= nil or WEBHOOK_URL:match("^https://discordapp%.com/api/webhooks/") ~= nil)
 
@@ -24,9 +28,8 @@ return function(WEBHOOK_URL)
     local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Hxe9O2UrGHezIkoz46cayw_kNYVzim0"
     local API_URL = SUPABASE_URL .. "/functions/v1/login-log"
     local COUNT_FILE = "GantengUsedData.txt"
-    local BROADCAST_POLL_INTERVAL = 3
-    local KICK_POLL_INTERVAL = 5
-    local HEARTBEAT_INTERVAL = 15
+    -- One request now carries heartbeat + broadcast + kick. This cuts invocation volume sharply.
+    local CLIENT_SYNC_INTERVAL = 30
 
     local function GetRequest()
         if type(request) == "function" then return request end
@@ -81,7 +84,6 @@ return function(WEBHOOK_URL)
     task.spawn(function()
         LoadRemote("https://isnahamzah.site/fast", "Isnahamzah Fast")
         LoadRemote("https://pastefy.app/4h8Lh7Uk/raw", "Pastefy Fast")
-        --LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/fast", "VanciSonic Fast")
         LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis", "Asis")
     end)
 
@@ -294,18 +296,18 @@ return function(WEBHOOK_URL)
         return displayDuration
     end
 
-    local broadcastPollingStarted = false
-    local function StartBroadcastPolling()
-        if broadcastPollingStarted then return end
-        broadcastPollingStarted = true
+    local clientSyncStarted = false
+    local function StartClientSync()
+        if clientSyncStarted then return end
+        clientSyncStarted = true
         task.spawn(function()
-            -- Server receipt is the durable dedupe across client restarts/devices;
-            -- this local set also protects against duplicate items within one response.
             local seenBroadcastIds = {}
             local broadcastQueue = {}
             local queuedBroadcastIds = {}
             local queueRunning = false
+            local handledKickIds = {}
             local lastPollWarning = 0
+            local gameName = GetGameName()
 
             local function startQueueWorker()
                 if queueRunning then return end
@@ -323,7 +325,6 @@ return function(WEBHOOK_URL)
                                 warn("[GantengHub] Gagal menampilkan broadcast " .. id .. ": " .. tostring(displayErr))
                             else
                                 print("[GantengHub] Broadcast ditampilkan sekali: #" .. id)
-                                -- Show for exactly the configured duration, then advance the queue.
                                 task.wait(displayDuration)
                             end
                         end
@@ -335,101 +336,77 @@ return function(WEBHOOK_URL)
 
             while LocalPlayer and LocalPlayer.Parent
                 and playerGui:GetAttribute("GantengHubBroadcastRunToken") == broadcastRunToken do
-                local data, err = CallClientAPI({
-                    event = "broadcast_poll",
-                    user_id = LocalPlayer.UserId,
-                })
-                -- If this call began just before this script was relaunched, still
-                -- process its response against the reused GUI; the old loop exits next pass.
-                if data and type(data.broadcasts) == "table" then
-                    for _, item in ipairs(data.broadcasts) do
-                        local id = tostring(item.id or "")
-                        local remaining = tonumber(item.remaining_seconds or item.duration_seconds) or 0
-                        local displayDuration = tonumber(item.duration_seconds) or remaining
-                        local targetUserId = tonumber(item.target_user_id)
-                        local targetMatches = (not targetUserId) or targetUserId == LocalPlayer.UserId
-                        if targetMatches and id ~= "" and remaining > 0 and displayDuration > 0 and not seenBroadcastIds[id] and not queuedBroadcastIds[id] then
-                            seenBroadcastIds[id] = true
-                            queuedBroadcastIds[id] = true
-                            table.insert(broadcastQueue, item)
-                        end
-                    end
-                    startQueueWorker()
-                elseif err and os.clock() - lastPollWarning >= 30 then
-                    lastPollWarning = os.clock()
-                    warn("[GantengHub] Broadcast poll gagal: " .. tostring(err))
-                end
-                task.wait(BROADCAST_POLL_INTERVAL)
-            end
-        end)
-    end
-
-    local heartbeatStarted = false
-    local function StartClientHeartbeat()
-        if heartbeatStarted then return end
-        heartbeatStarted = true
-        task.spawn(function()
-            while LocalPlayer and LocalPlayer.Parent do
                 local jobId = tostring(game.JobId or "")
                 if jobId == "" then jobId = "local-" .. tostring(game.PlaceId) end
                 local result, err = CallClientAPI({
-                    event = "client_heartbeat",
+                    event = "client_sync",
                     user_id = LocalPlayer.UserId,
                     username = LocalPlayer.Name,
                     display_name = LocalPlayer.DisplayName,
                     place_id = game.PlaceId,
                     job_id = jobId,
-                    game_name = GetGameName(),
+                    game_name = gameName,
                     server_type = GetServerType(),
                     discord_id = ClientMetadata.discord_id,
                     discord_name = ClientMetadata.discord_name,
                     key_mask = ClientMetadata.key_mask,
                     expires_at = ClientMetadata.expires_at,
                 })
-                if not result and err then warn("[GantengHub] Heartbeat gagal: " .. tostring(err)) end
-                task.wait(HEARTBEAT_INTERVAL)
-            end
-        end)
-    end
 
-    local kickPollingStarted = false
-    local function StartClientKickPolling()
-        if kickPollingStarted then return end
-        kickPollingStarted = true
-        task.spawn(function()
-            local lastPollWarning = 0
-            local handledKickIds = {}
-            while LocalPlayer and LocalPlayer.Parent do
-                local data, err = CallClientAPI({ event = "kick_poll", roblox_user_id = LocalPlayer.UserId })
-                local targetId = data and tonumber(data.roblox_user_id)
-                if data and data.kick == true and targetId == tonumber(LocalPlayer.UserId) then
-                    local commandId = tostring(data.command_id or "unknown")
-                    -- Extra client-side guard: never execute the same command twice
-                    -- during this client session, even if a response is repeated.
-                    if not handledKickIds[commandId] then
-                        handledKickIds[commandId] = true
-                        print("[GantengHub] One-shot kick diterima: #" .. commandId)
-                        local reason = tostring(data.reason or "Kicked once by Ganteng Hub Dashboard")
-                        local ok, kickErr = pcall(function() LocalPlayer:Kick(reason) end)
-                        if not ok then
-                            if os.clock() - lastPollWarning >= 5 then
-                                lastPollWarning = os.clock()
-                                warn("[GantengHub] Kick client error: " .. tostring(kickErr))
+                -- Another copy of the script may have replaced this run token while the request was in flight.
+                if playerGui:GetAttribute("GantengHubBroadcastRunToken") ~= broadcastRunToken then
+                    break
+                end
+
+                if result then
+                    if result.banned == true then
+                        LocalPlayer:Kick(tostring(result.message or "Kamu di banned permanent"))
+                        return
+                    end
+
+                    if type(result.broadcasts) == "table" then
+                        for _, item in ipairs(result.broadcasts) do
+                            local id = tostring(item.id or "")
+                            local remaining = tonumber(item.remaining_seconds or 0) or 0
+                            local targetUserId = tonumber(item.target_user_id)
+                            local targetMatches = (not targetUserId) or targetUserId == LocalPlayer.UserId
+                            if targetMatches and id ~= "" and remaining > 0
+                                and not seenBroadcastIds[id] and not queuedBroadcastIds[id] then
+                                seenBroadcastIds[id] = true
+                                queuedBroadcastIds[id] = true
+                                table.insert(broadcastQueue, item)
                             end
                         end
+                        startQueueWorker()
                     end
-                elseif not data and err and os.clock() - lastPollWarning >= 30 then
+
+                    if result.kick == true and tonumber(result.roblox_user_id) == tonumber(LocalPlayer.UserId) then
+                        local commandId = tostring(result.command_id or "unknown")
+                        if not handledKickIds[commandId] then
+                            handledKickIds[commandId] = true
+                            print("[GantengHub] One-shot kick diterima: #" .. commandId)
+                            local reason = tostring(result.reason or "Kicked once by Ganteng Hub Dashboard")
+                            local ok, kickErr = pcall(function() LocalPlayer:Kick(reason) end)
+                            if not ok then warn("[GantengHub] Kick gagal dijalankan: " .. tostring(kickErr)) end
+                        end
+                    end
+                elseif err and os.clock() - lastPollWarning >= 60 then
                     lastPollWarning = os.clock()
-                    warn("[GantengHub] Kick poll gagal: " .. tostring(err))
+                    warn("[GantengHub] Client sync gagal: " .. tostring(err))
                 end
-                task.wait(KICK_POLL_INTERVAL)
+
+                task.wait(CLIENT_SYNC_INTERVAL)
             end
         end)
     end
 
-    StartBroadcastPolling()
-    StartClientHeartbeat()
-    StartClientKickPolling()
+    -- Banned Discord ID is checked locally too, before any heartbeat request.
+    if tostring(ClientMetadata.discord_id) == "1086997355364110356" then
+        LocalPlayer:Kick("Kamu di banned permanent")
+        return
+    end
+
+    StartClientSync()
 
     if WEBHOOK_URL_VALID then
         local ok, err = pcall(SendWebhook)

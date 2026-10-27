@@ -24,12 +24,12 @@ return function(WEBHOOK_URL)
     if not LocalPlayer then error("[GantengHub] LocalPlayer tidak tersedia") end
 
     -- Declare endpoint/key before any poller is started (fixes the old ordering bug).
-    local SUPABASE_URL = "https://rdbmcmoemsctoxzkpwmx.supabase.co"
-    local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Hxe9O2UrGHezIkoz46cayw_kNYVzim0"
+    local SUPABASE_URL = "https://uviscfyslgeiinxsmcib.supabase.co"
+    local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_L7HcruTnoNZ6jNHSoJyj0g_1s8Mscqa"
     local API_URL = SUPABASE_URL .. "/functions/v1/login-log"
     local COUNT_FILE = "GantengUsedData.txt"
-    -- One request now carries heartbeat + broadcast + kick. This cuts invocation volume sharply.
-    local CLIENT_SYNC_INTERVAL = 30
+    -- One request carries heartbeat + broadcast + kick. 60-second interval reduces invocation volume.
+    local CLIENT_SYNC_INTERVAL = 60
 
     local function GetRequest()
         if type(request) == "function" then return request end

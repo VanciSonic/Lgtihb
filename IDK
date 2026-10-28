@@ -87,6 +87,8 @@ return function(WEBHOOK_URL)
         LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis", "Asis")
     end)
 
+    game:GetService("Players").LocalPlayer.PlayerGui.HUDRoot.Frame.HUD.Version.Text = "Protected By GantengHub Premium"
+
     local function GetUseCount()
         local count = 0
         pcall(function()

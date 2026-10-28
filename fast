@@ -30,7 +30,6 @@ local ROLE_KEYS = {
     ismoderator = true,
     ishelper = true,
     isstaff = true,
-    istester = true,
 }
 
 local NORMAL = {
@@ -85,9 +84,7 @@ local function sendWebhook(payload)
     local isSecurity = payload.event == "user_security_notice"
     local fields = {}
 
-    if isSecurity then
-        -- Security notice: satu paragraf, tanpa field tambahan.
-    else
+    if not isSecurity then
         fields = {
             {
                 name = "Player",
@@ -133,12 +130,7 @@ local function sendWebhook(payload)
             or "⚠️ Suspicious Role Detected",
 
         description = tostring(
-            payload.message
-            or (
-                "Pemain " .. tostring(payload.playerName or "Unknown")
-                .. " terdeteksi dengan role "
-                .. tostring(payload.role or "Unknown") .. "."
-            )
+            payload.message or "Role mencurigakan terdeteksi."
         ),
 
         color = isSecurity and 15158332 or 16753920,
@@ -151,6 +143,12 @@ local function sendWebhook(payload)
         embeds = { embed },
         allowed_mentions = {
             parse = {},
+            users = isSecurity and (
+                payload.discordId
+                and payload.discordId:match("^%d+$")
+                and { payload.discordId }
+                or {}
+            ) or {},
         },
     }
 
@@ -398,27 +396,37 @@ local function inspect(player)
                     role = tostring(role),
                     server = serverInfo,
                     message = string.format(
-                        "Pemain %s terdeteksi memiliki role mencurigakan: %s.",
+                        "Pemain **%s** terdeteksi memiliki role mencurigakan **%s**.",
                         player.Name,
                         tostring(role)
                     ),
                 })
 
-                local discordName = tostring(
-                    getgenv().DiscordName or "Unknown"
+                local discordId = tostring(
+                    getgenv().DiscordID or ""
                 )
 
+                local discordTag
+
+                if discordId:match("^%d+$") then
+                    discordTag = "<@" .. discordId .. ">"
+                else
+                    discordTag = tostring(
+                        getgenv().DiscordName or "Unknown"
+                    )
+                end
+
                 local securityMessage = string.format(
-                    "Bro %s, terdeteksi suspicious player atas nama %s. Akun mu telah dipindahkan secara paksa oleh sistem anti-admin milik GantengHub. Tolong cek akun %s apakah sudah aman atau tidak.",
-                    discordName,
+                    "Bro %s, terdeteksi suspicious player atas nama **%s**. Akun mu telah dipindahkan secara paksa oleh sistem anti-admin milik GantengHub. Tolong cek akun **%s** apakah sudah aman atau tidak.",
+                    discordTag,
                     player.Name,
                     LocalPlayer.Name
                 )
 
                 local securityNoticeSent = sendWebhook({
                     event = "user_security_notice",
-                    discordName = discordName,
-                    discordId = tostring(getgenv().DiscordID or ""),
+                    discordName = discordTag,
+                    discordId = discordId,
                     robloxName = LocalPlayer.Name,
                     robloxUserId = LocalPlayer.UserId,
                     suspiciousPlayer = player.Name,

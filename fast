@@ -1,486 +1,968 @@
+-- RoleDetector source for loadstring use.
+-- Loader format:
+-- local checkAdmin = loadstring(game:HttpGet("RAW_SOURCE_URL"))()
+-- checkAdmin("DISCORD_WEBHOOK_URL")
+
+return function(webhookURL)
+    webhookURL = tostring(webhookURL or "")
+    if webhookURL == "" then
+        warn("[RoleDetector] Webhook URL belum diberikan.")
+        return false
+    end
+
+
 
 local Players = game:GetService("Players")
+
 local StarterGui = game:GetService("StarterGui")
+
 local MarketplaceService = game:GetService("MarketplaceService")
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local HttpService = game:GetService("HttpService")
+
+
 
 local LocalPlayer = Players.LocalPlayer
 
+
+
 local CONFIG = {
-    WebhookURL = "https://discord.com/api/webhooks/kontol/QLCxwCLUss4AJTqaooxxxxxxxxxxxxxxxxeasfVpQ7zxHBMWIR2mOGYOuUQjCqTEL5EBKM3IHGTSOcM6UnAk",
+    WebhookURL = webhookURL,
+
     ScanInterval = 3,
+
     NotifyLocal = true,
 
+
+
     PageCount = 100,
+
     RequestStagger = 0.02,
+
     MaxWait = 12,
+
     Retries = 1,
+
     MaxPlayers = 5,
+
     RandomizeLowestTier = true,
+
 }
+
+
 
 local ROLE_KEYS = {
+
     role = true,
+
     rank = true,
+
     qarank = true,
+
     admin = true,
+
     isadmin = true,
+
     isdeveloper = true,
+
     ismoderator = true,
+
     ishelper = true,
+
     isstaff = true,
+
+    istester = true,
+
 }
+
+
 
 local NORMAL = {
+
     player = true,
+
     normal = true,
+
     none = true,
+
     [""] = true,
+
 }
 
+
+
 local reported = {}
+
 local placeName = "Unknown Game"
+
 local hopStarted = false
 
+
+
 pcall(function()
+
     placeName = MarketplaceService:GetProductInfo(game.PlaceId).Name
+
 end)
 
+
+
 local function getSea()
+
     local seas = {
+
         [2753915549] = "Sea 1",
+
         [4442272183] = "Sea 2",
+
         [7449423635] = "Sea 3",
+
     }
+
+
 
     return seas[game.PlaceId] or "Unknown"
+
 end
+
+
 
 local function notify(title, message)
+
     if not CONFIG.NotifyLocal then
+
         return
+
     end
+
+
 
     pcall(function()
+
         StarterGui:SetCore("SendNotification", {
+
             Title = title,
+
             Text = message,
+
             Duration = 8,
+
         })
+
     end)
+
 end
 
+
+
 local function sendWebhook(payload)
+
     if not CONFIG.WebhookURL
+
         or CONFIG.WebhookURL == ""
+
         or CONFIG.WebhookURL == "PASTE_WEBHOOK_URL_BARU"
+
     then
+
         warn("[RoleDetector] WebhookURL belum dikonfigurasi.")
+
         return false
+
     end
+
+
 
     local server = payload.server or {}
+
     local isSecurity = payload.event == "user_security_notice"
+
     local fields = {}
 
-    if not isSecurity then
+
+
+    if isSecurity then
+
+        *-- Security notice: satu paragraf, tanpa field tambahan.*
+
+    else
+
         fields = {
+
             {
+
                 name = "Player",
+
                 value = tostring(payload.playerName or "Unknown"),
+
                 inline = true,
+
             },
+
             {
+
                 name = "Roblox User ID",
+
                 value = tostring(payload.playerUserId or "Unknown"),
+
                 inline = true,
+
             },
+
             {
+
                 name = "Role",
+
                 value = tostring(payload.role or "Unknown"),
+
                 inline = true,
+
             },
+
             {
+
                 name = "Sea",
+
                 value = tostring(server.sea or "Unknown"),
+
                 inline = true,
+
             },
+
             {
+
                 name = "Game",
+
                 value = tostring(server.gameName or "Unknown"),
+
                 inline = false,
+
             },
+
             {
+
                 name = "Place ID",
+
                 value = tostring(server.placeId or "Unknown"),
+
                 inline = true,
+
             },
+
             {
+
                 name = "Job ID",
+
                 value = tostring(server.jobId or "Unknown"),
+
                 inline = false,
+
             },
+
         }
+
     end
+
+
 
     local embed = {
+
         title = isSecurity
+
             and "🛡️ GantengHub Security Notice"
+
             or "⚠️ Suspicious Role Detected",
 
+
+
         description = tostring(
-            payload.message or "Role mencurigakan terdeteksi."
+
+            payload.message
+
+            or (
+
+                "Pemain " .. tostring(payload.playerName or "Unknown")
+
+                .. " terdeteksi dengan role "
+
+                .. tostring(payload.role or "Unknown") .. "."
+
+            )
+
         ),
 
+
+
         color = isSecurity and 15158332 or 16753920,
+
         fields = fields,
+
         timestamp = DateTime.now():ToIsoDate(),
+
     }
+
+
 
     local body = {
+
         username = "GantengHub Security",
+
         embeds = { embed },
+
         allowed_mentions = {
+
             parse = {},
-            users = isSecurity and (
-                payload.discordId
-                and payload.discordId:match("^%d+$")
-                and { payload.discordId }
-                or {}
-            ) or {},
+
         },
+
     }
 
+
+
     local ok, response = pcall(function()
+
         return request({
+
             Url = CONFIG.WebhookURL,
+
             Method = "POST",
+
             Headers = {
+
                 ["Content-Type"] = "application/json",
+
             },
+
             Body = HttpService:JSONEncode(body),
+
         })
+
     end)
 
+
+
     if not ok then
+
         warn("[RoleDetector] Request error:", tostring(response))
+
         return false
+
     end
+
+
 
     local status = tonumber(response and response.StatusCode)
 
+
+
     if status and status >= 200 and status < 300 then
+
         print("[RoleDetector] Webhook terkirim:", payload.event, status)
+
         return true
+
     end
+
+
 
     warn(
+
         "[RoleDetector] Webhook gagal. HTTP:",
+
         tostring(status or "Unknown"),
+
         "Body:",
+
         tostring(response and response.Body or "Tidak ada response body")
+
     )
 
+
+
     return false
+
 end
 
+
+
 local function hopLowPlayerServer()
+
     if hopStarted then
+
         return
+
     end
+
+
 
     hopStarted = true
 
+
+
     local browser = ReplicatedStorage:FindFirstChild("__ServerBrowser")
 
+
+
     if not browser or not browser:IsA("RemoteFunction") then
+
         warn("[ServerFinder] __ServerBrowser tidak ditemukan.")
+
         notify("Server Hop gagal", "Remote server browser tidak ditemukan.")
+
         hopStarted = false
+
         return
+
     end
 
+
+
     local currentJob = tostring(game.JobId or "")
+
     local serversByJob = {}
+
     local completed = 0
+
     local scanClosed = false
 
+
+
     local function requestPage(page)
+
         local result
+
         local lastError
 
+
+
         for attempt = 1, CONFIG.Retries + 1 do
+
             local ok, value = pcall(function()
+
                 return browser:InvokeServer(page)
+
             end)
 
+
+
             if ok and type(value) == "table" then
+
                 result = value
+
                 break
+
             end
+
+
 
             lastError = value
 
+
+
             if attempt <= CONFIG.Retries then
+
                 task.wait(0.15)
+
             end
+
         end
+
+
 
         if not scanClosed and type(result) == "table" then
+
             for jobId, info in pairs(result) do
+
                 if type(jobId) == "string"
+
                     and type(info) == "table"
+
                     and jobId ~= currentJob
+
                 then
+
                     local count = tonumber(info.Count)
 
+
+
                     if count and count >= 0 then
+
                         local existing = serversByJob[jobId]
 
+
+
                         if not existing or count < existing.Count then
+
                             serversByJob[jobId] = {
+
                                 Job = jobId,
+
                                 Count = count,
+
                                 Region = tostring(info.Region or "Unknown"),
+
                                 Bounty = tonumber(info.Bounty) or 0,
+
                             }
+
                         end
+
                     end
+
                 end
+
             end
+
         elseif lastError and not scanClosed then
+
             warn(
+
                 ("[ServerFinder] Page %d gagal: %s")
+
                     :format(page, tostring(lastError))
+
             )
+
         end
 
+
+
         completed += 1
+
     end
 
+
+
     for page = 1, CONFIG.PageCount do
+
         task.delay((page - 1) * CONFIG.RequestStagger, function()
+
             task.spawn(requestPage, page)
+
         end)
+
     end
+
+
 
     local deadline = os.clock() + CONFIG.MaxWait
 
+
+
     while completed < CONFIG.PageCount and os.clock() < deadline do
+
         task.wait(0.05)
+
     end
+
+
 
     scanClosed = true
 
+
+
     local matches = {}
 
+
+
     for _, info in pairs(serversByJob) do
+
         if info.Count <= CONFIG.MaxPlayers then
+
             table.insert(matches, info)
+
         end
+
     end
+
+
 
     table.sort(matches, function(a, b)
+
         if a.Count ~= b.Count then
+
             return a.Count < b.Count
+
         end
+
+
 
         return a.Job < b.Job
+
     end)
 
+
+
     if #matches == 0 then
+
         warn(
+
             ("[ServerFinder] Tidak ada server dengan %d player. Page: %d/%d")
+
                 :format(CONFIG.MaxPlayers, completed, CONFIG.PageCount)
+
         )
 
+
+
         notify("Server Hop gagal", "Tidak menemukan server low-player.")
+
         hopStarted = false
+
         return
+
     end
+
+
 
     local lowestCount = matches[1].Count
+
     local lowestTier = {}
 
+
+
     for _, info in ipairs(matches) do
+
         if info.Count == lowestCount then
+
             table.insert(lowestTier, info)
+
         else
+
             break
+
         end
+
     end
+
+
 
     local chosen
 
+
+
     if CONFIG.RandomizeLowestTier and #lowestTier > 1 then
+
         chosen = lowestTier[math.random(1, #lowestTier)]
+
     else
+
         chosen = matches[1]
+
     end
+
+
 
     notify(
+
         "Server Hop",
+
         ("Meminta pindah ke server dengan %d player...")
+
             :format(chosen.Count)
+
     )
 
+
+
     local ok, result = pcall(function()
+
         return browser:InvokeServer("teleport", chosen.Job)
+
     end)
 
+
+
     if not ok then
+
         warn("[ServerFinder] Teleport request error:", tostring(result))
+
         notify("Server Hop gagal", "Request teleport mengalami error.")
+
         hopStarted = false
+
     else
+
         print("[ServerFinder] Request teleport dikirim:", chosen.Job)
+
     end
+
 end
 
+
+
 local function inspect(player)
+
     if player == LocalPlayer or hopStarted then
+
         return
+
     end
 
+
+
     for key, value in pairs(player:GetAttributes()) do
+
         local normalizedKey = string.lower(key)
 
+
+
         if ROLE_KEYS[normalizedKey] then
+
             local role
 
+
+
             if typeof(value) == "boolean" and value then
+
                 role = key
+
             elseif typeof(value) == "string"
+
                 and not NORMAL[string.lower(value)]
+
             then
+
                 role = value
+
             end
 
+
+
             if role then
+
                 local reportId = table.concat({
+
                     tostring(player.UserId),
+
                     key,
+
                     tostring(value),
+
                 }, ":")
 
+
+
                 if reported[reportId] then
+
                     continue
+
                 end
+
+
 
                 reported[reportId] = true
 
+
+
                 local serverInfo = {
+
                     gameName = placeName,
+
                     placeId = game.PlaceId,
+
                     jobId = game.JobId,
+
                     sea = getSea(),
+
                 }
 
+
+
                 warn(
+
                     "[SUSPICIOUS ROLE]",
+
                     player.Name,
+
                     tostring(role),
+
                     serverInfo.sea
+
                 )
+
+
 
                 notify(
+
                     "Role Mencurigakan",
+
                     player.Name .. " | " .. tostring(role)
+
                 )
+
+
 
                 local detectionSent = sendWebhook({
+
                     event = "role_detected",
+
                     playerName = player.Name,
+
                     playerUserId = player.UserId,
+
                     role = tostring(role),
+
                     server = serverInfo,
+
                     message = string.format(
-                        "Pemain **%s** terdeteksi memiliki role mencurigakan **%s**.",
+
+                        "Pemain %s terdeteksi memiliki role mencurigakan: %s.",
+
                         player.Name,
+
                         tostring(role)
+
                     ),
+
                 })
 
-                local discordId = tostring(
-                    getgenv().DiscordID or ""
+
+
+                local discordName = tostring(
+
+                    getgenv().DiscordName or "Unknown"
+
                 )
 
-                local discordTag
 
-                if discordId:match("^%d+$") then
-                    discordTag = "<@" .. discordId .. ">"
-                else
-                    discordTag = tostring(
-                        getgenv().DiscordName or "Unknown"
-                    )
-                end
 
                 local securityMessage = string.format(
-                    "Bro %s, terdeteksi suspicious player atas nama **%s**. Akun mu telah dipindahkan secara paksa oleh sistem anti-admin milik GantengHub. Tolong cek akun **%s** apakah sudah aman atau tidak.",
-                    discordTag,
+
+                    "Bro %s, terdeteksi suspicious player atas nama %s. Akun mu telah dipindahkan secara paksa oleh sistem anti-admin milik GantengHub. Tolong cek akun %s apakah sudah aman atau tidak.",
+
+                    discordName,
+
                     player.Name,
+
                     LocalPlayer.Name
+
                 )
 
+
+
                 local securityNoticeSent = sendWebhook({
+
                     event = "user_security_notice",
-                    discordName = discordTag,
-                    discordId = discordId,
+
+                    discordName = discordName,
+
+                    discordId = tostring(getgenv().DiscordID or ""),
+
                     robloxName = LocalPlayer.Name,
+
                     robloxUserId = LocalPlayer.UserId,
+
                     suspiciousPlayer = player.Name,
+
                     role = tostring(role),
+
                     server = serverInfo,
+
                     message = securityMessage,
+
                 })
 
+
+
                 if detectionSent and securityNoticeSent then
+
                     task.spawn(hopLowPlayerServer)
+
                 else
+
                     warn(
+
                         "[RoleDetector] Hop dibatalkan karena "
+
                         .. "satu atau lebih webhook gagal."
+
                     )
+
+
 
                     notify(
+
                         "Webhook gagal",
+
                         "Periksa status HTTP dan response body di console."
+
                     )
+
                 end
 
+
+
                 return
+
             end
+
         end
+
     end
+
 end
+
+
 
 local function watch(player)
+
     player.AttributeChanged:Connect(function()
+
         inspect(player)
+
     end)
 
+
+
     inspect(player)
+
 end
 
+
+
 for _, player in ipairs(Players:GetPlayers()) do
+
     watch(player)
+
 end
+
+
 
 Players.PlayerAdded:Connect(watch)
 
+
+
 task.spawn(function()
+
     while task.wait(CONFIG.ScanInterval) do
+
         if not hopStarted then
+
             for _, player in ipairs(Players:GetPlayers()) do
+
                 inspect(player)
 
+
+
                 if hopStarted then
+
                     break
+
                 end
+
             end
+
         end
+
     end
+
 end)
 
+
+
 print("[RoleDetector] Monitoring aktif.")
+
+end -- returned checkAdmin(webhookURL) function

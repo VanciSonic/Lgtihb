@@ -185,7 +185,7 @@ local function sendWebhook(payload)
 
     if isSecurity then
 
-        *-- Security notice: satu paragraf, tanpa field tambahan.*
+        -- Security notice: satu paragraf, tanpa field tambahan.
 
     else
 

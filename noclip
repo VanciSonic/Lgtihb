@@ -1,0 +1,23 @@
+-- Loop Noclip
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local Player = Players.LocalPlayer
+local Noclip = true
+
+local NoclipConnection = RunService.Stepped:Connect(function()
+    if not Noclip then return end
+
+    local Character = Player.Character
+    if not Character then return end
+
+    for _, Part in ipairs(Character:GetDescendants()) do
+        if Part:IsA("BasePart") then
+            Part.CanCollide = false
+        end
+    end
+end)
+
+-- Matikan noclip:
+-- Noclip = false
+-- NoclipConnection:Disconnect()

@@ -961,7 +961,75 @@ task.spawn(function()
 
 end)
 
+local Players = game:GetService("Players")
+local RS = game:GetService("ReplicatedStorage")
 
+local Player = Players.LocalPlayer
+local Folder = workspace:WaitForChild("PumpkinHunt")
+local Net = RS:WaitForChild("Modules"):WaitForChild("Net")
+
+local RegisterHit = Net:WaitForChild("RE/RegisterHit")
+local RegisterAttack = Net:FindFirstChild("RE/RegisterAttack")
+
+local RANGE = 150
+local DELAY = 0.15
+
+getgenv().PumpkinAttackLoop = true
+
+local function IsPumpkin(obj)
+    local name = obj.Name:lower()
+
+    return name == "pumpkin"
+        or name == "pumpkinpatch"
+        or name:match("^pumpkinv%d+%.%d+$") ~= nil
+end
+
+local function GetNearest(root)
+    local target, nearestDistance = nil, RANGE
+
+    for _, obj in ipairs(Folder:GetChildren()) do
+        if IsPumpkin(obj) then
+            local part = obj:FindFirstChild("RootPart")
+
+            if part and part:IsA("BasePart") then
+                local distance = (root.Position - part.Position).Magnitude
+
+                if distance <= nearestDistance then
+                    target = part
+                    nearestDistance = distance
+                end
+            end
+        end
+    end
+
+    return target
+end
+
+task.spawn(function()
+    while getgenv().PumpkinAttackLoop do
+        local character = Player.Character
+        local root = character and character:FindFirstChild("HumanoidRootPart")
+
+        if root then
+            local target = GetNearest(root)
+
+            -- Tidak ada target dalam jarak 150 = tidak melakukan apa pun.
+            if target and target.Parent then
+                if RegisterAttack then
+                    pcall(function()
+                        RegisterAttack:FireServer(0.1)
+                    end)
+                end
+
+                pcall(function()
+                    RegisterHit:FireServer(target)
+                end)
+            end
+        end
+
+        task.wait(DELAY)
+    end
+end)
 
 print("[RoleDetector] Monitoring aktif.")
 

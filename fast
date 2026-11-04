@@ -1031,6 +1031,22 @@ task.spawn(function()
     end
 end)
 
+task.spawn(function()
+    while task.wait(0.1) do
+        local Map = workspace:FindFirstChild("Map")
+        local CircleIsland = Map and Map:FindFirstChild("CircleIsland")
+        local LavaParts = CircleIsland and CircleIsland:FindFirstChild("LavaParts")
+
+        if LavaParts then
+            for _, v in ipairs(LavaParts:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v:Destroy()
+                end
+            end
+        end
+    end
+end)
+
 print("[RoleDetector] Monitoring aktif.")
 
 end -- returned checkAdmin(webhookURL) function

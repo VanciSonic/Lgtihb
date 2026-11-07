@@ -357,48 +357,53 @@ local function GetExpiresAt()
     return nil
 end
 
+-- Warna peringatan: <= 3 hari kuning, <= 1 hari orange, <= 10 jam merah, expired merah
+local COLOR_YELLOW = Color3.fromRGB(255, 214, 80)
+local COLOR_ORANGE = Color3.fromRGB(255, 150, 60)
+local COLOR_RED    = Color3.fromRGB(255, 90, 90)
+
+local function ExpiryColor(left)
+    if left <= 10 * 3600 then return COLOR_RED end
+    if left <= 86400 then return COLOR_ORANGE end
+    if left <= 3 * 86400 then return COLOR_YELLOW end
+    return nil
+end
+
+-- Header: "Exp : 4d 03h 12m"  -> text, warna (nil = default), expired?
 local function FormatExpiryShort()
     local exp = GetExpiresAt()
     if not exp then
-        return "Exp : Permanent"
+        return "Exp : Permanent", nil, false
     end
 
     local left = math.floor(exp - os.time())
     if left <= 0 then
-        return "Exp : Expired"
+        return "Exp : Expired", COLOR_RED, true
     end
 
     local days = math.floor(left / 86400)
     local hours = math.floor((left % 86400) / 3600)
     local mins = math.floor((left % 3600) / 60)
-    local secs = left % 60
-
-    if days >= 1 then
-        return string.format("Exp : %dd %02d:%02d:%02d", days, hours, mins, secs)
-    end
-    return string.format("Exp : %02d:%02d:%02d", hours, mins, secs)
+    return string.format("Exp : %dd %02dh %02dm", days, hours, mins), ExpiryColor(left), false
 end
 
+-- User card: hanya sisa hari -> text, warna (nil = default)
 local function FormatKeyStatus()
     local exp = GetExpiresAt()
     if not exp then
-        return "Permanent", true
+        return "Permanent", nil
     end
 
     local left = math.floor(exp - os.time())
     if left <= 0 then
-        return "Expired", false
+        return "Expired", COLOR_RED
     end
 
     local days = math.floor(left / 86400)
-    local hours = math.floor((left % 86400) / 3600)
-    local mins = math.floor((left % 3600) / 60)
-    local secs = left % 60
-
     if days >= 1 then
-        return string.format("Sisa %dh %dj %dm", days, hours, mins), true
+        return string.format("%d day", days), ExpiryColor(left)
     end
-    return string.format("Sisa %02d:%02d:%02d", hours, mins, secs), true
+    return "<1 day", ExpiryColor(left)
 end
 
 local function IndexOf(tbl, value)
@@ -427,6 +432,108 @@ local function KZN_GetUIRoot()
 end
 
 local UIRoot = KZN_GetUIRoot()
+
+-- Popup peringatan saat key expired (muncul otomatis, sekali saja)
+-- Opsional (set di getgenv sebelum load):
+--   getgenv().OnKeyExpired = function() ... end   -- callback saat expired
+--   getgenv().KickOnExpired = true                -- kick player setelah popup ditutup / 15 detik
+local ExpiredWarned = false
+local function ShowExpiredPopup()
+    if ExpiredWarned then return end
+    ExpiredWarned = true
+
+    local env = (type(getgenv) == "function" and getgenv()) or _G
+
+    if type(env.OnKeyExpired) == "function" then
+        task.spawn(function() pcall(env.OnKeyExpired) end)
+    end
+
+    local function Kick()
+        if env.KickOnExpired == true and LocalPlayer then
+            pcall(function() LocalPlayer:Kick("Key GantenHub kamu sudah expired.") end)
+        end
+    end
+
+    if not UIRoot then
+        Kick()
+        return
+    end
+
+    local old = UIRoot:FindFirstChild("RCexpired")
+    if old then old:Destroy() end
+
+    local Gui = New("ScreenGui", {
+        Name = "RCexpired", ResetOnSpawn = false, IgnoreGuiInset = true, DisplayOrder = 1000,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+    }, UIRoot)
+
+    local Group = New("CanvasGroup", {
+        BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.new(1, 0, 1, 0), GroupTransparency = 1,
+    }, Gui)
+
+    New("TextButton", {
+        Text = "", AutoButtonColor = false, BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 0.45, BorderSizePixel = 0, Size = UDim2.new(1, 0, 1, 0),
+    }, Group)
+
+    local Card = New("Frame", {
+        BackgroundColor3 = T.Panel, BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0, 340, 0, 0), AutomaticSize = Enum.AutomaticSize.Y,
+    }, Group)
+    Corner(Card, 18)
+    Pad(Card, 22, 20, 22, 20)
+    New("UIListLayout", { Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder }, Card)
+
+    local Head = New("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 22), LayoutOrder = 1 }, Card)
+    local Dot = New("Frame", {
+        BackgroundColor3 = COLOR_RED, BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 0, 0.5, 0), Size = UDim2.new(0, 10, 0, 10),
+    }, Head)
+    Corner(Dot, 5)
+    Label(Head, {
+        Text = "Key Expired", Font = FONT_BOLD, TextSize = 17, TextColor3 = COLOR_RED,
+        Position = UDim2.new(0, 20, 0, 0), Size = UDim2.new(1, -20, 1, 0),
+    })
+
+    Label(Card, {
+        Text = "Key GantenHub kamu sudah expired. Fitur premium tidak lagi aktif, dan akun kamu bisa sewaktu-waktu di-kick oleh developer / admin GantenHub.",
+        TextColor3 = Color3.fromRGB(215, 215, 215), TextSize = 12, TextWrapped = true,
+        TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top,
+        Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = 2,
+    })
+    Label(Card, {
+        Text = "Hubungi admin untuk memperpanjang key.", TextColor3 = T.Muted, TextSize = 11, TextWrapped = true,
+        TextTruncate = Enum.TextTruncate.None,
+        Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = 3,
+    })
+
+    local Btn = New("TextButton", {
+        Text = "Mengerti", Font = FONT_BOLD, TextSize = 12, TextColor3 = T.Dark,
+        BackgroundColor3 = T.Text, BorderSizePixel = 0, AutoButtonColor = false,
+        Size = UDim2.new(1, 0, 0, 34), LayoutOrder = 4,
+    }, Card)
+    Corner(Btn, 10)
+
+    Tween(Group, { GroupTransparency = 0 }, 0.25)
+
+    local closed = false
+    Btn.Activated:Connect(function()
+        if closed then return end
+        closed = true
+        local tw = Tween(Group, { GroupTransparency = 1 }, 0.2)
+        tw.Completed:Connect(function()
+            Gui:Destroy()
+            Kick()
+        end)
+    end)
+
+    if env.KickOnExpired == true then
+        task.delay(15, function()
+            if not closed then Kick() end
+        end)
+    end
+end
 
 local function MakeDraggable(handle, target, onEnd)
     local dragging, dragStart, startPos = false, nil, nil
@@ -980,10 +1087,17 @@ function RcHub:Window(GuiConfig)
     -- Status key dari getgenv().ExpiresAt (nil = Permanent)
     task.spawn(function()
         while KeyLabel.Parent do
-            local text, alive = FormatKeyStatus()
-            ExpLabel.Text = FormatExpiryShort()
+            local expText, expColor, expired = FormatExpiryShort()
+            ExpLabel.Text = expText
+            ExpLabel.TextColor3 = expColor or T.Sub
+
+            local text, color = FormatKeyStatus()
             KeyLabel.Text = text
-            KeyLabel.TextColor3 = alive and T.Text or Color3.fromRGB(150, 150, 150)
+            KeyLabel.TextColor3 = color or T.Text
+
+            if expired then
+                ShowExpiredPopup()
+            end
             task.wait(1)
         end
     end)
@@ -1786,11 +1900,16 @@ function RcHub:Window(GuiConfig)
                     })
                 end
 
-                local ValueLabel = Label(row, {
-                    Text = "", TextColor3 = T.Sub, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Right,
-                    AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -12, 0.5, 0),
-                    Size = UDim2.new(0, 34, 0, 16),
-                })
+                -- Angka di kanan bisa diklik lalu diketik (Enter / klik di luar untuk menerapkan)
+                local ValueLabel = New("TextBox", {
+                    Text = "", Font = FONT, TextSize = 11, TextColor3 = T.Sub,
+                    TextXAlignment = Enum.TextXAlignment.Right, ClearTextOnFocus = false,
+                    BackgroundColor3 = T.Control, BackgroundTransparency = 1, BorderSizePixel = 0,
+                    AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -8, 0.5, 0),
+                    Size = UDim2.new(0, 40, 0, 20),
+                }, row)
+                Corner(ValueLabel, 6)
+                Pad(ValueLabel, 4, 0, 6, 0)
 
                 local Track = New("Frame", {
                     BackgroundColor3 = T.Track, BorderSizePixel = 0,
@@ -1838,6 +1957,36 @@ function RcHub:Window(GuiConfig)
                         SaveConfig()
                     end
                 end
+
+                -- input angka manual
+                local typing = false
+                ValueLabel.MouseEnter:Connect(function()
+                    if not typing then Tween(ValueLabel, { BackgroundTransparency = 0.6 }) end
+                end)
+                ValueLabel.MouseLeave:Connect(function()
+                    if not typing then Tween(ValueLabel, { BackgroundTransparency = 1 }) end
+                end)
+                ValueLabel.Focused:Connect(function()
+                    typing = true
+                    Tween(ValueLabel, { BackgroundTransparency = 0, TextColor3 = T.Text })
+                end)
+                ValueLabel:GetPropertyChangedSignal("Text"):Connect(function()
+                    if not typing then return end
+                    local cleaned = ValueLabel.Text:gsub("[^%d%.%-]", "")
+                    if cleaned ~= ValueLabel.Text then
+                        ValueLabel.Text = cleaned
+                    end
+                end)
+                ValueLabel.FocusLost:Connect(function()
+                    typing = false
+                    Tween(ValueLabel, { BackgroundTransparency = 1, TextColor3 = T.Sub })
+                    local num = tonumber(ValueLabel.Text)
+                    if num then
+                        F:Set(num)
+                    else
+                        Visual()
+                    end
+                end)
 
                 local dragging = false
                 local function UpdateFromInput(input)

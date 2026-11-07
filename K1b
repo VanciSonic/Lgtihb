@@ -335,16 +335,48 @@ local function GetExpiresAt()
             if num > 1e12 then num = num / 1000 end
             return num
         end
-        local y, mo, d, h, mi, sec = v:match("^(%d+)%-(%d+)%-(%d+)[ T]?(%d*):?(%d*):?(%d*)")
+
+        -- contoh: "2026-11-11 06:37:44" (boleh ada teks lain di depan, mis. "Expires At 2026-...")
+        local y, mo, d, h, mi, sec = v:match("(%d%d%d%d)%-(%d+)%-(%d+)[ T]+(%d+):(%d+):?(%d*)")
+        if not y then
+            y, mo, d = v:match("(%d%d%d%d)%-(%d+)%-(%d+)")
+            h, mi, sec = 0, 0, 0
+        end
         if y then
             local ok, t = pcall(os.time, {
                 year = tonumber(y), month = tonumber(mo), day = tonumber(d),
                 hour = tonumber(h) or 0, min = tonumber(mi) or 0, sec = tonumber(sec) or 0,
             })
-            if ok then return t end
+            if ok and t then
+                -- os.time(table) dibaca sebagai UTC. Kalau tanggalmu waktu WIB, set getgenv().ExpiresTZ = 7
+                local tz = tonumber(env.ExpiresTZ) or 0
+                return t - tz * 3600
+            end
         end
     end
     return nil
+end
+
+local function FormatExpiryShort()
+    local exp = GetExpiresAt()
+    if not exp then
+        return "Exp : Permanent"
+    end
+
+    local left = math.floor(exp - os.time())
+    if left <= 0 then
+        return "Exp : Expired"
+    end
+
+    local days = math.floor(left / 86400)
+    local hours = math.floor((left % 86400) / 3600)
+    local mins = math.floor((left % 3600) / 60)
+    local secs = left % 60
+
+    if days >= 1 then
+        return string.format("Exp : %dd %02d:%02d:%02d", days, hours, mins, secs)
+    end
+    return string.format("Exp : %02d:%02d:%02d", hours, mins, secs)
 end
 
 local function FormatKeyStatus()
@@ -614,7 +646,7 @@ function RcHub:Window(GuiConfig)
     end
 
     local function HideWindow()
-        if animating or not Main.Visible then return end
+        if animating or not Main.Visible or not Content or not Overlay then return end
         animating = true
         if ClosePopup then ClosePopup() end
 
@@ -644,7 +676,7 @@ function RcHub:Window(GuiConfig)
     end
 
     local function ShowWindow()
-        if animating or Main.Visible then return end
+        if animating or Main.Visible or not Content or not Overlay then return end
         animating = true
 
         local pos, size = ButtonRect()
@@ -728,6 +760,12 @@ function RcHub:Window(GuiConfig)
         })
         table.insert(GoldTweens, GoldText(TagLabel))
     end
+
+    local ExpLabel = Label(TitleHolder, {
+        Text = FormatExpiryShort(), TextColor3 = T.Sub, TextSize = 10, TextTruncate = Enum.TextTruncate.None,
+        Size = UDim2.new(0, 0, 0, 20), AutomaticSize = Enum.AutomaticSize.X, LayoutOrder = 3,
+    })
+    TitleHolder.ClipsDescendants = true
 
     local SearchCard = New("Frame", {
         Name = "SearchBar", BackgroundColor3 = T.Panel, BorderSizePixel = 0,
@@ -943,6 +981,7 @@ function RcHub:Window(GuiConfig)
     task.spawn(function()
         while KeyLabel.Parent do
             local text, alive = FormatKeyStatus()
+            ExpLabel.Text = FormatExpiryShort()
             KeyLabel.Text = text
             KeyLabel.TextColor3 = alive and T.Text or Color3.fromRGB(150, 150, 150)
             task.wait(1)
@@ -1145,13 +1184,19 @@ function RcHub:Window(GuiConfig)
     Tabs:ToggleUI()
 
     -- Bungkus semua konten ke satu Frame supaya bisa dilepas saat animasi
+    -- ambil daftar anak SEBELUM Content dibuat (hindari reparent ke diri sendiri)
+    local BaseChildren = {}
+    for _, c in ipairs(Main:GetChildren()) do
+        if c:IsA("GuiObject") then
+            table.insert(BaseChildren, c)
+        end
+    end
+
     Content = New("Frame", {
         Name = "Content", BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.new(1, 0, 1, 0),
     }, Main)
-    for _, c in ipairs(Main:GetChildren()) do
-        if c:IsA("GuiObject") and c ~= Content then
-            c.Parent = Content
-        end
+    for _, c in ipairs(BaseChildren) do
+        c.Parent = Content
     end
 
     Overlay = New("Frame", {

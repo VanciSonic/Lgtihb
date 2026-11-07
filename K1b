@@ -261,6 +261,93 @@ local function ResolveIcon(icon)
     return tostring(icon)
 end
 
+-- Brand tetap (tidak ikut config Window)
+local BRAND_NAME = "GantenHub"
+local BRAND_TAG  = "Premium"
+
+-- Logo mahkota digambar dari Frame (tidak butuh asset, selalu tampil)
+local function MakeCrown(parent, color, props)
+    local box = New("Frame", {
+        Name = "Crown", BackgroundTransparency = 1, BorderSizePixel = 0,
+        Size = UDim2.new(0, 22, 0, 16),
+    }, parent)
+    if props then
+        for k, v in pairs(props) do box[k] = v end
+    end
+
+    New("Frame", {
+        BackgroundColor3 = color, BorderSizePixel = 0,
+        Position = UDim2.new(0, 1, 0, 11), Size = UDim2.new(0, 20, 0, 4),
+    }, box)
+
+    local spikes = {
+        { x = 5.5,  y = 7.5, s = 6 },
+        { x = 11,   y = 6,   s = 7 },
+        { x = 16.5, y = 7.5, s = 6 },
+    }
+    for _, sp in ipairs(spikes) do
+        New("Frame", {
+            BackgroundColor3 = color, BorderSizePixel = 0, Rotation = 45,
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0, sp.x, 0, sp.y), Size = UDim2.new(0, sp.s, 0, sp.s),
+        }, box)
+    end
+    return box
+end
+
+-- Baca masa aktif key dari getgenv().ExpiresAt (nil = permanent)
+-- Boleh berupa unix time (detik / milidetik) atau teks "YYYY-MM-DD" / "YYYY-MM-DD HH:MM:SS"
+local function GetExpiresAt()
+    local env = (type(getgenv) == "function" and getgenv()) or _G
+    local v = env and env.ExpiresAt
+    if v == nil or v == false or v == 0 then return nil end
+
+    if type(v) == "number" then
+        if v > 1e12 then v = v / 1000 end
+        return v
+    end
+
+    if type(v) == "string" then
+        if string.lower(v) == "permanent" then return nil end
+        local num = tonumber(v)
+        if num then
+            if num > 1e12 then num = num / 1000 end
+            return num
+        end
+        local y, mo, d, h, mi, sec = v:match("^(%d+)%-(%d+)%-(%d+)[ T]?(%d*):?(%d*):?(%d*)")
+        if y then
+            local ok, t = pcall(os.time, {
+                year = tonumber(y), month = tonumber(mo), day = tonumber(d),
+                hour = tonumber(h) or 0, min = tonumber(mi) or 0, sec = tonumber(sec) or 0,
+            })
+            if ok then return t end
+        end
+    end
+    return nil
+end
+
+local function FormatKeyStatus()
+    local exp = GetExpiresAt()
+    if not exp then
+        return "Permanent", true
+    end
+
+    local left = math.floor(exp - os.time())
+    if left <= 0 then
+        return "Expired", false
+    end
+
+    local days = math.floor(left / 86400)
+    local hours = math.floor((left % 86400) / 3600)
+    local mins = math.floor((left % 3600) / 60)
+    local secs = left % 60
+
+    if days >= 1 then
+        return string.format("Sisa %dh %dj %dm", days, hours, mins), true
+    end
+    return string.format("Sisa %02d:%02d:%02d", hours, mins, secs), true
+end
+
 local function IndexOf(tbl, value)
     for i, v in ipairs(tbl) do
         if v == value then return i end
@@ -420,13 +507,11 @@ end
 function RcHub:Window(GuiConfig)
     KZN_AssertThreadIdentity()
     GuiConfig              = GuiConfig or {}
-    GuiConfig.Title        = GuiConfig.Title or "GantenHub"
-    GuiConfig.Footer       = GuiConfig.Footer or "Premium"
+    GuiConfig.Title        = BRAND_NAME
+    GuiConfig.Footer       = BRAND_TAG
     GuiConfig.Color        = GuiConfig.Color or T.Text
     GuiConfig["Tab Width"] = math.max(GuiConfig["Tab Width"] or 150, 120)
     GuiConfig.Version      = GuiConfig.Version or 1
-    GuiConfig.User         = GuiConfig.User or (LocalPlayer and LocalPlayer.DisplayName) or "User"
-    GuiConfig.KeyStatus    = GuiConfig.KeyStatus or "Key aktif"
     GuiConfig.ToggleKey    = GuiConfig.ToggleKey or Enum.KeyCode.F3
 
     CURRENT_VERSION = GuiConfig.Version
@@ -445,6 +530,7 @@ function RcHub:Window(GuiConfig)
     local viewport = workspace.CurrentCamera.ViewportSize
     local winW = math.min(680, viewport.X - 20)
     local winH = math.min(420, viewport.Y - 20)
+    local MIN_W, MIN_H = math.min(520, winW), math.min(320, winH)
 
     local RCglob = New("ScreenGui", {
         Name = "RCglob", ResetOnSpawn = false, IgnoreGuiInset = true,
@@ -453,7 +539,8 @@ function RcHub:Window(GuiConfig)
 
     local Main = New("Frame", {
         Name = "Main", BackgroundColor3 = T.BG, BorderSizePixel = 0,
-        AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0),
+        Position = UDim2.new(0, math.floor((viewport.X - winW) / 2), 0, math.floor((viewport.Y - winH) / 2)),
         Size = UDim2.new(0, winW, 0, winH),
     }, RCglob)
     Corner(Main, 20)
@@ -474,16 +561,13 @@ function RcHub:Window(GuiConfig)
     }, Main)
     Corner(TitleCard, 14)
 
-    local logoImage = ResolveIcon(GuiConfig.Icon or "star")
-    New("ImageLabel", {
-        BackgroundTransparency = 1, Image = logoImage, ImageColor3 = T.Text,
-        AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 12, 0.5, 0),
-        Size = UDim2.new(0, 18, 0, 18),
-    }, TitleCard)
+    MakeCrown(TitleCard, T.Text, {
+        AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 14, 0.5, 0),
+    })
 
     local TitleHolder = New("Frame", {
         BackgroundTransparency = 1, AnchorPoint = Vector2.new(0, 0.5),
-        Position = UDim2.new(0, 38, 0.5, 0), Size = UDim2.new(1, -90, 1, 0),
+        Position = UDim2.new(0, 44, 0.5, 0), Size = UDim2.new(1, -54, 1, 0),
     }, TitleCard)
     New("UIListLayout", {
         FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 8),
@@ -508,13 +592,6 @@ function RcHub:Window(GuiConfig)
             Size = UDim2.new(0, 0, 1, 0), AutomaticSize = Enum.AutomaticSize.X,
         })
     end
-
-    Label(TitleCard, {
-        Text = "v" .. tostring(GuiConfig.Version), TextColor3 = T.Muted, TextSize = 11,
-        TextXAlignment = Enum.TextXAlignment.Right,
-        AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -14, 0.5, 0),
-        Size = UDim2.new(0, 36, 0, 16),
-    })
 
     local SearchCard = New("Frame", {
         Name = "SearchBar", BackgroundColor3 = T.Panel, BorderSizePixel = 0,
@@ -567,6 +644,62 @@ function RcHub:Window(GuiConfig)
 
     MakeDraggable(DragBar, Main)
     MakeDraggable(TitleCard, Main)
+
+    -- Resize handle (pojok kanan bawah): tarik untuk atur lebar (X) dan tinggi (Y) window
+    local ResizeHandle = New("TextButton", {
+        Name = "ResizeHandle", Text = "", AutoButtonColor = false, BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(1, 1), Position = UDim2.new(1, -2, 1, -2),
+        Size = UDim2.new(0, 22, 0, 22), ZIndex = 20,
+    }, Main)
+
+    local GripDots = {}
+    for _, p in ipairs({ { 15, 15 }, { 9, 15 }, { 15, 9 } }) do
+        local dot = New("Frame", {
+            BackgroundColor3 = T.Muted, BorderSizePixel = 0, ZIndex = 21,
+            Position = UDim2.new(0, p[1], 0, p[2]), Size = UDim2.new(0, 3, 0, 3),
+        }, ResizeHandle)
+        Corner(dot, 2)
+        table.insert(GripDots, dot)
+    end
+
+    ResizeHandle.MouseEnter:Connect(function()
+        for _, d in ipairs(GripDots) do Tween(d, { BackgroundColor3 = T.Text }) end
+    end)
+    ResizeHandle.MouseLeave:Connect(function()
+        for _, d in ipairs(GripDots) do Tween(d, { BackgroundColor3 = T.Muted }) end
+    end)
+
+    do
+        local resizing, startMouse, startSize = false, nil, nil
+
+        ResizeHandle.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1
+                or input.UserInputType == Enum.UserInputType.Touch then
+                resizing = true
+                startMouse = input.Position
+                startSize = Main.AbsoluteSize
+                if ClosePopup then ClosePopup() end
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        resizing = false
+                    end
+                end)
+            end
+        end)
+
+        UserInputService.InputChanged:Connect(function(input)
+            if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement
+                or input.UserInputType == Enum.UserInputType.Touch) then
+                local d = input.Position - startMouse
+                local vp = workspace.CurrentCamera.ViewportSize
+                local maxW = math.max(MIN_W, vp.X - Main.AbsolutePosition.X - 4)
+                local maxH = math.max(MIN_H, vp.Y - Main.AbsolutePosition.Y - 4)
+                local w = math.clamp(startSize.X + d.X, MIN_W, maxW)
+                local h = math.clamp(startSize.Y + d.Y, MIN_H, maxH)
+                Main.Size = UDim2.new(0, math.floor(w), 0, math.floor(h))
+            end
+        end)
+    end
 
     -- --------------------------------------------------------
     -- ROW 2 : nama tab (biru) + section chips (aqua)
@@ -660,13 +793,23 @@ function RcHub:Window(GuiConfig)
     end)
 
     Label(UserCard, {
-        Text = GuiConfig.User, TextColor3 = T.Sub, TextSize = 11,
+        Text = BRAND_TAG, TextColor3 = T.Sub, TextSize = 11,
         Position = UDim2.new(0, 46, 0, 9), Size = UDim2.new(1, -52, 0, 14),
     })
-    Label(UserCard, {
-        Text = GuiConfig.KeyStatus, TextColor3 = T.Text, Font = FONT_BOLD, TextSize = 11,
+    local KeyLabel = Label(UserCard, {
+        Text = "", TextColor3 = T.Text, Font = FONT_BOLD, TextSize = 11,
         Position = UDim2.new(0, 46, 0, 25), Size = UDim2.new(1, -52, 0, 14),
     })
+
+    -- Status key dari getgenv().ExpiresAt (nil = Permanent)
+    task.spawn(function()
+        while KeyLabel.Parent do
+            local text, alive = FormatKeyStatus()
+            KeyLabel.Text = text
+            KeyLabel.TextColor3 = alive and T.Text or Color3.fromRGB(150, 150, 150)
+            task.wait(1)
+        end
+    end)
 
     -- --------------------------------------------------------
     -- RIGHT : area element (pink) + overlay search
@@ -821,9 +964,8 @@ function RcHub:Window(GuiConfig)
                 Position = UDim2.new(0, 6, 0, 6),
             }, Btn)
         else
-            Label(Btn, {
-                Text = "G", Font = FONT_BOLD, TextSize = 18, TextXAlignment = Enum.TextXAlignment.Center,
-                Size = UDim2.new(1, 0, 1, 0),
+            MakeCrown(Btn, T.Text, {
+                AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0),
             })
         end
 
@@ -1028,8 +1170,12 @@ function RcHub:Window(GuiConfig)
         -- ----------------------------------------------------
         -- AddSection (chip + halaman dua kolom)
         -- ----------------------------------------------------
-        function Sections:AddSection(Title, AlwaysOpen)
+        -- AddSection(Title, TwoColumn)
+        --   TwoColumn = true  -> 2 kolom untuk element
+        --   TwoColumn = false / nil (default) -> 1 kolom
+        function Sections:AddSection(Title, TwoColumn)
             Title = Title or "Section"
+            local twoCol = (TwoColumn == true)
             local Sec = {}
 
             local Chip = New("TextButton", {
@@ -1056,11 +1202,11 @@ function RcHub:Window(GuiConfig)
             Sec.Page = Page
 
             local cols = {}
-            for i = 1, 2 do
+            for i = 1, (twoCol and 2 or 1) do
                 local sf = New("ScrollingFrame", {
                     Name = "Column" .. i, BackgroundColor3 = T.Panel, BorderSizePixel = 0,
-                    Position = UDim2.new(i == 1 and 0 or 0.5, i == 1 and 0 or 5, 0, 0),
-                    Size = UDim2.new(0.5, -5, 1, 0),
+                    Position = twoCol and UDim2.new(i == 1 and 0 or 0.5, i == 1 and 0 or 5, 0, 0) or UDim2.new(0, 0, 0, 0),
+                    Size = twoCol and UDim2.new(0.5, -5, 1, 0) or UDim2.new(1, 0, 1, 0),
                     CanvasSize = UDim2.new(0, 0, 0, 0), AutomaticCanvasSize = Enum.AutomaticSize.Y,
                     ScrollBarThickness = 3, ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100),
                     ScrollingDirection = Enum.ScrollingDirection.Y, Active = true,
@@ -1093,7 +1239,9 @@ function RcHub:Window(GuiConfig)
             -- pilih kolom (otomatis ke kolom yang lebih pendek)
             local function NewRow(height, cfg, transparent)
                 local idx = cfg and cfg.Column
-                if idx ~= 1 and idx ~= 2 then
+                if not twoCol then
+                    idx = 1
+                elseif idx ~= 1 and idx ~= 2 then
                     idx = (cols[1].h <= cols[2].h) and 1 or 2
                 end
                 local col = cols[idx]

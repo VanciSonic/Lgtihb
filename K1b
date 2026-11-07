@@ -1,4 +1,4 @@
--- GantenHub Premium UI Library (soft layout)
+-- GantengHub Premium UI Library (soft layout)
 -- Layout mengikuti sketsa:
 --   [ Nama GUI ........ ] [ Search bar ........ ] [-] [x]
 --   [ Nama tab ] [ < section chips (scroll kanan kiri) > ]
@@ -6,7 +6,7 @@
 --
 -- API sama dengan library lama:
 --   local Hub = loadstring(game:HttpGet("URL"))()
---   local Win = Hub:Window({ Title = "GantenHub", Footer = "Premium", Version = 1 })
+--   local Win = Hub:Window({ Title = "GantengHub", Footer = "Premium", Version = 1 })
 --   local Tab = Win:AddTab({ Name = "Combat", Icon = "sword" })
 --   local Sec = Tab:AddSection("Aimbot")
 --   Sec:AddToggle({ Title = "Enable", Default = false, Callback = function(v) end })
@@ -262,36 +262,84 @@ local function ResolveIcon(icon)
 end
 
 -- Brand tetap (tidak ikut config Window)
-local BRAND_NAME = "GantenHub"
+local BRAND_NAME = "GantengHub"
 local BRAND_TAG  = "Premium"
+
+-- Segitiga (setengah belah ketupat yang dipotong) -> dipakai untuk mahkota
+local function Tri(parent, x, y, base, color)
+    local clip = New("Frame", {
+        BackgroundTransparency = 1, BorderSizePixel = 0, ClipsDescendants = true,
+        Position = UDim2.new(0, x, 0, y), Size = UDim2.new(0, base, 0, base / 2),
+    }, parent)
+    local side = base / 1.41421356
+    New("Frame", {
+        BackgroundColor3 = color, BorderSizePixel = 0, Rotation = 45,
+        AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 1, 0),
+        Size = UDim2.new(0, side, 0, side),
+    }, clip)
+end
 
 -- Logo mahkota digambar dari Frame (tidak butuh asset, selalu tampil)
 local function MakeCrown(parent, color, props)
     local box = New("Frame", {
         Name = "Crown", BackgroundTransparency = 1, BorderSizePixel = 0,
-        Size = UDim2.new(0, 22, 0, 16),
+        Size = UDim2.new(0, 26, 0, 18),
     }, parent)
     if props then
         for k, v in pairs(props) do box[k] = v end
     end
 
+    -- badan + pita bawah
     New("Frame", {
         BackgroundColor3 = color, BorderSizePixel = 0,
-        Position = UDim2.new(0, 1, 0, 11), Size = UDim2.new(0, 20, 0, 4),
+        Position = UDim2.new(0, 1, 0, 8), Size = UDim2.new(0, 24, 0, 5),
     }, box)
+    local band = New("Frame", {
+        BackgroundColor3 = color, BorderSizePixel = 0,
+        Position = UDim2.new(0, 1, 0, 14), Size = UDim2.new(0, 24, 0, 3),
+    }, box)
+    Corner(band, 1)
 
-    local spikes = {
-        { x = 5.5,  y = 7.5, s = 6 },
-        { x = 11,   y = 6,   s = 7 },
-        { x = 16.5, y = 7.5, s = 6 },
-    }
-    for _, sp in ipairs(spikes) do
+    -- tiga puncak
+    Tri(box, 1, 4, 8, color)
+    Tri(box, 8, 3, 10, color)
+    Tri(box, 17, 4, 8, color)
+
+    -- bola kecil di ujung puncak
+    for _, d in ipairs({ { 3.5, 2.5 }, { 11.5, 1.5 }, { 19.5, 2.5 } }) do
+        local dot = New("Frame", {
+            BackgroundColor3 = color, BorderSizePixel = 0,
+            Position = UDim2.new(0, d[1], 0, d[2]), Size = UDim2.new(0, 3, 0, 3),
+        }, box)
+        Corner(dot, 2)
+    end
+    return box
+end
+
+-- Ikon segitiga warning (!) digambar dari Frame
+local function MakeWarnIcon(parent, color, props)
+    local box = New("Frame", {
+        Name = "WarnIcon", BackgroundTransparency = 1, BorderSizePixel = 0,
+        Size = UDim2.new(0, 18, 0, 16),
+    }, parent)
+    if props then
+        for k, v in pairs(props) do box[k] = v end
+    end
+
+    local h = 14
+    for i = 0, h - 1 do
+        local w = math.max(2, math.floor((i + 1) * 17 / h + 0.5))
         New("Frame", {
-            BackgroundColor3 = color, BorderSizePixel = 0, Rotation = 45,
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            Position = UDim2.new(0, sp.x, 0, sp.y), Size = UDim2.new(0, sp.s, 0, sp.s),
+            BackgroundColor3 = color, BorderSizePixel = 0,
+            Position = UDim2.new(0, math.floor((18 - w) / 2), 0, i + 1), Size = UDim2.new(0, w, 0, 1),
         }, box)
     end
+
+    Label(box, {
+        Text = "!", Font = FONT_BOLD, TextSize = 10, TextColor3 = T.Dark, ZIndex = 2,
+        TextXAlignment = Enum.TextXAlignment.Center, TextTruncate = Enum.TextTruncate.None,
+        Position = UDim2.new(0, 0, 0, 4), Size = UDim2.new(1, 0, 0, 12),
+    })
     return box
 end
 
@@ -450,7 +498,7 @@ local function ShowExpiredPopup()
 
     local function Kick()
         if env.KickOnExpired == true and LocalPlayer then
-            pcall(function() LocalPlayer:Kick("Key GantenHub kamu sudah expired.") end)
+            pcall(function() LocalPlayer:Kick("Key GantengHub kamu sudah expired.") end)
         end
     end
 
@@ -497,7 +545,7 @@ local function ShowExpiredPopup()
     })
 
     Label(Card, {
-        Text = "Key GantenHub kamu sudah expired. Fitur premium tidak lagi aktif, dan akun kamu bisa sewaktu-waktu di-kick oleh developer / admin GantenHub.",
+        Text = "Key GantengHub kamu sudah expired. Fitur premium tidak lagi aktif, dan akun kamu bisa sewaktu-waktu di-kick oleh developer / admin GantengHub.",
         TextColor3 = Color3.fromRGB(215, 215, 215), TextSize = 12, TextWrapped = true,
         TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top,
         Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = 2,
@@ -574,7 +622,7 @@ local NotifyGui, NotifyHolder
 function RcHub:MakeNotify(NotifyConfig)
     KZN_AssertThreadIdentity()
     NotifyConfig = NotifyConfig or {}
-    NotifyConfig.Title       = NotifyConfig.Title or "GantenHub"
+    NotifyConfig.Title       = NotifyConfig.Title or "GantengHub"
     NotifyConfig.Description = NotifyConfig.Description or "Notification"
     NotifyConfig.Content     = NotifyConfig.Content or ""
     NotifyConfig.Color       = NotifyConfig.Color or T.Text
@@ -654,7 +702,7 @@ end
 
 function rcchub(msg, delay, color, title, desc)
     return RcHub:MakeNotify({
-        Title = title or "GantenHub",
+        Title = title or "GantengHub",
         Description = desc or "Notification",
         Content = msg or "",
         Color = color,
@@ -742,9 +790,17 @@ function RcHub:Window(GuiConfig)
         SaveConfig()
     end
 
+    -- Titik asal koordinat Main (dihitung dari Main sendiri saat terlihat) supaya
+    -- target animasi tepat di tombol walau ada GUI inset / nested ScreenGui.
+    local MainOrigin = RCglob.AbsolutePosition
+
+    local function UpdateOrigin()
+        MainOrigin = Main.AbsolutePosition - Vector2.new(Main.Position.X.Offset, Main.Position.Y.Offset)
+    end
+
     local function ButtonRect()
         if ToggleBtn and ToggleBtn.Parent then
-            local p, sz = ToggleBtn.AbsolutePosition, ToggleBtn.AbsoluteSize
+            local p, sz = ToggleBtn.AbsolutePosition - MainOrigin, ToggleBtn.AbsoluteSize
             return UDim2.new(0, p.X, 0, p.Y), UDim2.new(0, sz.X, 0, sz.Y)
         end
         local cx = LastPos.X.Offset + LastSize.X.Offset / 2
@@ -752,12 +808,21 @@ function RcHub:Window(GuiConfig)
         return UDim2.new(0, cx - 21, 0, cy - 21), UDim2.new(0, 42, 0, 42)
     end
 
+    local function CloseModals()
+        for _, n in ipairs({ "CloseDialog", "ResetDialog", "GuideDialog" }) do
+            local o = Main:FindFirstChild(n)
+            if o then o:Destroy() end
+        end
+    end
+
     local function HideWindow()
         if animating or not Main.Visible or not Content or not Overlay then return end
         animating = true
         if ClosePopup then ClosePopup() end
+        CloseModals()
 
         CaptureRect()
+        UpdateOrigin()
         local pos, size = ButtonRect()
 
         -- 1) fade konten (cepat)
@@ -769,11 +834,11 @@ function RcHub:Window(GuiConfig)
             -- 2) lepas konten supaya animasi tidak berat, lalu sedot ke tombol
             Content.Parent = nil
             Overlay.Visible = false
-            TweenService:Create(Main, TweenInfo.new(0.34, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
+            TweenService:Create(Main, TweenInfo.new(0.42, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
                 Position = pos, Size = size,
             }):Play()
 
-            task.delay(0.36, function()
+            task.delay(0.44, function()
                 Main.Visible = false
                 Main.Position = LastPos
                 Main.Size = LastSize
@@ -793,11 +858,11 @@ function RcHub:Window(GuiConfig)
         Main.Size = size
         Main.Visible = true
 
-        TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+        TweenService:Create(Main, TweenInfo.new(0.45, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
             Position = LastPos, Size = LastSize,
         }):Play()
 
-        task.delay(0.42, function()
+        task.delay(0.47, function()
             Main.Position = LastPos
             Main.Size = LastSize
 
@@ -818,11 +883,190 @@ function RcHub:Window(GuiConfig)
         if Main.Visible then HideWindow() else ShowWindow() end
     end
 
+    -- ===== Modal / popup di dalam window =====
+    local function OpenModal(name, maxW, maxH)
+        local old = Main:FindFirstChild(name)
+        if old then old:Destroy() end
+
+        local Overlay = New("TextButton", {
+            Name = name, Text = "", AutoButtonColor = false,
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0), BackgroundTransparency = 1, BorderSizePixel = 0,
+            Size = UDim2.new(1, 0, 1, 0), ZIndex = 85,
+        }, Main)
+        Corner(Overlay, 20)
+
+        local Card = New("Frame", {
+            BackgroundColor3 = T.Panel, BorderSizePixel = 0, Active = true, ZIndex = 86,
+            AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0),
+            Size = UDim2.new(0.9, 0, 0.9, 0),
+        }, Overlay)
+        Corner(Card, 18)
+        New("UISizeConstraint", { MaxSize = Vector2.new(maxW, maxH) }, Card)
+        local CardScale = New("UIScale", { Scale = 0.92 }, Card)
+
+        local XBtn = New("TextButton", {
+            Text = "×", Font = FONT_BOLD, TextSize = 16, TextColor3 = T.Sub, BackgroundColor3 = T.Control,
+            BorderSizePixel = 0, AutoButtonColor = false, ZIndex = 90,
+            AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -12, 0, 12), Size = UDim2.new(0, 26, 0, 26),
+        }, Card)
+        Corner(XBtn, 13)
+        XBtn.MouseEnter:Connect(function() Tween(XBtn, { BackgroundColor3 = T.Track, TextColor3 = T.Text }) end)
+        XBtn.MouseLeave:Connect(function() Tween(XBtn, { BackgroundColor3 = T.Control, TextColor3 = T.Sub }) end)
+
+        local closed = false
+        local function Close()
+            if closed then return end
+            closed = true
+            Tween(Overlay, { BackgroundTransparency = 1 }, 0.15)
+            Tween(CardScale, { Scale = 0.92 }, 0.15)
+            task.delay(0.16, function()
+                if Overlay and Overlay.Parent then Overlay:Destroy() end
+            end)
+        end
+        XBtn.Activated:Connect(Close)
+        Overlay.Activated:Connect(Close)
+
+        Tween(Overlay, { BackgroundTransparency = 0.45 }, 0.18)
+        Tween(CardScale, { Scale = 1 }, 0.2)
+
+        return Overlay, Card, Close
+    end
+
+    -- Popup guide (dipakai AddGuide). data = { Title = "", Pages = { {Title=, Content=}, ... } }
+    local function ShowGuide(data)
+        local pages = data.Pages or {}
+        if #pages == 0 then return end
+
+        local _, Card, Close = OpenModal("GuideDialog", 440, 340)
+        local multi = #pages > 1
+        local footer = multi and 52 or 16
+        local idx = 1
+
+        local TitleLabel = Label(Card, {
+            Text = "", Font = FONT_BOLD, TextSize = 15, RichText = true, ZIndex = 88,
+            Position = UDim2.new(0, 18, 0, 14), Size = UDim2.new(1, -62, 0, 24),
+        })
+        New("Frame", {
+            BackgroundColor3 = T.Track, BorderSizePixel = 0, ZIndex = 88,
+            Position = UDim2.new(0, 14, 0, 46), Size = UDim2.new(1, -28, 0, 1),
+        }, Card)
+
+        local Scroll = New("ScrollingFrame", {
+            BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 88, Active = true,
+            Position = UDim2.new(0, 14, 0, 54), Size = UDim2.new(1, -28, 1, -(54 + footer)),
+            CanvasSize = UDim2.new(0, 0, 0, 0), AutomaticCanvasSize = Enum.AutomaticSize.Y,
+            ScrollBarThickness = 3, ScrollBarImageColor3 = Color3.fromRGB(110, 110, 110),
+        }, Card)
+        local Body = Label(Scroll, {
+            Text = "", TextColor3 = Color3.fromRGB(215, 215, 215), TextSize = 12, TextWrapped = true,
+            TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top,
+            RichText = true, LineHeight = 1.15, ZIndex = 89,
+            Size = UDim2.new(1, -10, 0, 0), AutomaticSize = Enum.AutomaticSize.Y,
+        })
+
+        local PageLabel, Prev, Next
+        if multi then
+            local function MakeBtn(text, bg, fg)
+                local b = New("TextButton", {
+                    Text = text, Font = FONT_BOLD, TextSize = 12, TextColor3 = fg, BackgroundColor3 = bg,
+                    BorderSizePixel = 0, AutoButtonColor = false, ZIndex = 89, Size = UDim2.new(0, 86, 0, 30),
+                }, Card)
+                Corner(b, 10)
+                return b
+            end
+            Prev = MakeBtn("Kembali", T.Control, T.Text)
+            Prev.AnchorPoint = Vector2.new(0, 1)
+            Prev.Position = UDim2.new(0, 14, 1, -12)
+
+            Next = MakeBtn("Lanjut", T.Text, T.Dark)
+            Next.AnchorPoint = Vector2.new(1, 1)
+            Next.Position = UDim2.new(1, -14, 1, -12)
+
+            PageLabel = Label(Card, {
+                Text = "", TextColor3 = T.Sub, TextSize = 11, ZIndex = 89,
+                TextXAlignment = Enum.TextXAlignment.Center,
+                AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -18), Size = UDim2.new(0, 80, 0, 16),
+            })
+        end
+
+        local function Render()
+            local pg = pages[idx]
+            TitleLabel.Text = pg.Title or data.Title or "Guide"
+            Body.Text = pg.Content or ""
+            Scroll.CanvasPosition = Vector2.new(0, 0)
+            if multi then
+                PageLabel.Text = idx .. " / " .. #pages
+                Prev.Visible = idx > 1
+                Next.Text = (idx == #pages) and "Selesai" or "Lanjut"
+            end
+        end
+
+        if multi then
+            Prev.Activated:Connect(function()
+                if idx > 1 then idx = idx - 1; Render() end
+            end)
+            Next.Activated:Connect(function()
+                if idx < #pages then idx = idx + 1; Render() else Close() end
+            end)
+        end
+
+        Render()
+    end
+
+    -- Reset semua element ke default
+    local function ResetAll()
+        for k in pairs(ConfigData) do
+            if k ~= "_version" and k ~= "WindowRect" then
+                ConfigData[k] = nil
+            end
+        end
+        for _, el in pairs(Elements) do
+            if type(el) == "table" and el.Resettable and el.Set then
+                pcall(function() el:Set(el.DefaultValue) end)
+            end
+        end
+        SaveConfigNow()
+        RcHub:MakeNotify({
+            Title = BRAND_NAME, Description = "Reset selesai",
+            Content = "Semua element dikembalikan ke setting default.", Color = COLOR_RED, Delay = 4,
+        })
+    end
+
+    local function OpenResetDialog()
+        local _, Card, Close = OpenModal("ResetDialog", 340, 215)
+
+        MakeWarnIcon(Card, COLOR_RED, { Position = UDim2.new(0, 18, 0, 17), ZIndex = 88 })
+        Label(Card, {
+            Text = "Reset Settings", Font = FONT_BOLD, TextSize = 15, ZIndex = 88,
+            Position = UDim2.new(0, 44, 0, 14), Size = UDim2.new(1, -90, 0, 24),
+        })
+        Label(Card, {
+            Text = "Jika dilanjutkan, seluruh pengaturan UI akan di-reset dan semua element dikembalikan ke setting default. Tindakan ini tidak bisa dibatalkan.",
+            TextColor3 = Color3.fromRGB(215, 215, 215), TextSize = 12, TextWrapped = true,
+            TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 88,
+            Position = UDim2.new(0, 18, 0, 52), Size = UDim2.new(1, -36, 0, 80),
+        })
+
+        local Go = New("TextButton", {
+            Text = "Reset", Font = FONT_BOLD, TextSize = 13, TextColor3 = Color3.new(1, 1, 1),
+            BackgroundColor3 = Color3.fromRGB(205, 60, 60), BorderSizePixel = 0, AutoButtonColor = false,
+            ZIndex = 89, AnchorPoint = Vector2.new(0, 1),
+            Position = UDim2.new(0, 18, 1, -16), Size = UDim2.new(1, -36, 0, 36),
+        }, Card)
+        Corner(Go, 10)
+        Go.MouseEnter:Connect(function() Tween(Go, { BackgroundColor3 = Color3.fromRGB(225, 75, 75) }) end)
+        Go.MouseLeave:Connect(function() Tween(Go, { BackgroundColor3 = Color3.fromRGB(205, 60, 60) }) end)
+        Go.Activated:Connect(function()
+            Close()
+            task.defer(ResetAll)
+        end)
+    end
+
     -- --------------------------------------------------------
     -- ROW 1 : nama GUI (hijau) + search bar (merah) + min/close
     -- --------------------------------------------------------
     local DragBar = New("Frame", {
-        BackgroundTransparency = 1, Size = UDim2.new(1, -80, 0, 58), Name = "DragBar",
+        BackgroundTransparency = 1, Size = UDim2.new(1, -120, 0, 58), Name = "DragBar",
     }, Main)
 
     local TitleCard = New("Frame", {
@@ -876,7 +1120,7 @@ function RcHub:Window(GuiConfig)
 
     local SearchCard = New("Frame", {
         Name = "SearchBar", BackgroundColor3 = T.Panel, BorderSizePixel = 0,
-        Position = UDim2.new(0.5, 5, 0, 10), Size = UDim2.new(0.5, -85, 0, 40),
+        Position = UDim2.new(0.5, 5, 0, 10), Size = UDim2.new(0.5, -125, 0, 40),
     }, Main)
     Corner(SearchCard, 20)
 
@@ -917,6 +1161,23 @@ function RcHub:Window(GuiConfig)
         AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -46, 0, 15), Size = UDim2.new(0, 30, 0, 30),
     }, Main)
     Corner(Min, 15)
+
+    -- Tombol reset (segitiga warning merah)
+    local Warn = New("TextButton", {
+        Name = "ResetButton", Text = "", AutoButtonColor = false,
+        BackgroundColor3 = T.Panel, BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -82, 0, 15), Size = UDim2.new(0, 30, 0, 30),
+    }, Main)
+    Corner(Warn, 15)
+    MakeWarnIcon(Warn, COLOR_RED, {
+        AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0), Size = UDim2.new(0, 18, 0, 16),
+    })
+    Warn.MouseEnter:Connect(function() Tween(Warn, { BackgroundColor3 = Color3.fromRGB(70, 34, 34) }) end)
+    Warn.MouseLeave:Connect(function() Tween(Warn, { BackgroundColor3 = T.Panel }) end)
+    Warn.Activated:Connect(function()
+        KZN_AssertThreadIdentity()
+        OpenResetDialog()
+    end)
 
     for _, b in ipairs({ Close, Min }) do
         b.MouseEnter:Connect(function() Tween(b, { BackgroundColor3 = T.Control, TextColor3 = T.Text }) end)
@@ -1678,7 +1939,7 @@ function RcHub:Window(GuiConfig)
                 if typeof(fn) ~= "function" then return end
                 local args = { ... }
                 local ok, err = pcall(function() fn(unpack(args)) end)
-                if not ok then warn("[GantenHub] Callback error:", err) end
+                if not ok then warn("[GantengHub] Callback error:", err) end
             end
 
             -- ------------------------------------------------
@@ -1797,6 +2058,7 @@ function RcHub:Window(GuiConfig)
                 cfg.Callback = cfg.Callback or function() end
 
                 local key = "Toggle_" .. cfg.Title
+                local DefaultValue = cfg.Default
                 if ConfigData[key] ~= nil then cfg.Default = ConfigData[key] end
 
                 local hasContent = cfg.Content ~= ""
@@ -1863,7 +2125,100 @@ function RcHub:Window(GuiConfig)
                 table.insert(Sec.Toggles, F)
 
                 F:Set(F.Value, true)
+                F.DefaultValue = DefaultValue
+                F.Resettable = true
                 Elements[key] = F
+                ApplyLock(row, cfg)
+                Register(cfg.Title, row)
+                return F
+            end
+
+            -- ------------------------------------------------
+            -- Guide (tutorial): tanda "??" -> klik -> popup panduan
+            -- ------------------------------------------------
+            -- Sec:AddGuide({
+            --     Title = "Cara Farm Level", Content = "Tekan ?? untuk lihat panduan",
+            --     GuideTitle = "Panduan Farm Level",
+            --     GuideContent = "Langkah 1 ...\nLangkah 2 ...",            -- 1 halaman (rich text)
+            --     Pages = { {Title="Langkah 1", Content="..."}, "teks saja" }, -- atau banyak halaman
+            -- })
+            function Items:AddGuide(cfg)
+                cfg = cfg or {}
+                cfg.Title = cfg.Title or "Guide"
+                cfg.Content = cfg.Content or ""
+                cfg.GuideTitle = cfg.GuideTitle or cfg.Title
+                cfg.Callback = cfg.Callback or function() end
+
+                local hasContent = cfg.Content ~= ""
+                local row = NewRow(hasContent and 48 or 36, cfg)
+
+                local rich = (cfg.RichText ~= false)
+                Label(row, {
+                    Text = cfg.Title, TextSize = 12, RichText = rich,
+                    Position = UDim2.new(0, 12, 0, hasContent and 7 or 0),
+                    Size = UDim2.new(1, -70, 0, hasContent and 16 or 36),
+                })
+                if hasContent then
+                    Label(row, {
+                        Text = cfg.Content, TextColor3 = T.Sub, TextSize = 11, RichText = rich,
+                        Position = UDim2.new(0, 12, 0, 24), Size = UDim2.new(1, -70, 0, 16),
+                    })
+                end
+
+                local Badge = New("Frame", {
+                    BackgroundColor3 = T.Control, BorderSizePixel = 0,
+                    AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -12, 0.5, 0),
+                    Size = UDim2.new(0, 34, 0, 20),
+                }, row)
+                Corner(Badge, 10)
+                local Mark = Label(Badge, {
+                    Text = "??", Font = FONT_BOLD, TextSize = 11, TextColor3 = T.Sub,
+                    TextXAlignment = Enum.TextXAlignment.Center, TextTruncate = Enum.TextTruncate.None,
+                    Size = UDim2.new(1, 0, 1, 0),
+                })
+
+                local Hit = New("TextButton", {
+                    Text = "", BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0),
+                }, row)
+                Hit.MouseEnter:Connect(function()
+                    Tween(Badge, { BackgroundColor3 = T.Text })
+                    Tween(Mark, { TextColor3 = T.Dark })
+                end)
+                Hit.MouseLeave:Connect(function()
+                    Tween(Badge, { BackgroundColor3 = T.Control })
+                    Tween(Mark, { TextColor3 = T.Sub })
+                end)
+
+                local function GetPages()
+                    local out = {}
+                    if type(cfg.Pages) == "table" and #cfg.Pages > 0 then
+                        for _, pg in ipairs(cfg.Pages) do
+                            if type(pg) == "table" then
+                                table.insert(out, { Title = pg.Title or cfg.GuideTitle, Content = pg.Content or "" })
+                            else
+                                table.insert(out, { Title = cfg.GuideTitle, Content = tostring(pg) })
+                            end
+                        end
+                    else
+                        table.insert(out, { Title = cfg.GuideTitle, Content = cfg.GuideContent or cfg.Content })
+                    end
+                    return out
+                end
+
+                local F = {}
+                function F:Open()
+                    ShowGuide({ Title = cfg.GuideTitle, Pages = GetPages() })
+                    SafeCall(cfg.Callback)
+                end
+                function F:SetGuide(newCfg)
+                    for k, v in pairs(newCfg or {}) do cfg[k] = v end
+                end
+
+                Hit.Activated:Connect(function()
+                    KZN_AssertThreadIdentity()
+                    F:Open()
+                end)
+
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)
                 return F
@@ -1883,6 +2238,7 @@ function RcHub:Window(GuiConfig)
                 cfg.Callback = cfg.Callback or function() end
 
                 local key = "Slider_" .. cfg.Title
+                local DefaultValue = cfg.Default
                 if ConfigData[key] ~= nil then cfg.Default = ConfigData[key] end
 
                 local hasContent = cfg.Content ~= ""
@@ -2020,6 +2376,8 @@ function RcHub:Window(GuiConfig)
                 end)
 
                 F:Set(F.Value, true)
+                F.DefaultValue = DefaultValue
+                F.Resettable = true
                 Elements[key] = F
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)
@@ -2037,6 +2395,7 @@ function RcHub:Window(GuiConfig)
                 cfg.Default = cfg.Default or ""
 
                 local key = "Input_" .. cfg.Title
+                local DefaultValue = cfg.Default
                 if ConfigData[key] ~= nil then cfg.Default = ConfigData[key] end
 
                 local hasContent = cfg.Content ~= ""
@@ -2084,6 +2443,8 @@ function RcHub:Window(GuiConfig)
                 end)
 
                 F:Set(F.Value, true)
+                F.DefaultValue = DefaultValue
+                F.Resettable = true
                 Elements[key] = F
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)
@@ -2104,6 +2465,7 @@ function RcHub:Window(GuiConfig)
                 cfg.SubButtonCallback = cfg.SubCallback or cfg.SubButtonCallback or function() end
 
                 local key = "Panel_" .. cfg.Title
+                local DefaultValue = cfg.Default
                 if ConfigData[key] ~= nil then cfg.Default = ConfigData[key] end
 
                 local row = NewRow(110, cfg)
@@ -2172,6 +2534,8 @@ function RcHub:Window(GuiConfig)
                     if not silent then SaveConfig() end
                 end
 
+                F.DefaultValue = DefaultValue
+                F.Resettable = true
                 Elements[key] = F
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)
@@ -2191,6 +2555,7 @@ function RcHub:Window(GuiConfig)
                 cfg.Callback = cfg.Callback or function() end
 
                 local key = "Dropdown_" .. cfg.Title
+                local DefaultValue = cfg.Default
                 if ConfigData[key] ~= nil then cfg.Default = ConfigData[key] end
 
                 local hasContent = cfg.Content ~= ""
@@ -2482,6 +2847,8 @@ function RcHub:Window(GuiConfig)
                 function F:GetValue() return F.Value end
 
                 F:SetValues(F.Options, cfg.Default, true)
+                F.DefaultValue = DefaultValue
+                F.Resettable = true
                 Elements[key] = F
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)

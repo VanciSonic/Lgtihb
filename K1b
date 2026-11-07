@@ -295,6 +295,27 @@ local function MakeCrown(parent, color, props)
     return box
 end
 
+-- Teks emas bergerak (hanya warna yang bergeser kanan-kiri, teks diam)
+local GOLD_SEQUENCE = ColorSequence.new({
+    ColorSequenceKeypoint.new(0,    Color3.fromRGB(176, 128, 28)),
+    ColorSequenceKeypoint.new(0.35, Color3.fromRGB(255, 214, 84)),
+    ColorSequenceKeypoint.new(0.5,  Color3.fromRGB(255, 243, 176)),
+    ColorSequenceKeypoint.new(0.65, Color3.fromRGB(255, 214, 84)),
+    ColorSequenceKeypoint.new(1,    Color3.fromRGB(176, 128, 28)),
+})
+
+local function GoldText(label)
+    label.TextColor3 = Color3.new(1, 1, 1)
+    local grad = New("UIGradient", { Color = GOLD_SEQUENCE, Offset = Vector2.new(-1, 0) }, label)
+    local tw = TweenService:Create(
+        grad,
+        TweenInfo.new(1.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+        { Offset = Vector2.new(1, 0) }
+    )
+    tw:Play()
+    return tw
+end
+
 -- Baca masa aktif key dari getgenv().ExpiresAt (nil = permanent)
 -- Boleh berupa unix time (detik / milidetik) atau teks "YYYY-MM-DD" / "YYYY-MM-DD HH:MM:SS"
 local function GetExpiresAt()
@@ -545,8 +566,75 @@ function RcHub:Window(GuiConfig)
     }, RCglob)
     Corner(Main, 20)
 
+    local MainScale = New("UIScale", { Scale = 1 }, Main)
+    local GoldTweens = {}
+
     -- Popup / dropdown state
     local ClosePopup = nil
+
+    -- Animasi buka/tutup window: tersedot ke tombol bulat (toggle button)
+    local ToggleBtn = nil
+    local animating = false
+    local savedPos = nil
+
+    local function TargetPoint()
+        if ToggleBtn and ToggleBtn.Parent then
+            return ToggleBtn.AbsolutePosition + ToggleBtn.AbsoluteSize / 2
+        end
+        return Main.AbsolutePosition + Main.AbsoluteSize / 2
+    end
+
+    local function HideWindow()
+        if animating or not Main.Visible then return end
+        animating = true
+        if ClosePopup then ClosePopup() end
+        savedPos = Main.Position
+
+        local p = TargetPoint()
+        TweenService:Create(Main, TweenInfo.new(0.42, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            Position = UDim2.new(0, p.X, 0, p.Y),
+        }):Play()
+
+        local tw = TweenService:Create(MainScale, TweenInfo.new(0.42, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+            Scale = 0.02,
+        })
+        tw.Completed:Connect(function()
+            Main.Visible = false
+            Main.Position = savedPos
+            MainScale.Scale = 1
+            animating = false
+        end)
+        tw:Play()
+
+        task.delay(0.7, function() animating = false end)
+    end
+
+    local function ShowWindow()
+        if animating or Main.Visible then return end
+        animating = true
+
+        local target = Main.Position
+        local p = TargetPoint()
+        Main.Position = UDim2.new(0, p.X, 0, p.Y)
+        MainScale.Scale = 0.02
+        Main.Visible = true
+
+        TweenService:Create(Main, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+            Position = target,
+        }):Play()
+
+        local tw = TweenService:Create(MainScale, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Scale = 1,
+        })
+        tw.Completed:Connect(function() animating = false end)
+        tw:Play()
+
+        task.delay(0.7, function() animating = false end)
+    end
+
+    local function ToggleWindow()
+        if Main.Visible then HideWindow() else ShowWindow() end
+    end
 
     -- --------------------------------------------------------
     -- ROW 1 : nama GUI (hijau) + search bar (merah) + min/close
@@ -581,16 +669,21 @@ function RcHub:Window(GuiConfig)
 
     if GuiConfig.Footer ~= "" then
         local Tag = New("Frame", {
-            BackgroundColor3 = T.Text, BorderSizePixel = 0,
-            Size = UDim2.new(0, 0, 0, 18), AutomaticSize = Enum.AutomaticSize.X, LayoutOrder = 2,
+            BackgroundColor3 = Color3.fromRGB(14, 14, 14), BorderSizePixel = 0,
+            Size = UDim2.new(0, 0, 0, 20), AutomaticSize = Enum.AutomaticSize.X, LayoutOrder = 2,
         }, TitleHolder)
-        Corner(Tag, 9)
-        Pad(Tag, 9, 0, 9, 0)
-        Label(Tag, {
-            Text = GuiConfig.Footer, TextColor3 = T.Dark, Font = FONT_BOLD, TextSize = 11,
+        Corner(Tag, 10)
+        Pad(Tag, 10, 0, 10, 0)
+        New("UIStroke", {
+            Color = Color3.fromRGB(150, 112, 30), Thickness = 1, Transparency = 0.35,
+            ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+        }, Tag)
+        local TagLabel = Label(Tag, {
+            Text = GuiConfig.Footer, Font = FONT_BOLD, TextSize = 11,
             TextTruncate = Enum.TextTruncate.None,
             Size = UDim2.new(0, 0, 1, 0), AutomaticSize = Enum.AutomaticSize.X,
         })
+        table.insert(GoldTweens, GoldText(TagLabel))
     end
 
     local SearchCard = New("Frame", {
@@ -792,10 +885,11 @@ function RcHub:Window(GuiConfig)
         end
     end)
 
-    Label(UserCard, {
-        Text = BRAND_TAG, TextColor3 = T.Sub, TextSize = 11,
+    local UserTag = Label(UserCard, {
+        Text = BRAND_TAG, Font = FONT_BOLD, TextSize = 11,
         Position = UDim2.new(0, 46, 0, 9), Size = UDim2.new(1, -52, 0, 14),
     })
+    table.insert(GoldTweens, GoldText(UserTag))
     local KeyLabel = Label(UserCard, {
         Text = "", TextColor3 = T.Text, Font = FONT_BOLD, TextSize = 11,
         Position = UDim2.new(0, 46, 0, 25), Size = UDim2.new(1, -52, 0, 14),
@@ -935,6 +1029,7 @@ function RcHub:Window(GuiConfig)
     -- Window controls
     -- --------------------------------------------------------
     function Tabs:DestroyGui()
+        for _, tw in ipairs(GoldTweens) do pcall(function() tw:Cancel() end) end
         if RCglob then RCglob:Destroy() end
         if UIRoot and UIRoot:FindFirstChild("ToggleUIButton") then
             UIRoot.ToggleUIButton:Destroy()
@@ -942,7 +1037,7 @@ function RcHub:Window(GuiConfig)
     end
 
     function Tabs:Toggle()
-        Main.Visible = not Main.Visible
+        ToggleWindow()
     end
 
     function Tabs:ToggleUI()
@@ -956,6 +1051,7 @@ function RcHub:Window(GuiConfig)
             Position = UDim2.new(0, 20, 0, 100), Size = UDim2.new(0, 42, 0, 42),
         }, ScreenGui)
         Corner(Btn, 21)
+        ToggleBtn = Btn
 
         if GuiConfig.Image then
             New("ImageLabel", {
@@ -996,21 +1092,25 @@ function RcHub:Window(GuiConfig)
 
         Btn.Activated:Connect(function()
             if not moved then
-                Main.Visible = not Main.Visible
+                ToggleWindow()
             end
         end)
     end
 
     Tabs:ToggleUI()
 
+    -- Muncul dari tombol bulat saat pertama kali load
+    Main.Visible = false
+    task.delay(0.15, ShowWindow)
+
     Min.Activated:Connect(function()
-        Main.Visible = false
+        HideWindow()
     end)
 
     UserInputService.InputBegan:Connect(function(input, gpe)
         if gpe then return end
         if input.KeyCode == GuiConfig.ToggleKey then
-            Main.Visible = not Main.Visible
+            ToggleWindow()
         end
     end)
 
@@ -1054,7 +1154,10 @@ function RcHub:Window(GuiConfig)
         local Yes = DialogButton("Tutup", 0, T.Text, T.Dark)
         local Cancel = DialogButton("Batal", 0.5, T.Control, T.Text)
 
-        Yes.Activated:Connect(function() Tabs:DestroyGui() end)
+        Yes.Activated:Connect(function()
+            HideWindow()
+            task.delay(0.5, function() Tabs:DestroyGui() end)
+        end)
         Cancel.Activated:Connect(function() Overlay:Destroy() end)
     end)
 
@@ -1080,6 +1183,9 @@ function RcHub:Window(GuiConfig)
                 BackgroundColor3 = on and Color3.fromRGB(230, 230, 230) or Color3.fromRGB(42, 42, 42),
             })
             Tween(s.ChipText, { TextColor3 = on and T.Dark or T.Sub })
+            if s.CountLabel then
+                Tween(s.CountLabel, { TextColor3 = on and T.Dark or T.Sub })
+            end
         end
     end
 
@@ -1187,13 +1293,53 @@ function RcHub:Window(GuiConfig)
             Corner(Chip, 13)
             Pad(Chip, 14, 0, 14, 0)
 
-            local ChipText = Label(Chip, {
+            local Inner = New("Frame", {
+                BackgroundTransparency = 1, Size = UDim2.new(0, 0, 1, 0), AutomaticSize = Enum.AutomaticSize.X,
+            }, Chip)
+            New("UIListLayout", {
+                FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 7),
+                VerticalAlignment = Enum.VerticalAlignment.Center, SortOrder = Enum.SortOrder.LayoutOrder,
+            }, Inner)
+
+            local ChipText = Label(Inner, {
                 Text = Title, TextColor3 = T.Sub, TextSize = 12, TextTruncate = Enum.TextTruncate.None,
-                Size = UDim2.new(0, 0, 1, 0), AutomaticSize = Enum.AutomaticSize.X,
+                Size = UDim2.new(0, 0, 1, 0), AutomaticSize = Enum.AutomaticSize.X, LayoutOrder = 1,
             })
+
+            -- Status jumlah toggle ON per section:  "11 ●"  (bulat hijau kalau ada yang ON)
+            local Badge = New("Frame", {
+                BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 16), AutomaticSize = Enum.AutomaticSize.X,
+                LayoutOrder = 2,
+            }, Inner)
+            New("UIListLayout", {
+                FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 4),
+                VerticalAlignment = Enum.VerticalAlignment.Center, SortOrder = Enum.SortOrder.LayoutOrder,
+            }, Badge)
+            local CountLabel = Label(Badge, {
+                Text = "0", Font = FONT_BOLD, TextColor3 = T.Sub, TextSize = 11, TextTruncate = Enum.TextTruncate.None,
+                Size = UDim2.new(0, 0, 1, 0), AutomaticSize = Enum.AutomaticSize.X, LayoutOrder = 1,
+            })
+            local StatusDot = New("Frame", {
+                BackgroundColor3 = Color3.fromRGB(95, 95, 95), BorderSizePixel = 0,
+                Size = UDim2.new(0, 8, 0, 8), LayoutOrder = 2,
+            }, Badge)
+            Corner(StatusDot, 4)
 
             Sec.Chip = Chip
             Sec.ChipText = ChipText
+            Sec.CountLabel = CountLabel
+            Sec.Toggles = {}
+
+            function Sec.UpdateBadge()
+                local n = 0
+                for _, t in ipairs(Sec.Toggles) do
+                    if t.Value == true then n = n + 1 end
+                end
+                CountLabel.Text = tostring(n)
+                Tween(StatusDot, {
+                    BackgroundColor3 = (n > 0) and Color3.fromRGB(70, 220, 120) or Color3.fromRGB(95, 95, 95),
+                }, 0.2)
+            end
 
             local Page = New("Frame", {
                 Name = "Page_" .. Title, BackgroundTransparency = 1, BorderSizePixel = 0,
@@ -1477,6 +1623,7 @@ function RcHub:Window(GuiConfig)
                     F.Value = (Value == true)
                     ConfigData[key] = F.Value
                     Visual()
+                    Sec.UpdateBadge()
                     if not silent then
                         SafeCall(cfg.Callback, F.Value)
                         SaveConfig()
@@ -1487,6 +1634,8 @@ function RcHub:Window(GuiConfig)
                     KZN_AssertThreadIdentity()
                     F:Set(not F.Value)
                 end)
+
+                table.insert(Sec.Toggles, F)
 
                 F:Set(F.Value, true)
                 Elements[key] = F
@@ -1808,30 +1957,63 @@ function RcHub:Window(GuiConfig)
 
                 local PillText = Label(Pill, {
                     Text = "", TextColor3 = Color3.fromRGB(205, 205, 205), TextSize = 11,
-                    Position = UDim2.new(0, 10, 0, 0), Size = UDim2.new(1, -28, 1, 0),
+                    Position = UDim2.new(0, 10, 0, 0), Size = UDim2.new(1, -30, 1, 0),
                 })
-                Label(Pill, {
-                    Text = "▾", Font = FONT_BOLD, TextSize = 12, TextColor3 = T.Sub,
-                    TextXAlignment = Enum.TextXAlignment.Center,
-                    AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -6, 0.5, 0), Size = UDim2.new(0, 14, 1, 0),
-                })
+
+                -- Panah chevron (digambar dari Frame): kanan = tertutup, bawah = terbuka
+                local Chevron = New("Frame", {
+                    BackgroundTransparency = 1, AnchorPoint = Vector2.new(1, 0.5),
+                    Position = UDim2.new(1, -9, 0.5, 0), Size = UDim2.new(0, 10, 0, 10), Rotation = -90,
+                }, Pill)
+                for _, d in ipairs({ { 3.1, 45 }, { 6.9, -45 } }) do
+                    local bar = New("Frame", {
+                        BackgroundColor3 = T.Sub, BorderSizePixel = 0,
+                        AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0, d[1], 0, 5),
+                        Size = UDim2.new(0, 6, 0, 2), Rotation = d[2],
+                    }, Chevron)
+                    Corner(bar, 1)
+                end
+
+                local HEADER = 38
 
                 local Popup = New("Frame", {
                     Name = "DropdownPopup", BackgroundColor3 = T.Popup, BorderSizePixel = 0,
-                    Visible = false, ZIndex = 60, Size = UDim2.new(0, 150, 0, 100),
+                    Visible = false, ZIndex = 60, ClipsDescendants = true, Size = UDim2.new(0, 150, 0, 0),
                 }, Main)
                 Corner(Popup, 12)
 
+                local SearchWrap = New("Frame", {
+                    BackgroundColor3 = T.Control, BorderSizePixel = 0, ZIndex = 61,
+                    Position = UDim2.new(0, 6, 0, 6), Size = UDim2.new(1, -12, 0, 26),
+                }, Popup)
+                Corner(SearchWrap, 8)
+
+                local SearchInput = New("TextBox", {
+                    BackgroundTransparency = 1, ClearTextOnFocus = false, ZIndex = 62,
+                    Font = FONT, TextSize = 11, TextColor3 = T.Text, Text = "",
+                    PlaceholderText = "Cari...", PlaceholderColor3 = T.Muted,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Position = UDim2.new(0, 10, 0, 0), Size = UDim2.new(1, -20, 1, 0),
+                }, SearchWrap)
+
                 local List = New("ScrollingFrame", {
                     BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 61,
-                    Position = UDim2.new(0, 4, 0, 4), Size = UDim2.new(1, -8, 1, -8),
+                    Position = UDim2.new(0, 4, 0, HEADER), Size = UDim2.new(1, -8, 1, -(HEADER + 4)),
                     CanvasSize = UDim2.new(0, 0, 0, 0), AutomaticCanvasSize = Enum.AutomaticSize.Y,
                     ScrollBarThickness = 2, ScrollBarImageColor3 = Color3.fromRGB(120, 120, 120), Active = true,
                 }, Popup)
                 New("UIListLayout", { Padding = UDim.new(0, 2), SortOrder = Enum.SortOrder.LayoutOrder }, List)
 
+                local EmptyLabel = Label(List, {
+                    Text = "Tidak ditemukan", TextColor3 = T.Muted, TextSize = 11, ZIndex = 62,
+                    TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.new(1, -6, 0, 26),
+                    LayoutOrder = 99999, Visible = false,
+                })
+
                 local F = { Value = cfg.Multi and {} or nil, Options = cfg.Options, Opened = false }
                 local OptionButtons = {}
+                local openUp = false
+                local animToken = 0
 
                 local function IsSelected(opt)
                     if cfg.Multi then
@@ -1857,10 +2039,65 @@ function RcHub:Window(GuiConfig)
                     end
                 end
 
+                local function TargetRect()
+                    local count = 0
+                    for _, b in pairs(OptionButtons) do
+                        if b.Visible then count = count + 1 end
+                    end
+                    if count == 0 then count = 1 end
+
+                    local width = math.max(Pill.AbsoluteSize.X, 170)
+                    local height = math.min(count * 28 + 8, 172) + HEADER
+                    local p = Pill.AbsolutePosition - Main.AbsolutePosition
+                    local x = p.X + Pill.AbsoluteSize.X - width
+                    local below = p.Y + Pill.AbsoluteSize.Y + 4
+                    local y = below
+
+                    openUp = (below + height > Main.AbsoluteSize.Y - 8)
+                    if openUp then y = p.Y - height - 4 end
+
+                    x = math.clamp(x, 8, math.max(8, Main.AbsoluteSize.X - width - 8))
+                    y = math.max(y, 8)
+                    return x, y, width, height
+                end
+
+                local function ApplyFilter()
+                    local q = Normalize(SearchInput.Text)
+                    local shown = 0
+                    for opt, b in pairs(OptionButtons) do
+                        local ok = (q == "") or (string.find(string.lower(tostring(opt)), q, 1, true) ~= nil)
+                        b.Visible = ok
+                        if ok then shown = shown + 1 end
+                    end
+                    EmptyLabel.Visible = (shown == 0)
+                    List.CanvasPosition = Vector2.new(0, 0)
+
+                    if F.Opened then
+                        local x, y, w, h = TargetRect()
+                        Tween(Popup, { Size = UDim2.new(0, w, 0, h), Position = UDim2.new(0, x, 0, y) }, 0.12)
+                    end
+                end
+
+                SearchInput:GetPropertyChangedSignal("Text"):Connect(ApplyFilter)
+
                 local function Close()
+                    if not F.Opened then return end
                     F.Opened = false
-                    Popup.Visible = false
                     if ClosePopup == F.CloseFn then ClosePopup = nil end
+
+                    animToken = animToken + 1
+                    local token = animToken
+                    SearchInput:ReleaseFocus()
+                    Tween(Chevron, { Rotation = -90 }, 0.18)
+
+                    -- menyusut / tersedot kembali ke tombol dropdown
+                    local w, h = Popup.AbsoluteSize.X, Popup.AbsoluteSize.Y
+                    local px, py = Popup.Position.X.Offset, Popup.Position.Y.Offset
+                    local endY = openUp and (py + h) or py
+                    local tw = Tween(Popup, { Size = UDim2.new(0, w, 0, 0), Position = UDim2.new(0, px, 0, endY) }, 0.16)
+                    tw.Completed:Connect(function()
+                        if animToken == token then Popup.Visible = false end
+                    end)
                 end
 
                 F.CloseFn = function(pos)
@@ -1927,25 +2164,33 @@ function RcHub:Window(GuiConfig)
                     end
 
                     Styles()
+                    if Normalize(SearchInput.Text) ~= "" then ApplyFilter() else EmptyLabel.Visible = (#F.Options == 0) end
                 end
 
                 local function Open()
                     if ClosePopup then ClosePopup() end
 
-                    local width = math.max(Pill.AbsoluteSize.X, 150)
-                    local height = math.min(#F.Options * 28 + 8, 172)
-                    local p = Pill.AbsolutePosition - Main.AbsolutePosition
-                    local x = p.X + Pill.AbsoluteSize.X - width
-                    local y = p.Y + Pill.AbsoluteSize.Y + 4
-                    if y + height > Main.AbsoluteSize.Y - 8 then
-                        y = p.Y - height - 4
-                    end
+                    SearchInput.Text = ""
+                    ApplyFilter()
 
-                    Popup.Size = UDim2.new(0, width, 0, height)
-                    Popup.Position = UDim2.new(0, math.clamp(x, 8, Main.AbsoluteSize.X - width - 8), 0, math.max(y, 8))
+                    animToken = animToken + 1
+                    local x, y, w, h = TargetRect()
+                    local startY = openUp and (y + h) or y
+
+                    Popup.Size = UDim2.new(0, w, 0, 0)
+                    Popup.Position = UDim2.new(0, x, 0, startY)
                     Popup.Visible = true
+                    Tween(Popup, { Size = UDim2.new(0, w, 0, h), Position = UDim2.new(0, x, 0, y) }, 0.2)
+                    Tween(Chevron, { Rotation = 0 }, 0.2)
+
                     F.Opened = true
                     ClosePopup = F.CloseFn
+
+                    if not UserInputService.TouchEnabled then
+                        task.defer(function()
+                            if F.Opened then SearchInput:CaptureFocus() end
+                        end)
+                    end
                 end
 
                 Pill.Activated:Connect(function()

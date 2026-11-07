@@ -396,7 +396,7 @@ end
 
 local UIRoot = KZN_GetUIRoot()
 
-local function MakeDraggable(handle, target)
+local function MakeDraggable(handle, target, onEnd)
     local dragging, dragStart, startPos = false, nil, nil
 
     handle.InputBegan:Connect(function(input)
@@ -408,6 +408,7 @@ local function MakeDraggable(handle, target)
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
+                    if onEnd then onEnd() end
                 end
             end)
         end
@@ -558,78 +559,120 @@ function RcHub:Window(GuiConfig)
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     }, UIRoot)
 
+    -- Posisi & ukuran terakhir diingat (juga tersimpan di config)
+    local startW, startH = winW, winH
+    local startX = math.floor((viewport.X - winW) / 2)
+    local startY = math.floor((viewport.Y - winH) / 2)
+    local savedRect = ConfigData.WindowRect
+    if type(savedRect) == "table" and tonumber(savedRect.w) and tonumber(savedRect.h)
+        and tonumber(savedRect.x) and tonumber(savedRect.y) then
+        startW = math.clamp(savedRect.w, MIN_W, math.max(MIN_W, viewport.X - 10))
+        startH = math.clamp(savedRect.h, MIN_H, math.max(MIN_H, viewport.Y - 10))
+        startX = math.clamp(savedRect.x, 0, math.max(0, viewport.X - startW))
+        startY = math.clamp(savedRect.y, 0, math.max(0, viewport.Y - startH))
+    end
+
     local Main = New("Frame", {
         Name = "Main", BackgroundColor3 = T.BG, BorderSizePixel = 0,
         AnchorPoint = Vector2.new(0, 0),
-        Position = UDim2.new(0, math.floor((viewport.X - winW) / 2), 0, math.floor((viewport.Y - winH) / 2)),
-        Size = UDim2.new(0, winW, 0, winH),
+        Position = UDim2.new(0, startX, 0, startY),
+        Size = UDim2.new(0, startW, 0, startH),
     }, RCglob)
     Corner(Main, 20)
 
-    local MainScale = New("UIScale", { Scale = 1 }, Main)
     local GoldTweens = {}
 
     -- Popup / dropdown state
     local ClosePopup = nil
 
-    -- Animasi buka/tutup window: tersedot ke tombol bulat (toggle button)
+    -- Animasi buka/tutup window (ringan): konten di-fade lalu dilepas dari layar,
+    -- yang bergerak hanya kotak kosong yang menyusut / membesar dari tombol bulat.
     local ToggleBtn = nil
     local animating = false
-    local savedPos = nil
+    local Content = nil   -- dibuat setelah semua elemen dasar jadi
+    local Overlay = nil   -- penutup fade
 
-    local function TargetPoint()
+    local LastPos, LastSize = Main.Position, Main.Size
+
+    local function CaptureRect()
+        LastPos, LastSize = Main.Position, Main.Size
+        ConfigData.WindowRect = {
+            x = LastPos.X.Offset, y = LastPos.Y.Offset,
+            w = LastSize.X.Offset, h = LastSize.Y.Offset,
+        }
+        SaveConfig()
+    end
+
+    local function ButtonRect()
         if ToggleBtn and ToggleBtn.Parent then
-            return ToggleBtn.AbsolutePosition + ToggleBtn.AbsoluteSize / 2
+            local p, sz = ToggleBtn.AbsolutePosition, ToggleBtn.AbsoluteSize
+            return UDim2.new(0, p.X, 0, p.Y), UDim2.new(0, sz.X, 0, sz.Y)
         end
-        return Main.AbsolutePosition + Main.AbsoluteSize / 2
+        local cx = LastPos.X.Offset + LastSize.X.Offset / 2
+        local cy = LastPos.Y.Offset + LastSize.Y.Offset / 2
+        return UDim2.new(0, cx - 21, 0, cy - 21), UDim2.new(0, 42, 0, 42)
     end
 
     local function HideWindow()
         if animating or not Main.Visible then return end
         animating = true
         if ClosePopup then ClosePopup() end
-        savedPos = Main.Position
 
-        local p = TargetPoint()
-        TweenService:Create(Main, TweenInfo.new(0.42, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            Position = UDim2.new(0, p.X, 0, p.Y),
-        }):Play()
+        CaptureRect()
+        local pos, size = ButtonRect()
 
-        local tw = TweenService:Create(MainScale, TweenInfo.new(0.42, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-            Scale = 0.02,
-        })
-        tw.Completed:Connect(function()
-            Main.Visible = false
-            Main.Position = savedPos
-            MainScale.Scale = 1
-            animating = false
+        -- 1) fade konten (cepat)
+        Overlay.BackgroundTransparency = 1
+        Overlay.Visible = true
+        Tween(Overlay, { BackgroundTransparency = 0 }, 0.12)
+
+        task.delay(0.13, function()
+            -- 2) lepas konten supaya animasi tidak berat, lalu sedot ke tombol
+            Content.Parent = nil
+            Overlay.Visible = false
+            TweenService:Create(Main, TweenInfo.new(0.34, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
+                Position = pos, Size = size,
+            }):Play()
+
+            task.delay(0.36, function()
+                Main.Visible = false
+                Main.Position = LastPos
+                Main.Size = LastSize
+                animating = false
+            end)
         end)
-        tw:Play()
-
-        task.delay(0.7, function() animating = false end)
     end
 
     local function ShowWindow()
         if animating or Main.Visible then return end
         animating = true
 
-        local target = Main.Position
-        local p = TargetPoint()
-        Main.Position = UDim2.new(0, p.X, 0, p.Y)
-        MainScale.Scale = 0.02
+        local pos, size = ButtonRect()
+        Content.Parent = nil
+        Overlay.Visible = false
+        Main.Position = pos
+        Main.Size = size
         Main.Visible = true
 
-        TweenService:Create(Main, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
-            Position = target,
+        TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+            Position = LastPos, Size = LastSize,
         }):Play()
 
-        local tw = TweenService:Create(MainScale, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Scale = 1,
-        })
-        tw.Completed:Connect(function() animating = false end)
-        tw:Play()
+        task.delay(0.42, function()
+            Main.Position = LastPos
+            Main.Size = LastSize
 
-        task.delay(0.7, function() animating = false end)
+            -- 3) pasang konten kembali di balik penutup, lalu fade in
+            Overlay.BackgroundTransparency = 0
+            Overlay.Visible = true
+            Content.Parent = Main
+            Tween(Overlay, { BackgroundTransparency = 1 }, 0.2)
+
+            task.delay(0.22, function()
+                Overlay.Visible = false
+                animating = false
+            end)
+        end)
     end
 
     local function ToggleWindow()
@@ -735,8 +778,8 @@ function RcHub:Window(GuiConfig)
         b.MouseLeave:Connect(function() Tween(b, { BackgroundColor3 = T.Panel, TextColor3 = T.Sub }) end)
     end
 
-    MakeDraggable(DragBar, Main)
-    MakeDraggable(TitleCard, Main)
+    MakeDraggable(DragBar, Main, CaptureRect)
+    MakeDraggable(TitleCard, Main, CaptureRect)
 
     -- Resize handle (pojok kanan bawah): tarik untuk atur lebar (X) dan tinggi (Y) window
     local ResizeHandle = New("TextButton", {
@@ -775,6 +818,7 @@ function RcHub:Window(GuiConfig)
                 input.Changed:Connect(function()
                     if input.UserInputState == Enum.UserInputState.End then
                         resizing = false
+                        CaptureRect()
                     end
                 end)
             end
@@ -938,8 +982,9 @@ function RcHub:Window(GuiConfig)
     end
 
     local function SearchRegister(title, tabName, sectionName, frame, focus)
+        local clean = (tostring(title):gsub("<[^>]+>", ""))
         table.insert(SearchItems, {
-            Title = tostring(title), Norm = Normalize(title),
+            Title = clean, Norm = Normalize(clean),
             Tab = tabName, Section = sectionName, Frame = frame, Focus = focus,
         })
     end
@@ -1099,6 +1144,22 @@ function RcHub:Window(GuiConfig)
 
     Tabs:ToggleUI()
 
+    -- Bungkus semua konten ke satu Frame supaya bisa dilepas saat animasi
+    Content = New("Frame", {
+        Name = "Content", BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.new(1, 0, 1, 0),
+    }, Main)
+    for _, c in ipairs(Main:GetChildren()) do
+        if c:IsA("GuiObject") and c ~= Content then
+            c.Parent = Content
+        end
+    end
+
+    Overlay = New("Frame", {
+        Name = "FadeCover", BackgroundColor3 = T.BG, BackgroundTransparency = 1, BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 1, 0), ZIndex = 100, Visible = false,
+    }, Main)
+    Corner(Overlay, 20)
+
     -- Muncul dari tombol bulat saat pertama kali load
     Main.Visible = false
     task.delay(0.15, ShowWindow)
@@ -1156,7 +1217,7 @@ function RcHub:Window(GuiConfig)
 
         Yes.Activated:Connect(function()
             HideWindow()
-            task.delay(0.5, function() Tabs:DestroyGui() end)
+            task.delay(0.8, function() Tabs:DestroyGui() end)
         end)
         Cancel.Activated:Connect(function() Overlay:Destroy() end)
     end)
@@ -1498,18 +1559,23 @@ function RcHub:Window(GuiConfig)
                 Pad(row, 12, 10, 12, 10)
                 New("UIListLayout", { Padding = UDim.new(0, 3), SortOrder = Enum.SortOrder.LayoutOrder }, row)
 
+                -- Rich text aktif (matikan dengan RichText = false)
+                local rich = (cfg.RichText ~= false)
+
                 Label(row, {
-                    Text = cfg.Title, Font = FONT_BOLD, TextSize = 12, Size = UDim2.new(1, 0, 0, 16), LayoutOrder = 1,
+                    Text = cfg.Title, Font = FONT_BOLD, TextSize = 12, Size = UDim2.new(1, 0, 0, 16),
+                    LayoutOrder = 1, RichText = rich,
                 })
-                local Content = Label(row, {
+                local ContentLabel = Label(row, {
                     Text = cfg.Content, TextColor3 = T.Sub, TextSize = 11, TextWrapped = true,
                     TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top,
                     Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = 2,
+                    RichText = rich,
                 })
 
                 local F = {}
                 function F:SetContent(text)
-                    Content.Text = tostring(text or "")
+                    ContentLabel.Text = tostring(text or "")
                 end
 
                 ApplyLock(row, cfg)
@@ -1860,6 +1926,7 @@ function RcHub:Window(GuiConfig)
                         Text = cfg.Content, TextColor3 = T.Sub, TextSize = 11, TextWrapped = true,
                         TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top,
                         Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = 2,
+                        RichText = (cfg.RichText ~= false),
                     })
                 end
 

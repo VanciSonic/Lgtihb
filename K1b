@@ -1407,15 +1407,22 @@ function RcHub:Window(GuiConfig)
         if oldToggle then oldToggle:Destroy() end
     end
 
-    local viewport = workspace.CurrentCamera.ViewportSize
-    local winW = math.min(680, viewport.X - 20)
-    local winH = math.min(420, viewport.Y - 20)
-    local MIN_W, MIN_H = math.min(520, winW), math.min(320, winH)
-
     local RCglob = New("ScreenGui", {
         Name = "RCglob", ResetOnSpawn = false, IgnoreGuiInset = true,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     }, UIRoot)
+
+    -- Ukuran layar GUI yang sebenarnya (ikut berubah saat Roblox di-scale / di-minimize)
+    local function ScreenSize()
+        local sz = RCglob.AbsoluteSize
+        if sz.X > 0 and sz.Y > 0 then return sz end
+        return workspace.CurrentCamera.ViewportSize
+    end
+
+    local viewport = ScreenSize()
+    local winW = math.min(680, viewport.X - 20)
+    local winH = math.min(420, viewport.Y - 20)
+    local MIN_W, MIN_H = math.min(520, winW), math.min(320, winH)
 
     -- Posisi & ukuran terakhir diingat (juga tersimpan di config)
     local startW, startH = winW, winH
@@ -1457,6 +1464,7 @@ function RcHub:Window(GuiConfig)
 
     local LastPos, LastSize = Main.Position, Main.Size
     local activeTween = nil
+    local DesiredW, DesiredH = startW, startH -- ukuran pilihan user, dipakai lagi saat layar membesar
 
     -- Simpan posisi & ukuran HANYA kalau window terbuka penuh dan tidak sedang animasi
     local function CaptureRect(force)
@@ -1465,6 +1473,7 @@ function RcHub:Window(GuiConfig)
         if sz.X.Offset < MIN_W or sz.Y.Offset < MIN_H then return end
 
         LastPos, LastSize = Main.Position, Main.Size
+        DesiredW, DesiredH = sz.X.Offset, sz.Y.Offset
         ConfigData.WindowRect = {
             x = LastPos.X.Offset, y = LastPos.Y.Offset,
             w = LastSize.X.Offset, h = LastSize.Y.Offset,
@@ -1585,6 +1594,72 @@ function RcHub:Window(GuiConfig)
         if animating then return end
         if Main.Visible then HideWindow() else ShowWindow() end
     end
+
+    -- ===== Ikuti perubahan ukuran layar (Roblox di-scale / di-minimize di PC) =====
+    -- Window dan tombol bulat dipindah secara PROPORSIONAL ke layar baru, lalu dijaga tetap di dalam layar.
+    local prevScreen = viewport
+    local fitQueued = false
+
+    local function FitToScreen()
+        local scr = ScreenSize()
+        -- layar 0 / terlalu kecil (mis. Roblox di-minimize): abaikan supaya posisi tidak rusak
+        if scr.X < 200 or scr.Y < 150 then return end
+        if math.abs(scr.X - prevScreen.X) < 1 and math.abs(scr.Y - prevScreen.Y) < 1 then return end
+
+        if ClosePopup then ClosePopup() end
+
+        MIN_W = math.min(520, scr.X - 20)
+        MIN_H = math.min(320, scr.Y - 20)
+
+        local function Refit(pos, size)
+            local w = math.clamp(DesiredW, MIN_W, math.max(MIN_W, scr.X - 10))
+            local h = math.clamp(DesiredH, MIN_H, math.max(MIN_H, scr.Y - 10))
+            -- titik tengah dipertahankan secara proporsional
+            local cx = (pos.X.Offset + size.X.Offset / 2) / prevScreen.X * scr.X
+            local cy = (pos.Y.Offset + size.Y.Offset / 2) / prevScreen.Y * scr.Y
+            local x = math.clamp(cx - w / 2, 0, math.max(0, scr.X - w))
+            local y = math.clamp(cy - h / 2, 0, math.max(0, scr.Y - h))
+            return UDim2.new(0, math.floor(x), 0, math.floor(y)), UDim2.new(0, math.floor(w), 0, math.floor(h))
+        end
+
+        -- window (saat tersembunyi, ukuran tersimpan di LastPos/LastSize)
+        local srcPos, srcSize = LastPos, LastSize
+        if Main.Visible then srcPos, srcSize = Main.Position, Main.Size end
+        LastPos, LastSize = Refit(srcPos, srcSize)
+        Main.Position, Main.Size = LastPos, LastSize
+
+        -- tombol bulat buka/tutup
+        if ToggleBtn and ToggleBtn.Parent then
+            local bw, bh = ToggleBtn.AbsoluteSize.X, ToggleBtn.AbsoluteSize.Y
+            local p = ToggleBtn.Position
+            local cx = (p.X.Offset + bw / 2) / prevScreen.X * scr.X
+            local cy = (p.Y.Offset + bh / 2) / prevScreen.Y * scr.Y
+            ToggleBtn.Position = UDim2.new(
+                0, math.floor(math.clamp(cx - bw / 2, 0, math.max(0, scr.X - bw))),
+                0, math.floor(math.clamp(cy - bh / 2, 0, math.max(0, scr.Y - bh)))
+            )
+        end
+
+        prevScreen = scr
+    end
+
+    -- tunggu animasi buka/tutup selesai dulu, lalu sesuaikan (debounce saat layar ditarik-tarik)
+    local function QueueFit()
+        if fitQueued then return end
+        fitQueued = true
+        task.spawn(function()
+            task.wait(0.05)
+            local tries = 0
+            while animating and tries < 40 do
+                task.wait(0.1)
+                tries = tries + 1
+            end
+            fitQueued = false
+            FitToScreen()
+        end)
+    end
+
+    RCglob:GetPropertyChangedSignal("AbsoluteSize"):Connect(QueueFit)
 
     -- ===== Modal / popup di dalam window =====
     local function OpenModal(name, maxW, maxH)
@@ -2134,7 +2209,7 @@ function RcHub:Window(GuiConfig)
             if resizing and not animating and (input.UserInputType == Enum.UserInputType.MouseMovement
                 or input.UserInputType == Enum.UserInputType.Touch) then
                 local d = input.Position - startMouse
-                local vp = workspace.CurrentCamera.ViewportSize
+                local vp = ScreenSize()
                 local maxW = math.max(MIN_W, vp.X - Main.AbsolutePosition.X - 4)
                 local maxH = math.max(MIN_H, vp.Y - Main.AbsolutePosition.Y - 4)
                 local w = math.clamp(startSize.X + d.X, MIN_W, maxW)

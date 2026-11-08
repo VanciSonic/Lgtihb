@@ -607,10 +607,12 @@ local function ShowExpiredPopup()
     end
 end
 
-local function MakeDraggable(handle, target, onEnd)
+-- [FIX] canDrag (opsional): kalau mengembalikan false, drag tidak dimulai
+local function MakeDraggable(handle, target, onEnd, canDrag)
     local dragging, dragStart, startPos = false, nil, nil
 
     handle.InputBegan:Connect(function(input)
+        if canDrag and not canDrag() then return end
         if input.UserInputType == Enum.UserInputType.MouseButton1
             or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
@@ -796,16 +798,27 @@ function RcHub:Window(GuiConfig)
     -- Popup / dropdown state
     local ClosePopup = nil
 
-    -- Animasi buka/tutup window (ringan): konten di-fade lalu dilepas dari layar,
-    -- yang bergerak hanya kotak kosong yang menyusut / membesar dari tombol bulat.
+    -- ========================================================
+    -- Animasi buka/tutup (ringan) + LOCK anti-spam
+    --   * Saat animasi BUKA berjalan  -> tutup diabaikan sampai selesai
+    --   * Saat animasi TUTUP berjalan -> buka diabaikan sampai selesai
+    -- Konten di-fade lalu dilepas dari layar, yang bergerak hanya
+    -- kotak kosong yang menyusut / membesar dari tombol bulat.
+    -- ========================================================
     local ToggleBtn = nil
-    local animating = false
-    local Content = nil   -- dibuat setelah semua elemen dasar jadi
-    local Overlay = nil   -- penutup fade
+    local animating = false   -- true selama animasi buka / tutup masih jalan
+    local Content = nil       -- dibuat setelah semua elemen dasar jadi
+    local Overlay = nil       -- penutup fade
 
     local LastPos, LastSize = Main.Position, Main.Size
+    local activeTween = nil
 
-    local function CaptureRect()
+    -- Simpan posisi & ukuran HANYA kalau window terbuka penuh dan tidak sedang animasi
+    local function CaptureRect(force)
+        if not force and (animating or not Main.Visible) then return end
+        local sz = Main.Size
+        if sz.X.Offset < MIN_W or sz.Y.Offset < MIN_H then return end
+
         LastPos, LastSize = Main.Position, Main.Size
         ConfigData.WindowRect = {
             x = LastPos.X.Offset, y = LastPos.Y.Offset,
@@ -839,13 +852,36 @@ function RcHub:Window(GuiConfig)
         end
     end
 
+    -- Jalankan tween Main; onDone dipanggil SEKALI saat selesai (ada fallback timeout
+    -- supaya lock `animating` tidak pernah nyangkut)
+    local function PlayMain(info, goal, onDone)
+        if activeTween then pcall(function() activeTween:Cancel() end) end
+
+        local tw = TweenService:Create(Main, info, goal)
+        activeTween = tw
+        local done = false
+
+        local function Finish()
+            if done then return end
+            done = true
+            if activeTween == tw then activeTween = nil end
+            onDone()
+        end
+
+        tw.Completed:Connect(function(state)
+            if state == Enum.PlaybackState.Completed then Finish() end
+        end)
+        task.delay(info.Time + 0.3, Finish)
+        tw:Play()
+    end
+
     local function HideWindow()
         if animating or not Main.Visible or not Content or not Overlay then return end
         animating = true
         if ClosePopup then ClosePopup() end
         CloseModals()
 
-        CaptureRect()
+        CaptureRect(true)
         UpdateOrigin()
         local pos, size = ButtonRect()
 
@@ -858,15 +894,14 @@ function RcHub:Window(GuiConfig)
             -- 2) lepas konten supaya animasi tidak berat, lalu sedot ke tombol
             Content.Parent = nil
             Overlay.Visible = false
-            TweenService:Create(Main, TweenInfo.new(0.42, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
-                Position = pos, Size = size,
-            }):Play()
 
-            task.delay(0.44, function()
+            PlayMain(TweenInfo.new(0.42, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
+                Position = pos, Size = size,
+            }, function()
                 Main.Visible = false
                 Main.Position = LastPos
                 Main.Size = LastSize
-                animating = false
+                animating = false -- baru boleh dibuka lagi
             end)
         end)
     end
@@ -882,11 +917,9 @@ function RcHub:Window(GuiConfig)
         Main.Size = size
         Main.Visible = true
 
-        TweenService:Create(Main, TweenInfo.new(0.45, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
+        PlayMain(TweenInfo.new(0.45, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
             Position = LastPos, Size = LastSize,
-        }):Play()
-
-        task.delay(0.47, function()
+        }, function()
             Main.Position = LastPos
             Main.Size = LastSize
 
@@ -898,12 +931,13 @@ function RcHub:Window(GuiConfig)
 
             task.delay(0.22, function()
                 Overlay.Visible = false
-                animating = false
+                animating = false -- baru boleh ditutup lagi
             end)
         end)
     end
 
     local function ToggleWindow()
+        if animating then return end
         if Main.Visible then HideWindow() else ShowWindow() end
     end
 
@@ -1215,8 +1249,9 @@ function RcHub:Window(GuiConfig)
         b.MouseLeave:Connect(function() Tween(b, { BackgroundColor3 = T.Panel, TextColor3 = T.Sub }) end)
     end
 
-    MakeDraggable(DragBar, Main, CaptureRect)
-    MakeDraggable(TitleCard, Main, CaptureRect)
+    -- [FIX] drag diblok saat animasi buka/tutup
+    MakeDraggable(DragBar, Main, CaptureRect, function() return not animating end)
+    MakeDraggable(TitleCard, Main, CaptureRect, function() return not animating end)
 
     -- Resize handle (pojok kanan bawah): tarik untuk atur lebar (X) dan tinggi (Y) window
     local ResizeHandle = New("TextButton", {
@@ -1246,6 +1281,7 @@ function RcHub:Window(GuiConfig)
         local resizing, startMouse, startSize = false, nil, nil
 
         ResizeHandle.InputBegan:Connect(function(input)
+            if animating then return end -- [FIX] resize diblok saat animasi
             if input.UserInputType == Enum.UserInputType.MouseButton1
                 or input.UserInputType == Enum.UserInputType.Touch then
                 resizing = true
@@ -1262,7 +1298,7 @@ function RcHub:Window(GuiConfig)
         end)
 
         UserInputService.InputChanged:Connect(function(input)
-            if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement
+            if resizing and not animating and (input.UserInputType == Enum.UserInputType.MouseMovement
                 or input.UserInputType == Enum.UserInputType.Touch) then
                 local d = input.Position - startMouse
                 local vp = workspace.CurrentCamera.ViewportSize
@@ -1627,6 +1663,7 @@ function RcHub:Window(GuiConfig)
     end)
 
     Close.Activated:Connect(function()
+        if animating then return end -- [FIX] jangan buka dialog saat animasi
         if Main:FindFirstChild("CloseDialog") then return end
 
         local Overlay = New("Frame", {

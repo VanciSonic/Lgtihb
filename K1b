@@ -1,20 +1,3 @@
--- GantengHub Premium UI Library (soft layout)
--- Layout mengikuti sketsa:
---   [ Nama GUI ........ ] [ Search bar ........ ] [-] [x]
---   [ Nama tab ] [ < section chips (scroll kanan kiri) > ]
---   [ Tab list ] [ Kolom element kiri ] [ Kolom element kanan ]  (scroll atas bawah)
---
--- API sama dengan library lama:
---   local Hub = loadstring(game:HttpGet("URL"))()
---   local Win = Hub:Window({ Title = "GantengHub", Footer = "Premium", Version = 1 })
---   local Tab = Win:AddTab({ Name = "Combat", Icon = "sword" })
---   local Sec = Tab:AddSection("Aimbot")
---   Sec:AddToggle({ Title = "Enable", Default = false, Callback = function(v) end })
---   Opsi tambahan: Column = 1 / 2 (pilih kolom), Locked = true (elemen premium terkunci)
-
--- ============================================================
--- INSTANCE CAPABILITY COMPATIBILITY
--- ============================================================
 local function KZN_NewInstance(className, parent)
     local obj = Instance.new(className)
 

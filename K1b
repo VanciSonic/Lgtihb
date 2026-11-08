@@ -78,11 +78,17 @@ local hasFS = type(isfolder) == "function"
     and type(readfile) == "function"
     and type(isfile) == "function"
 
+local _resettingConfig = false
+local _saveGeneration = 0
+
+local function EnsureConfigFolders()
+    if not hasFS then return end
+    if not isfolder("GantengPremium") then makefolder("GantengPremium") end
+    if not isfolder("GantengPremium/Config") then makefolder("GantengPremium/Config") end
+end
+
 if hasFS then
-    pcall(function()
-        if not isfolder("KZN") then makefolder("KZN") end
-        if not isfolder("KZN/Config") then makefolder("KZN/Config") end
-    end)
+    pcall(EnsureConfigFolders)
 end
 
 local gameName = "Game"
@@ -92,7 +98,37 @@ end)
 gameName = gameName:gsub("[^%w_ ]", "")
 gameName = gameName:gsub("%s+", "_")
 
-local ConfigFile = "KZN/Config/Data_" .. gameName .. ".json"
+local ConfigFile = "GantengPremium/Config/Data_" .. gameName .. ".json"
+
+local function DeleteFolder(path)
+    if not hasFS then return end
+
+    if type(listfiles) == "function" and type(delfile) == "function" then
+        local function ClearContents(folder)
+            local ok, entries = pcall(listfiles, folder)
+            if not ok or type(entries) ~= "table" then return end
+
+            for _, entry in ipairs(entries) do
+                local item = tostring(entry)
+                local isDir = false
+                pcall(function() isDir = isfolder(item) end)
+                if isDir then
+                    ClearContents(item)
+                    if type(delfolder) == "function" then pcall(delfolder, item) end
+                else
+                    pcall(delfile, item)
+                end
+            end
+        end
+        ClearContents(path)
+    elseif type(delfile) == "function" and isfile(ConfigFile) then
+        pcall(delfile, ConfigFile)
+    end
+
+    if type(delfolder) == "function" then
+        pcall(delfolder, path)
+    end
+end
 
 ConfigData      = {}
 Elements        = {}
@@ -100,23 +136,28 @@ CURRENT_VERSION = nil
 
 local _saveScheduled = false
 function SaveConfig()
-    if not hasFS then return end
+    if not hasFS or _resettingConfig then return end
     if _saveScheduled then return end
     _saveScheduled = true
+    local generation = _saveGeneration
     task.delay(0.75, function()
+        if generation ~= _saveGeneration then return end
         _saveScheduled = false
+        if _resettingConfig then return end
         ConfigData._version = CURRENT_VERSION
         pcall(function()
+            EnsureConfigFolders()
             writefile(ConfigFile, HttpService:JSONEncode(ConfigData))
         end)
     end)
 end
 
 function SaveConfigNow()
-    if not hasFS then return end
+    if not hasFS or _resettingConfig then return end
     _saveScheduled = false
     ConfigData._version = CURRENT_VERSION
     pcall(function()
+        EnsureConfigFolders()
         writefile(ConfigFile, HttpService:JSONEncode(ConfigData))
     end)
 end
@@ -1013,8 +1054,12 @@ function RcHub:Window(GuiConfig)
         Render()
     end
 
-    -- Reset semua element ke default
+    -- Reset semua element ke default dan hapus folder penyimpanan
     local function ResetAll()
+        _resettingConfig = true
+        _saveGeneration = _saveGeneration + 1
+        _saveScheduled = false
+
         for k in pairs(ConfigData) do
             if k ~= "_version" and k ~= "WindowRect" then
                 ConfigData[k] = nil
@@ -1025,10 +1070,13 @@ function RcHub:Window(GuiConfig)
                 pcall(function() el:Set(el.DefaultValue) end)
             end
         end
-        SaveConfigNow()
+
+        DeleteFolder("GantengPremium")
+        _resettingConfig = false
+
         RcHub:MakeNotify({
             Title = BRAND_NAME, Description = "Reset selesai",
-            Content = "Semua element dikembalikan ke setting default.", Color = COLOR_RED, Delay = 4,
+            Content = "Semua element kembali ke default dan folder GantengPremium dihapus.", Color = COLOR_RED, Delay = 4,
         })
     end
 

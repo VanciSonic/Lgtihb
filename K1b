@@ -737,6 +737,194 @@ function rcchub(msg, delay, color, title, desc)
 end
 
 -- ============================================================
+-- SHARE CODE (export / import seluruh setting element)
+-- ============================================================
+-- RcHub:ExportCode()      -> code, jumlahSettingBerbeda   (atau nil, pesanError)
+-- RcHub:ImportCode(code)  -> true, jumlahElement, versiBeda (atau false, pesanError)
+--
+-- Format code:
+--   Ganteng_~<data>~<checksum>   : code "offline", datanya ada DI DALAM code (tanpa server)
+--   Ganteng_<id>                 : code pendek, butuh backend (opsional, lihat di bawah)
+--
+-- Backend opsional untuk code pendek (set di getgenv sebelum load):
+--   getgenv().GantengShareBackend = {
+--       Upload   = function(json) ... return "idPendek" end,
+--       Download = function(id)   ... return jsonString end,
+--   }
+--
+-- Element yang ikut dibagikan: Toggle, Slider, Dropdown (otomatis).
+-- Input & Panel TIDAK ikut (bisa berisi webhook / data pribadi) kecuali cfg.Share = true.
+-- Element apa pun bisa dikecualikan dengan cfg.Share = false.
+local SHARE_PREFIX = "Ganteng_"
+local B64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+local B64_INDEX = {}
+for i = 1, 64 do B64_INDEX[string.byte(B64_CHARS, i)] = i - 1 end
+
+local function B64Encode(s)
+    local out = {}
+    for i = 1, #s, 3 do
+        local a, b, c = string.byte(s, i, i + 2)
+        local n = a * 65536 + (b or 0) * 256 + (c or 0)
+        local c1 = math.floor(n / 262144) % 64
+        local c2 = math.floor(n / 4096) % 64
+        local c3 = math.floor(n / 64) % 64
+        local c4 = n % 64
+        out[#out + 1] = B64_CHARS:sub(c1 + 1, c1 + 1) .. B64_CHARS:sub(c2 + 1, c2 + 1)
+            .. (b and B64_CHARS:sub(c3 + 1, c3 + 1) or "")
+            .. (c and B64_CHARS:sub(c4 + 1, c4 + 1) or "")
+    end
+    return table.concat(out)
+end
+
+local function B64Decode(s)
+    local out = {}
+    for i = 1, #s, 4 do
+        local c1, c2, c3, c4 = string.byte(s, i, i + 3)
+        local d1, d2 = B64_INDEX[c1], B64_INDEX[c2]
+        if d1 == nil or d2 == nil then return nil end
+        local d3 = c3 and B64_INDEX[c3] or nil
+        local d4 = c4 and B64_INDEX[c4] or nil
+        if (c3 and d3 == nil) or (c4 and d4 == nil) then return nil end
+        local n = d1 * 262144 + d2 * 4096 + (d3 or 0) * 64 + (d4 or 0)
+        out[#out + 1] = string.char(math.floor(n / 65536) % 256)
+        if d3 then out[#out + 1] = string.char(math.floor(n / 256) % 256) end
+        if d4 then out[#out + 1] = string.char(n % 256) end
+    end
+    return table.concat(out)
+end
+
+local function ShareChecksum(s)
+    local h = 5381
+    for i = 1, #s do
+        h = (h * 33 + string.byte(s, i)) % 4294967296
+    end
+    return string.format("%08x", h)
+end
+
+local function SameValue(a, b)
+    if a == b then return true end
+    if type(a) == "table" and type(b) == "table" then
+        local okA, ja = pcall(HttpService.JSONEncode, HttpService, a)
+        local okB, jb = pcall(HttpService.JSONEncode, HttpService, b)
+        return okA and okB and ja == jb
+    end
+    return false
+end
+
+local function IsShareable(el)
+    return type(el) == "table" and el.Resettable and el.Set and not el.NoShare
+end
+
+-- Validasi nilai dari code orang lain (jangan percaya isi code mentah-mentah)
+local function ValidShareValue(key, v)
+    local kind = string.match(key, "^(%a+)_")
+    if kind == "Toggle" then return type(v) == "boolean" end
+    if kind == "Slider" then return type(v) == "number" and v == v and math.abs(v) < 1e9 end
+    if kind == "Dropdown" then
+        if type(v) == "string" or type(v) == "number" then return #tostring(v) <= 200 end
+        if type(v) == "table" then
+            if #v > 200 then return false end
+            for _, x in ipairs(v) do
+                if (type(x) ~= "string" and type(x) ~= "number") or #tostring(x) > 200 then return false end
+            end
+            return true
+        end
+        return false
+    end
+    if kind == "Input" or kind == "Panel" then return type(v) == "string" and #v <= 500 end
+    return false
+end
+
+function RcHub:ExportCode()
+    local state, count = {}, 0
+    for key, el in pairs(Elements) do
+        if IsShareable(el) then
+            local cur = ConfigData[key]
+            if cur ~= nil and not SameValue(cur, el.DefaultValue) then
+                state[key] = cur
+                count = count + 1
+            end
+        end
+    end
+
+    local ok, json = pcall(HttpService.JSONEncode, HttpService, { v = CURRENT_VERSION, d = state })
+    if not ok then return nil, "Gagal membuat code" end
+
+    local env = (type(getgenv) == "function" and getgenv()) or _G
+    local backend = env and env.GantengShareBackend
+    if type(backend) == "table" and type(backend.Upload) == "function" then
+        local okUp, id = pcall(backend.Upload, json)
+        if okUp and type(id) == "string" and id:match("^[%w%-_]+$") then
+            return SHARE_PREFIX .. id, count
+        end
+        -- upload gagal -> otomatis pakai code offline
+    end
+
+    return SHARE_PREFIX .. "~" .. B64Encode(json) .. "~" .. ShareChecksum(json), count
+end
+
+function RcHub:ImportCode(code)
+    KZN_AssertThreadIdentity()
+    code = (tostring(code or ""):gsub("%s+", ""))
+    if code == "" then return false, "Code masih kosong" end
+
+    local body = code:match("^" .. SHARE_PREFIX .. "(.+)$")
+    if not body then return false, "Format code salah (harus diawali " .. SHARE_PREFIX .. ")" end
+
+    local json
+    if body:sub(1, 1) == "~" then
+        local b64, crc = body:match("^~([%w%-_]+)~(%x+)$")
+        if not b64 then return false, "Code rusak atau kepotong" end
+        json = B64Decode(b64)
+        if not json or ShareChecksum(json) ~= crc then
+            return false, "Code rusak atau salah salin"
+        end
+    else
+        local env = (type(getgenv) == "function" and getgenv()) or _G
+        local backend = env and env.GantengShareBackend
+        if type(backend) ~= "table" or type(backend.Download) ~= "function" then
+            return false, "Code pendek butuh backend, tapi backend belum diatur"
+        end
+        local okDl, res = pcall(backend.Download, body)
+        if not okDl or type(res) ~= "string" then return false, "Code tidak ditemukan" end
+        json = res
+    end
+
+    if #json > 200000 then return false, "Code terlalu besar" end
+
+    local okDec, data = pcall(HttpService.JSONDecode, HttpService, json)
+    if not okDec or type(data) ~= "table" or type(data.d) ~= "table" then
+        return false, "Isi code tidak valid"
+    end
+    local state = data.d
+
+    -- Semua element ikut dibuat sama persis: yang tidak ada di code kembali ke default
+    local normal, toggles = {}, {}
+    for key, el in pairs(Elements) do
+        if IsShareable(el) then
+            local value = state[key]
+            if value == nil then value = el.DefaultValue end
+            if value ~= nil and ValidShareValue(key, value) then
+                local list = (string.sub(key, 1, 7) == "Toggle_") and toggles or normal
+                table.insert(list, { el = el, value = value })
+            end
+        end
+    end
+
+    -- slider / dropdown dulu, toggle terakhir (supaya fitur jalan dengan setting yang sudah benar)
+    for _, item in ipairs(normal) do
+        pcall(item.el.Set, item.el, item.value)
+    end
+    task.wait(0.1)
+    for _, item in ipairs(toggles) do
+        pcall(item.el.Set, item.el, item.value)
+        task.wait()
+    end
+
+    return true, #normal + #toggles, (data.v ~= CURRENT_VERSION)
+end
+
+-- ============================================================
 -- WINDOW
 -- ============================================================
 function RcHub:Window(GuiConfig)
@@ -846,7 +1034,7 @@ function RcHub:Window(GuiConfig)
     end
 
     local function CloseModals()
-        for _, n in ipairs({ "CloseDialog", "ResetDialog", "GuideDialog" }) do
+        for _, n in ipairs({ "CloseDialog", "ResetDialog", "GuideDialog", "ShareDialog" }) do
             local o = Main:FindFirstChild(n)
             if o then o:Destroy() end
         end
@@ -1127,6 +1315,104 @@ function RcHub:Window(GuiConfig)
         end)
     end
 
+    -- Dialog "Redeem / Copy Setting": input code + tombol Redeem & Copy Setting
+    local function OpenShareDialog()
+        local _, Card, CloseDlg = OpenModal("ShareDialog", 380, 240)
+        local GREEN = Color3.fromRGB(70, 220, 120)
+        local busy = false
+
+        Label(Card, {
+            Text = "Redeem / Copy Setting", Font = FONT_BOLD, TextSize = 15, ZIndex = 88,
+            Position = UDim2.new(0, 18, 0, 14), Size = UDim2.new(1, -62, 0, 24),
+        })
+        Label(Card, {
+            Text = "Redeem: tempel code setting dari orang lain lalu tekan Redeem. Copy Setting: salin code seluruh setting UI kamu.",
+            TextColor3 = Color3.fromRGB(215, 215, 215), TextSize = 12, TextWrapped = true,
+            TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 88,
+            Position = UDim2.new(0, 18, 0, 48), Size = UDim2.new(1, -36, 0, 48),
+        })
+
+        local Box = New("TextBox", {
+            BackgroundColor3 = T.Control, BorderSizePixel = 0, ClearTextOnFocus = false, ClipsDescendants = true,
+            Font = FONT, TextSize = 11, TextColor3 = T.Text, Text = "",
+            PlaceholderText = "Ganteng_...", PlaceholderColor3 = T.Muted,
+            TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 88,
+            Position = UDim2.new(0, 18, 0, 104), Size = UDim2.new(1, -36, 0, 30),
+        }, Card)
+        Corner(Box, 8)
+        Pad(Box, 10, 0, 10, 0)
+
+        local function DlgButton(text, x, bg, fg, hover)
+            local b = New("TextButton", {
+                Text = text, Font = FONT_BOLD, TextSize = 12, TextColor3 = fg, BackgroundColor3 = bg,
+                BorderSizePixel = 0, AutoButtonColor = false, ZIndex = 89,
+                AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(x, x == 0 and 18 or 4, 1, -16),
+                Size = UDim2.new(0.5, -22, 0, 34),
+            }, Card)
+            Corner(b, 10)
+            b.MouseEnter:Connect(function() Tween(b, { BackgroundColor3 = hover }) end)
+            b.MouseLeave:Connect(function() Tween(b, { BackgroundColor3 = bg }) end)
+            return b
+        end
+
+        local RedeemBtn = DlgButton("Redeem", 0, T.Text, T.Dark, Color3.fromRGB(255, 255, 255))
+        local CopyBtn = DlgButton("Copy Setting", 0.5, T.Control, T.Text, T.Track)
+
+        RedeemBtn.Activated:Connect(function()
+            KZN_AssertThreadIdentity()
+            if busy then return end
+            busy = true
+            local ok, res, mismatch = RcHub:ImportCode(Box.Text)
+            busy = false
+            if ok then
+                RcHub:MakeNotify({
+                    Title = BRAND_NAME, Description = "Redeem berhasil", Color = GREEN, Delay = 4,
+                    Content = tostring(res) .. " element di-load dari code."
+                        .. (mismatch and "\nCode dibuat di versi script yang beda, sebagian element mungkin tidak cocok." or ""),
+                })
+                CloseDlg()
+            else
+                RcHub:MakeNotify({
+                    Title = BRAND_NAME, Description = "Redeem gagal", Color = COLOR_RED, Delay = 4,
+                    Content = tostring(res),
+                })
+            end
+        end)
+
+        CopyBtn.Activated:Connect(function()
+            KZN_AssertThreadIdentity()
+            local code = RcHub:ExportCode()
+            if not code then
+                RcHub:MakeNotify({
+                    Title = BRAND_NAME, Description = "Copy gagal", Color = COLOR_RED, Delay = 4,
+                    Content = "Gagal membuat code setting.",
+                })
+                return
+            end
+
+            local clip = setclipboard or toclipboard
+            local copied = false
+            if type(clip) == "function" then
+                copied = pcall(clip, code)
+            end
+
+            if copied then
+                RcHub:MakeNotify({
+                    Title = BRAND_NAME, Description = "Setting disalin", Color = GREEN, Delay = 4,
+                    Content = "Code disalin ke clipboard (" .. #code .. " karakter).",
+                })
+                CloseDlg()
+            else
+                -- executor tanpa clipboard: taruh di kotak, salin manual
+                Box.Text = code
+                RcHub:MakeNotify({
+                    Title = BRAND_NAME, Description = "Salin manual", Color = COLOR_YELLOW, Delay = 5,
+                    Content = "Executor tidak punya clipboard. Code sudah ada di kotak, salin manual.",
+                })
+            end
+        end)
+    end
+
     -- --------------------------------------------------------
     -- ROW 1 : nama GUI (hijau) + search bar (merah) + min/close
     -- --------------------------------------------------------
@@ -1227,21 +1513,111 @@ function RcHub:Window(GuiConfig)
     }, Main)
     Corner(Min, 15)
 
-    -- Tombol reset (segitiga warning merah)
-    local Warn = New("TextButton", {
-        Name = "ResetButton", Text = "", AutoButtonColor = false,
+    -- Tombol menu (3 garis) -> daftar: Reset Setting / Redeem + Copy Setting
+    local MenuBtn = New("TextButton", {
+        Name = "MenuButton", Text = "", AutoButtonColor = false,
         BackgroundColor3 = T.Panel, BorderSizePixel = 0,
         AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -82, 0, 15), Size = UDim2.new(0, 30, 0, 30),
     }, Main)
-    Corner(Warn, 15)
-    MakeWarnIcon(Warn, COLOR_RED, {
-        AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0), Size = UDim2.new(0, 18, 0, 16),
-    })
-    Warn.MouseEnter:Connect(function() Tween(Warn, { BackgroundColor3 = Color3.fromRGB(70, 34, 34) }) end)
-    Warn.MouseLeave:Connect(function() Tween(Warn, { BackgroundColor3 = T.Panel }) end)
-    Warn.Activated:Connect(function()
+    Corner(MenuBtn, 15)
+
+    local MenuBars = {}
+    for i = 0, 2 do
+        local bar = New("Frame", {
+            BackgroundColor3 = T.Sub, BorderSizePixel = 0,
+            AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, (i - 1) * 5),
+            Size = UDim2.new(0, 14, 0, 2),
+        }, MenuBtn)
+        Corner(bar, 1)
+        table.insert(MenuBars, bar)
+    end
+    MenuBtn.MouseEnter:Connect(function()
+        Tween(MenuBtn, { BackgroundColor3 = T.Control })
+        for _, b in ipairs(MenuBars) do Tween(b, { BackgroundColor3 = T.Text }) end
+    end)
+    MenuBtn.MouseLeave:Connect(function()
+        Tween(MenuBtn, { BackgroundColor3 = T.Panel })
+        for _, b in ipairs(MenuBars) do Tween(b, { BackgroundColor3 = T.Sub }) end
+    end)
+
+    local MENU_W, MENU_H = 190, 76
+    local MenuPopup = nil
+    local MenuOpen = false
+    local MenuCloseFn
+
+    local function CloseMenu()
+        if not MenuOpen then return end
+        MenuOpen = false
+        if ClosePopup == MenuCloseFn then ClosePopup = nil end
+
+        local pop = MenuPopup
+        MenuPopup = nil
+        if pop and pop.Parent then
+            local tw = Tween(pop, { Size = UDim2.new(0, MENU_W, 0, 0) }, 0.12)
+            tw.Completed:Connect(function()
+                if pop.Parent then pop:Destroy() end
+            end)
+        end
+    end
+
+    -- klik di luar menu menutupnya (dipanggil lewat mekanisme ClosePopup yang sama dengan dropdown)
+    MenuCloseFn = function(pos)
+        if pos then
+            local function inside(gui)
+                local p, sz = gui.AbsolutePosition, gui.AbsoluteSize
+                return pos.X >= p.X and pos.X <= p.X + sz.X and pos.Y >= p.Y and pos.Y <= p.Y + sz.Y
+            end
+            if (MenuPopup and inside(MenuPopup)) or inside(MenuBtn) then return end
+        end
+        CloseMenu()
+    end
+
+    local function OpenMenu()
+        if animating then return end
+        if ClosePopup then ClosePopup() end
+
+        local old = Main:FindFirstChild("MenuPopup")
+        if old then old:Destroy() end
+
+        local Pop = New("Frame", {
+            Name = "MenuPopup", BackgroundColor3 = T.Popup, BorderSizePixel = 0,
+            ClipsDescendants = true, ZIndex = 60,
+            AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -82, 0, 50),
+            Size = UDim2.new(0, MENU_W, 0, 0),
+        }, Main)
+        Corner(Pop, 12)
+
+        local function Item(index, text, color, action)
+            local b = New("TextButton", {
+                Text = "", AutoButtonColor = false, BackgroundColor3 = T.Popup, BorderSizePixel = 0, ZIndex = 61,
+                Position = UDim2.new(0, 6, 0, 6 + (index - 1) * 34), Size = UDim2.new(1, -12, 0, 30),
+            }, Pop)
+            Corner(b, 8)
+            Label(b, {
+                Text = text, TextSize = 12, TextColor3 = color, ZIndex = 62,
+                Position = UDim2.new(0, 10, 0, 0), Size = UDim2.new(1, -20, 1, 0),
+            })
+            b.MouseEnter:Connect(function() Tween(b, { BackgroundColor3 = T.Control }) end)
+            b.MouseLeave:Connect(function() Tween(b, { BackgroundColor3 = T.Popup }) end)
+            b.Activated:Connect(function()
+                KZN_AssertThreadIdentity()
+                CloseMenu()
+                action()
+            end)
+        end
+
+        Item(1, "Reset Setting", COLOR_RED, OpenResetDialog)
+        Item(2, "Redeem / Copy Setting", T.Text, OpenShareDialog)
+
+        MenuPopup = Pop
+        MenuOpen = true
+        ClosePopup = MenuCloseFn
+        Tween(Pop, { Size = UDim2.new(0, MENU_W, 0, MENU_H) }, 0.15)
+    end
+
+    MenuBtn.Activated:Connect(function()
         KZN_AssertThreadIdentity()
-        OpenResetDialog()
+        if MenuOpen then CloseMenu() else OpenMenu() end
     end)
 
     for _, b in ipairs({ Close, Min }) do
@@ -2195,6 +2571,7 @@ function RcHub:Window(GuiConfig)
                 F:Set(F.Value, true)
                 F.DefaultValue = DefaultValue
                 F.Resettable = true
+                F.NoShare = (cfg.Share == false)
                 Elements[key] = F
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)
@@ -2446,6 +2823,7 @@ function RcHub:Window(GuiConfig)
                 F:Set(F.Value, true)
                 F.DefaultValue = DefaultValue
                 F.Resettable = true
+                F.NoShare = (cfg.Share == false)
                 Elements[key] = F
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)
@@ -2513,6 +2891,7 @@ function RcHub:Window(GuiConfig)
                 F:Set(F.Value, true)
                 F.DefaultValue = DefaultValue
                 F.Resettable = true
+                F.NoShare = (cfg.Share ~= true)
                 Elements[key] = F
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)
@@ -2604,6 +2983,7 @@ function RcHub:Window(GuiConfig)
 
                 F.DefaultValue = DefaultValue
                 F.Resettable = true
+                F.NoShare = (cfg.Share ~= true)
                 Elements[key] = F
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)
@@ -2917,10 +3297,72 @@ function RcHub:Window(GuiConfig)
                 F:SetValues(F.Options, cfg.Default, true)
                 F.DefaultValue = DefaultValue
                 F.Resettable = true
+                F.NoShare = (cfg.Share == false)
                 Elements[key] = F
                 ApplyLock(row, cfg)
                 Register(cfg.Title, row)
                 return F
+            end
+
+            -- ------------------------------------------------
+            -- Share Panel: Export / Import code seluruh setting
+            -- ------------------------------------------------
+            -- Sec:AddSharePanel()   (opsional: { Title = "...", Content = "...", Column = 1 })
+            function Items:AddSharePanel(cfg)
+                cfg = cfg or {}
+                local GREEN = Color3.fromRGB(70, 220, 120)
+                local panel
+
+                panel = Items:AddPanel({
+                    Title = cfg.Title or "Share Config",
+                    Content = cfg.Content or "Export = salin code seluruh setting kamu. Import = tempel code dari orang lain lalu tekan Import Code.",
+                    Placeholder = SHARE_PREFIX .. "...",
+                    Button = "Import Code",
+                    SubButton = "Export Code",
+                    Column = cfg.Column,
+                    Callback = function(text)
+                        local ok, res, mismatch = RcHub:ImportCode(text)
+                        if ok then
+                            RcHub:MakeNotify({
+                                Title = BRAND_NAME, Description = "Import berhasil", Color = GREEN, Delay = 4,
+                                Content = tostring(res) .. " element di-load dari code."
+                                    .. (mismatch and "\nCode dibuat di versi script yang beda, sebagian element mungkin tidak cocok." or ""),
+                            })
+                        else
+                            RcHub:MakeNotify({
+                                Title = BRAND_NAME, Description = "Import gagal", Color = COLOR_RED, Delay = 4,
+                                Content = tostring(res),
+                            })
+                        end
+                    end,
+                    SubCallback = function()
+                        local code, info = RcHub:ExportCode()
+                        if not code then
+                            RcHub:MakeNotify({
+                                Title = BRAND_NAME, Description = "Export gagal", Color = COLOR_RED, Delay = 4,
+                                Content = tostring(info),
+                            })
+                            return
+                        end
+
+                        local clip = setclipboard or toclipboard
+                        local copied = false
+                        if type(clip) == "function" then
+                            copied = pcall(clip, code)
+                        end
+                        if not copied then
+                            panel:Set(code, true) -- fallback: taruh di kotak input, salin manual
+                        end
+
+                        RcHub:MakeNotify({
+                            Title = BRAND_NAME, Description = "Export berhasil", Color = GREEN, Delay = 5,
+                            Content = copied
+                                and ("Code disalin ke clipboard (" .. #code .. " karakter).")
+                                or "Executor tidak punya clipboard, code ditaruh di kotak input. Salin manual.",
+                        })
+                    end,
+                })
+                return panel
             end
 
             return Items

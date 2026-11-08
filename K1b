@@ -742,39 +742,320 @@ end
 -- RcHub:ExportCode()      -> code, jumlahSettingBerbeda   (atau nil, pesanError)
 -- RcHub:ImportCode(code)  -> true, jumlahElement, versiBeda (atau false, pesanError)
 --
--- Format code:
---   Ganteng_~<data>~<checksum>   : code "offline", datanya ada DI DALAM code (tanpa server)
---   Ganteng_<id>                 : code pendek, butuh backend (opsional, lihat di bawah)
+-- Bentuk code: Ganteng-SoNIcsonICnicSOnic...   (isinya CUMA huruf s o n i c, besar-kecil dibedakan)
+--   Setting dipadatkan jadi byte sekecil mungkin, lalu ditulis sebagai "angka basis-10"
+--   yang digit 0-9 nya diganti huruf  s o n i c S O N I C.
+--   Code lama (Ganteng_~...~...) tetap bisa di-import.
+--   CATATAN: ini ENCODING, bukan enkripsi. Siapa pun bisa decode.
+--
+-- Redeem = salinan PERSIS: semua element yang ikut dibagikan di-set sama dengan pemilik code
+-- (yang tidak ada di code dikembalikan ke default, sama seperti punya pemilik code).
+--
+-- Cara memadatkan (tanpa mengubah hasil):
+--   * hanya setting yang BEDA dari default yang disimpan
+--   * nama element -> hash 16-bit (otomatis 24-bit kalau ada tabrakan antar element)
+--   * toggle : cukup hash-nya (nilainya pasti kebalikan dari default)
+--   * slider : nomor langkah (varint), bukan angka utuh
+--   * dropdown : pilihan bawaan script -> hash 16-bit, nilai lain (isi dinamis) disimpan utuh
 --
 -- Backend opsional untuk code pendek (set di getgenv sebelum load):
 --   getgenv().GantengShareBackend = {
---       Upload   = function(json) ... return "idPendek" end,
---       Download = function(id)   ... return jsonString end,
+--       Upload   = function(data) ... return "id" end,       -- data = teks huruf sonic
+--       Download = function(id)   ... return dataString end,
 --   }
+--   id harus mengandung karakter selain s/o/n/i/c (kalau tidak, dianggap code biasa).
 --
 -- Element yang ikut dibagikan: Toggle, Slider, Dropdown (otomatis).
 -- Input & Panel TIDAK ikut (bisa berisi webhook / data pribadi) kecuali cfg.Share = true.
 -- Element apa pun bisa dikecualikan dengan cfg.Share = false.
-local SHARE_PREFIX = "Ganteng_"
+local SHARE_PREFIX = "Ganteng-"
+local SONIC_CHARS = "sonicSONIC"
+local SONIC_INDEX = {}
+for i = 1, 10 do SONIC_INDEX[string.byte(SONIC_CHARS, i)] = i - 1 end
+
+-- 6 byte -> 15 huruf ; sisa 1..5 byte -> 3,5,8,10,13 huruf
+local SONIC_REST_DIGITS = { 3, 5, 8, 10, 13 }
+local SONIC_REST_BYTES = { [0] = 0, [3] = 1, [5] = 2, [8] = 3, [10] = 4, [13] = 5 }
+
+local function SonicEncode(bytes)
+    local out = {}
+    local n = #bytes
+
+    local function emit(first, count, digits)
+        local v = 0
+        for k = first, first + count - 1 do v = v * 256 + bytes[k] end
+        local t = {}
+        for d = digits, 1, -1 do
+            local r = v % 10
+            t[d] = string.sub(SONIC_CHARS, r + 1, r + 1)
+            v = (v - r) / 10
+        end
+        out[#out + 1] = table.concat(t)
+    end
+
+    local i = 1
+    while i + 5 <= n do
+        emit(i, 6, 15)
+        i = i + 6
+    end
+    local rest = n - i + 1
+    if rest > 0 then emit(i, rest, SONIC_REST_DIGITS[rest]) end
+    return table.concat(out)
+end
+
+local function SonicDecode(text)
+    local len = #text
+    local full = math.floor(len / 15)
+    local restDigits = len - full * 15
+    local restBytes = SONIC_REST_BYTES[restDigits]
+    if restBytes == nil then return nil end
+
+    local bytes = {}
+    local pos = 1
+
+    local function chunk(digits, count)
+        local v = 0
+        for _ = 1, digits do
+            local d = SONIC_INDEX[string.byte(text, pos)]
+            if d == nil then return false end
+            v = v * 10 + d
+            pos = pos + 1
+        end
+        if v >= 2 ^ (8 * count) then return false end
+        local tmp = {}
+        for k = count, 1, -1 do
+            tmp[k] = v % 256
+            v = math.floor(v / 256)
+        end
+        for k = 1, count do bytes[#bytes + 1] = tmp[k] end
+        return true
+    end
+
+    for _ = 1, full do
+        if not chunk(15, 6) then return nil end
+    end
+    if restBytes > 0 and not chunk(restDigits, restBytes) then return nil end
+    return bytes
+end
+
+-- hash 24-bit sebuah teks (hash 16-bit = hash 24-bit % 65536)
+local function KeyHash(str)
+    local h = 7
+    for i = 1, #str do
+        h = (h * 131 + string.byte(str, i)) % 16777216
+    end
+    return h
+end
+
+local function ByteChecksum(bytes, last)
+    local h = 11
+    for i = 1, last do
+        h = (h * 131 + bytes[i]) % 65536
+    end
+    return h
+end
+
+local function PushVarint(buf, n)
+    while n >= 128 do
+        buf[#buf + 1] = n % 128 + 128
+        n = math.floor(n / 128)
+    end
+    buf[#buf + 1] = n
+end
+
+local function PushZigzag(buf, n)
+    PushVarint(buf, (n >= 0) and (n * 2) or (-n * 2 - 1))
+end
+
+local function PushHash16(buf, h)
+    buf[#buf + 1] = h % 256
+    buf[#buf + 1] = math.floor(h / 256)
+end
+
+-- hash 16-bit sebuah pilihan dropdown; nil kalau pilihan tidak ada di daftar / hash-nya tabrakan
+local function OptionHash(options, opt)
+    local h = KeyHash(tostring(opt)) % 65536
+    local found, dup = false, false
+    for _, o in ipairs(options or {}) do
+        if o == opt then
+            found = true
+        elseif KeyHash(tostring(o)) % 65536 == h then
+            dup = true
+        end
+    end
+    if found and not dup then return h end
+    return nil
+end
+
+-- nilai umum, tag: 0 false | 1 true | 2 angka bulat | 3 teks | 4 daftar teks/angka
+--                  5 pilihan (hash) | 6 daftar pilihan (hash) | 7 angka desimal (x1000)
+local function PushValue(buf, v, options)
+    local t = type(v)
+    if t == "boolean" then
+        buf[#buf + 1] = v and 1 or 0
+    elseif t == "number" then
+        local n = math.floor(v * 1000 + 0.5)
+        if n % 1000 == 0 then
+            buf[#buf + 1] = 2
+            PushZigzag(buf, n / 1000)
+        else
+            buf[#buf + 1] = 7
+            PushZigzag(buf, n)
+        end
+    elseif t == "string" then
+        local h = options and OptionHash(options, v)
+        if h then
+            buf[#buf + 1] = 5
+            PushHash16(buf, h)
+        else
+            buf[#buf + 1] = 3
+            PushVarint(buf, #v)
+            for i = 1, #v do buf[#buf + 1] = string.byte(v, i) end
+        end
+    elseif t == "table" then
+        local hashes = nil
+        if options then
+            hashes = {}
+            for i = 1, #v do
+                local h = OptionHash(options, v[i])
+                if not h then
+                    hashes = nil
+                    break
+                end
+                hashes[i] = h
+            end
+        end
+        if hashes then
+            buf[#buf + 1] = 6
+            PushVarint(buf, #hashes)
+            for _, h in ipairs(hashes) do PushHash16(buf, h) end
+        else
+            buf[#buf + 1] = 4
+            PushVarint(buf, #v)
+            for i = 1, #v do PushValue(buf, v[i], nil) end
+        end
+    end
+end
+
+local function ReadVarint(bytes, pos, limit)
+    local n, mul = 0, 1
+    for _ = 1, 7 do
+        if pos > limit then return nil end
+        local b = bytes[pos]
+        pos = pos + 1
+        n = n + (b % 128) * mul
+        if b < 128 then return n, pos end
+        mul = mul * 128
+    end
+    return nil
+end
+
+local function ReadZigzag(bytes, pos, limit)
+    local z, np = ReadVarint(bytes, pos, limit)
+    if not z then return nil end
+    if z % 2 == 0 then return z / 2, np end
+    return -(z + 1) / 2, np
+end
+
+-- return: ok, value, posBerikutnya
+local function ReadValue(bytes, pos, limit, depth)
+    if pos > limit then return false end
+    local tag = bytes[pos]
+    pos = pos + 1
+
+    if tag == 0 then return true, false, pos end
+    if tag == 1 then return true, true, pos end
+
+    if tag == 2 then
+        local v, np = ReadZigzag(bytes, pos, limit)
+        if not v then return false end
+        return true, v, np
+    end
+    if tag == 7 then
+        local v, np = ReadZigzag(bytes, pos, limit)
+        if not v then return false end
+        return true, v / 1000, np
+    end
+
+    if tag == 3 then
+        local len
+        len, pos = ReadVarint(bytes, pos, limit)
+        if not len or len > 1000 or pos + len - 1 > limit then return false end
+        local chars = {}
+        for k = 0, len - 1 do chars[#chars + 1] = string.char(bytes[pos + k]) end
+        return true, table.concat(chars), pos + len
+    end
+
+    if tag == 5 then
+        if pos + 1 > limit then return false end
+        return true, { __opt = bytes[pos] + bytes[pos + 1] * 256 }, pos + 2
+    end
+
+    if tag == 6 and depth == 0 then
+        local count
+        count, pos = ReadVarint(bytes, pos, limit)
+        if not count or count > 200 or pos + count * 2 - 1 > limit then return false end
+        local list = {}
+        for _ = 1, count do
+            list[#list + 1] = bytes[pos] + bytes[pos + 1] * 256
+            pos = pos + 2
+        end
+        return true, { __opts = list }, pos
+    end
+
+    if tag == 4 and depth == 0 then
+        local count
+        count, pos = ReadVarint(bytes, pos, limit)
+        if not count or count > 200 then return false end
+        local list = {}
+        for _ = 1, count do
+            if pos > limit then return false end
+            local t = bytes[pos]
+            if t ~= 2 and t ~= 3 and t ~= 7 then return false end
+            local ok, v, np = ReadValue(bytes, pos, limit, 1)
+            if not ok then return false end
+            list[#list + 1] = v
+            pos = np
+        end
+        return true, list, pos
+    end
+
+    return false
+end
+
+-- ubah hash pilihan dari code jadi nilai asli sesuai daftar pilihan BAWAAN element ini
+-- return: nilai, bisaDipakai
+local function ResolveShared(el, value)
+    if type(value) ~= "table" then return value, true end
+    local options = el.StaticOptions or el.Options or {}
+
+    if value.__opt ~= nil then
+        for _, opt in ipairs(options) do
+            if KeyHash(tostring(opt)) % 65536 == value.__opt then return opt, true end
+        end
+        return nil, false
+    end
+
+    if value.__opts ~= nil then
+        local out = {}
+        for _, h in ipairs(value.__opts) do
+            for _, opt in ipairs(options) do
+                if KeyHash(tostring(opt)) % 65536 == h then
+                    out[#out + 1] = opt
+                    break
+                end
+            end
+        end
+        return out, true
+    end
+
+    return value, true
+end
+
+-- ---------- code format lama (Ganteng_~base64~checksum), hanya untuk import ----------
 local B64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
 local B64_INDEX = {}
 for i = 1, 64 do B64_INDEX[string.byte(B64_CHARS, i)] = i - 1 end
-
-local function B64Encode(s)
-    local out = {}
-    for i = 1, #s, 3 do
-        local a, b, c = string.byte(s, i, i + 2)
-        local n = a * 65536 + (b or 0) * 256 + (c or 0)
-        local c1 = math.floor(n / 262144) % 64
-        local c2 = math.floor(n / 4096) % 64
-        local c3 = math.floor(n / 64) % 64
-        local c4 = n % 64
-        out[#out + 1] = B64_CHARS:sub(c1 + 1, c1 + 1) .. B64_CHARS:sub(c2 + 1, c2 + 1)
-            .. (b and B64_CHARS:sub(c3 + 1, c3 + 1) or "")
-            .. (c and B64_CHARS:sub(c4 + 1, c4 + 1) or "")
-    end
-    return table.concat(out)
-end
 
 local function B64Decode(s)
     local out = {}
@@ -793,7 +1074,7 @@ local function B64Decode(s)
     return table.concat(out)
 end
 
-local function ShareChecksum(s)
+local function LegacyChecksum(s)
     local h = 5381
     for i = 1, #s do
         h = (h * 33 + string.byte(s, i)) % 4294967296
@@ -835,76 +1116,252 @@ local function ValidShareValue(key, v)
     return false
 end
 
+local function ShareVersion()
+    return math.floor(tonumber(CURRENT_VERSION) or 0) % 128
+end
+
 function RcHub:ExportCode()
-    local state, count = {}, 0
+    -- hash 16-bit cukup kalau tidak ada tabrakan antar element; kalau ada, pakai 24-bit
+    local seen, wide = {}, false
+    for key, el in pairs(Elements) do
+        if IsShareable(el) then
+            local h = KeyHash(key) % 65536
+            if seen[h] then wide = true end
+            seen[h] = true
+        end
+    end
+
+    -- kelompokkan setting yang BEDA dari default
+    local toggles, sliders, options, generic = {}, {}, {}, {}
     for key, el in pairs(Elements) do
         if IsShareable(el) then
             local cur = ConfigData[key]
-            if cur ~= nil and not SameValue(cur, el.DefaultValue) then
-                state[key] = cur
-                count = count + 1
+            if cur ~= nil and not SameValue(cur, el.DefaultValue) and ValidShareValue(key, cur) then
+                local kind = string.match(key, "^(%a+)_")
+                local placed = false
+
+                if kind == "Toggle" and type(cur) == "boolean" and type(el.DefaultValue) == "boolean" then
+                    toggles[#toggles + 1] = { key = key }
+                    placed = true
+                elseif kind == "Slider" and type(cur) == "number" and el.Min and el.Increment and el.Increment > 0 then
+                    local idx = math.floor((cur - el.Min) / el.Increment + 0.5)
+                    if idx >= 0 and idx < 4000000000 and math.abs((el.Min + idx * el.Increment) - cur) < 0.0005 then
+                        sliders[#sliders + 1] = { key = key, idx = idx }
+                        placed = true
+                    end
+                elseif kind == "Dropdown" and type(cur) ~= "table" then
+                    local h = OptionHash(el.StaticOptions, cur)
+                    if h then
+                        options[#options + 1] = { key = key, h = h }
+                        placed = true
+                    end
+                end
+
+                if not placed then
+                    generic[#generic + 1] = { key = key, value = cur, options = el.StaticOptions }
+                end
             end
         end
     end
 
-    local ok, json = pcall(HttpService.JSONEncode, HttpService, { v = CURRENT_VERSION, d = state })
-    if not ok then return nil, "Gagal membuat code" end
+    local function ByKey(a, b) return a.key < b.key end
+    table.sort(toggles, ByKey)
+    table.sort(sliders, ByKey)
+    table.sort(options, ByKey)
+    table.sort(generic, ByKey)
+
+    -- header 1 byte: versi script (7 bit) + penanda hash lebar (1 bit)
+    local buf = { ShareVersion() * 2 + (wide and 1 or 0) }
+
+    local function PushKey(key)
+        local h = KeyHash(key)
+        if not wide then h = h % 65536 end
+        buf[#buf + 1] = h % 256
+        buf[#buf + 1] = math.floor(h / 256) % 256
+        if wide then buf[#buf + 1] = math.floor(h / 65536) end
+    end
+
+    PushVarint(buf, #toggles)
+    for _, item in ipairs(toggles) do PushKey(item.key) end
+
+    PushVarint(buf, #sliders)
+    for _, item in ipairs(sliders) do
+        PushKey(item.key)
+        PushVarint(buf, item.idx)
+    end
+
+    PushVarint(buf, #options)
+    for _, item in ipairs(options) do
+        PushKey(item.key)
+        PushHash16(buf, item.h)
+    end
+
+    PushVarint(buf, #generic)
+    for _, item in ipairs(generic) do
+        PushKey(item.key)
+        PushValue(buf, item.value, item.options)
+    end
+
+    local crc = ByteChecksum(buf, #buf)
+    buf[#buf + 1] = crc % 256
+    buf[#buf + 1] = math.floor(crc / 256)
+
+    local data = SonicEncode(buf)
+    local total = #toggles + #sliders + #options + #generic
 
     local env = (type(getgenv) == "function" and getgenv()) or _G
     local backend = env and env.GantengShareBackend
     if type(backend) == "table" and type(backend.Upload) == "function" then
-        local okUp, id = pcall(backend.Upload, json)
-        if okUp and type(id) == "string" and id:match("^[%w%-_]+$") then
-            return SHARE_PREFIX .. id, count
+        local okUp, id = pcall(backend.Upload, data)
+        if okUp and type(id) == "string" and id:match("^[%w%-_]+$") and not id:match("^[SsOoNnIiCc]+$") then
+            return SHARE_PREFIX .. id, total
         end
-        -- upload gagal -> otomatis pakai code offline
+        -- upload gagal -> otomatis pakai code biasa
     end
 
-    return SHARE_PREFIX .. "~" .. B64Encode(json) .. "~" .. ShareChecksum(json), count
+    return SHARE_PREFIX .. data, total
 end
 
 function RcHub:ImportCode(code)
     KZN_AssertThreadIdentity()
     code = (tostring(code or ""):gsub("%s+", ""))
     if code == "" then return false, "Code masih kosong" end
+    if #code > 200000 then return false, "Code terlalu besar" end
 
-    local body = code:match("^" .. SHARE_PREFIX .. "(.+)$")
+    local body = code:match("^Ganteng[%-_](.+)$")
     if not body then return false, "Format code salah (harus diawali " .. SHARE_PREFIX .. ")" end
 
-    local json
+    local lookup, versionDiff
+
     if body:sub(1, 1) == "~" then
+        -- format lama: Ganteng_~base64~checksum (isi JSON)
         local b64, crc = body:match("^~([%w%-_]+)~(%x+)$")
         if not b64 then return false, "Code rusak atau kepotong" end
-        json = B64Decode(b64)
-        if not json or ShareChecksum(json) ~= crc then
+        local json = B64Decode(b64)
+        if not json or LegacyChecksum(json) ~= crc then
             return false, "Code rusak atau salah salin"
         end
-    else
-        local env = (type(getgenv) == "function" and getgenv()) or _G
-        local backend = env and env.GantengShareBackend
-        if type(backend) ~= "table" or type(backend.Download) ~= "function" then
-            return false, "Code pendek butuh backend, tapi backend belum diatur"
+        local okDec, data = pcall(HttpService.JSONDecode, HttpService, json)
+        if not okDec or type(data) ~= "table" or type(data.d) ~= "table" then
+            return false, "Isi code tidak valid"
         end
-        local okDl, res = pcall(backend.Download, body)
-        if not okDl or type(res) ~= "string" then return false, "Code tidak ditemukan" end
-        json = res
-    end
+        local state = data.d
+        lookup = function(key, el) return state[key] end
+        versionDiff = (data.v ~= CURRENT_VERSION)
+    else
+        local text = body
+        if not text:match("^[SsOoNnIiCc]+$") then
+            -- code pendek: ambil datanya dari backend
+            local env = (type(getgenv) == "function" and getgenv()) or _G
+            local backend = env and env.GantengShareBackend
+            if type(backend) ~= "table" or type(backend.Download) ~= "function" then
+                return false, "Code pendek butuh backend, tapi backend belum diatur"
+            end
+            local okDl, res = pcall(backend.Download, body)
+            if not okDl or type(res) ~= "string" or not res:match("^[SsOoNnIiCc]+$") then
+                return false, "Code tidak ditemukan"
+            end
+            text = res
+        end
 
-    if #json > 200000 then return false, "Code terlalu besar" end
+        local bytes = SonicDecode(text)
+        if not bytes or #bytes < 6 then return false, "Code rusak atau kepotong" end
 
-    local okDec, data = pcall(HttpService.JSONDecode, HttpService, json)
-    if not okDec or type(data) ~= "table" or type(data.d) ~= "table" then
-        return false, "Isi code tidak valid"
+        local n = #bytes
+        local crc = bytes[n - 1] + bytes[n] * 256
+        if ByteChecksum(bytes, n - 2) ~= crc then return false, "Code rusak atau salah salin" end
+
+        local limit = n - 2
+        local header = bytes[1]
+        local wide = (header % 2 == 1)
+        local ver = math.floor(header / 2)
+        local hb = wide and 3 or 2
+        local pos = 2
+
+        local function varint()
+            local v, np = ReadVarint(bytes, pos, limit)
+            if not v or v > 5000 then return nil end
+            pos = np
+            return v
+        end
+
+        local function readKey()
+            if pos + hb - 1 > limit then return nil end
+            local h = bytes[pos] + bytes[pos + 1] * 256
+            if wide then h = h + bytes[pos + 2] * 65536 end
+            pos = pos + hb
+            return h
+        end
+
+        local BAD = "Isi code tidak valid"
+        local flips, sliderIdx, optionHash, generic = {}, {}, {}, {}
+
+        local count = varint()
+        if not count then return false, BAD end
+        for _ = 1, count do
+            local h = readKey()
+            if not h then return false, BAD end
+            flips[h] = true
+        end
+
+        count = varint()
+        if not count then return false, BAD end
+        for _ = 1, count do
+            local h = readKey()
+            local idx = h and varint()
+            if not idx then return false, BAD end
+            sliderIdx[h] = idx
+        end
+
+        count = varint()
+        if not count then return false, BAD end
+        for _ = 1, count do
+            local h = readKey()
+            if not h or pos + 1 > limit then return false, BAD end
+            optionHash[h] = bytes[pos] + bytes[pos + 1] * 256
+            pos = pos + 2
+        end
+
+        count = varint()
+        if not count then return false, BAD end
+        for _ = 1, count do
+            local h = readKey()
+            if not h then return false, BAD end
+            local ok, value, nextPos = ReadValue(bytes, pos, limit, 0)
+            if not ok then return false, BAD end
+            generic[h] = value
+            pos = nextPos
+        end
+
+        lookup = function(key, el)
+            local h = KeyHash(key)
+            if not wide then h = h % 65536 end
+
+            if flips[h] and string.sub(key, 1, 7) == "Toggle_" and type(el.DefaultValue) == "boolean" then
+                return not el.DefaultValue
+            end
+
+            local idx = sliderIdx[h]
+            if idx ~= nil and el.Min and el.Increment then
+                return el.Min + idx * el.Increment
+            end
+
+            local oh = optionHash[h]
+            if oh ~= nil then return { __opt = oh } end
+
+            return generic[h]
+        end
+        versionDiff = (ver ~= ShareVersion())
     end
-    local state = data.d
 
     -- Semua element ikut dibuat sama persis: yang tidak ada di code kembali ke default
     local normal, toggles = {}, {}
     for key, el in pairs(Elements) do
         if IsShareable(el) then
-            local value = state[key]
-            if value == nil then value = el.DefaultValue end
-            if value ~= nil and ValidShareValue(key, value) then
+            local value, usable = lookup(key, el), true
+            if value ~= nil then value, usable = ResolveShared(el, value) end
+            if value == nil and usable then value = el.DefaultValue end
+            if usable and value ~= nil and ValidShareValue(key, value) then
                 local list = (string.sub(key, 1, 7) == "Toggle_") and toggles or normal
                 table.insert(list, { el = el, value = value })
             end
@@ -921,7 +1378,7 @@ function RcHub:ImportCode(code)
         task.wait()
     end
 
-    return true, #normal + #toggles, (data.v ~= CURRENT_VERSION)
+    return true, #normal + #toggles, versionDiff
 end
 
 -- ============================================================
@@ -1335,7 +1792,7 @@ function RcHub:Window(GuiConfig)
         local Box = New("TextBox", {
             BackgroundColor3 = T.Control, BorderSizePixel = 0, ClearTextOnFocus = false, ClipsDescendants = true,
             Font = FONT, TextSize = 11, TextColor3 = T.Text, Text = "",
-            PlaceholderText = "Ganteng_...", PlaceholderColor3 = T.Muted,
+            PlaceholderText = SHARE_PREFIX .. "...", PlaceholderColor3 = T.Muted,
             TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 88,
             Position = UDim2.new(0, 18, 0, 104), Size = UDim2.new(1, -36, 0, 30),
         }, Card)
@@ -2736,7 +3193,7 @@ function RcHub:Window(GuiConfig)
                     Size = UDim2.new(1, 12, 0, 24),
                 }, Track)
 
-                local F = { Value = cfg.Default }
+                local F = { Value = cfg.Default, Min = cfg.Min, Max = cfg.Max, Increment = cfg.Increment }
 
                 local function Visual()
                     local alpha = (F.Value - cfg.Min) / math.max(cfg.Max - cfg.Min, 1e-9)
@@ -3084,7 +3541,12 @@ function RcHub:Window(GuiConfig)
                     LayoutOrder = 99999, Visible = false,
                 })
 
-                local F = { Value = cfg.Multi and {} or nil, Options = cfg.Options, Opened = false }
+                -- Daftar pilihan bawaan script (tidak berubah walau list diisi ulang saat runtime).
+                -- Dipakai share code supaya pilihan bisa dipadatkan jadi hash dan tetap 100% cocok di device lain.
+                local StaticOptions = {}
+                for i, o in ipairs(cfg.Options) do StaticOptions[i] = o end
+
+                local F = { Value = cfg.Multi and {} or nil, Options = cfg.Options, StaticOptions = StaticOptions, Opened = false }
                 local OptionButtons = {}
                 local openUp = false
                 local animToken = 0

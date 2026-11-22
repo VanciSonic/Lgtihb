@@ -49,6 +49,8 @@ end
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local TextService = game:GetService("TextService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
@@ -367,7 +369,8 @@ local function MakeWarnIcon(parent, color, props)
     return box
 end
 
--- Teks emas bergerak (hanya warna yang bergeser kanan-kiri, teks diam)
+-- Teks emas bergerak: gradient digeser tiap frame lewat Heartbeat (lebih stabil di mobile
+-- dibanding tween berulang), teks tetap diam, hanya kilau warnanya yang bergerak
 local GOLD_SEQUENCE = ColorSequence.new({
     ColorSequenceKeypoint.new(0,    Color3.fromRGB(176, 128, 28)),
     ColorSequenceKeypoint.new(0.35, Color3.fromRGB(255, 214, 84)),
@@ -378,14 +381,21 @@ local GOLD_SEQUENCE = ColorSequence.new({
 
 local function GoldText(label)
     label.TextColor3 = Color3.new(1, 1, 1)
+    label.TextTransparency = 0
     local grad = New("UIGradient", { Color = GOLD_SEQUENCE, Offset = Vector2.new(-1, 0) }, label)
-    local tw = TweenService:Create(
-        grad,
-        TweenInfo.new(1.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
-        { Offset = Vector2.new(1, 0) }
-    )
-    tw:Play()
-    return tw
+
+    local t = 0
+    local conn
+    conn = RunService.Heartbeat:Connect(function(dt)
+        if not grad.Parent then
+            conn:Disconnect()
+            return
+        end
+        t = t + dt
+        grad.Offset = Vector2.new(math.sin(t * 1.75), 0)
+    end)
+
+    return { Cancel = function() if conn then conn:Disconnect() end end }
 end
 
 -- Baca masa aktif key dari getgenv().ExpiresAt (nil = permanent)
@@ -1397,6 +1407,18 @@ function RcHub:Window(GuiConfig)
     CURRENT_VERSION = GuiConfig.Version
     LoadConfigFromFile()
 
+    -- Keybind buka/tutup UI (bisa diganti lewat Setting UI, tersimpan di config)
+    local DefaultToggleKey = GuiConfig.ToggleKey
+    local ToggleKey = DefaultToggleKey
+    do
+        local savedKey = ConfigData.UIKeybind
+        if type(savedKey) == "string" then
+            local okKey, kc = pcall(function() return Enum.KeyCode[savedKey] end)
+            if okKey and kc then ToggleKey = kc end
+        end
+    end
+    local CaptureCb = nil -- diisi saat menunggu user menekan key baru
+
     local TabW = GuiConfig["Tab Width"]
     local Tabs = {}
 
@@ -1437,13 +1459,16 @@ function RcHub:Window(GuiConfig)
         startY = math.clamp(savedRect.y, 0, math.max(0, viewport.Y - startH))
     end
 
-    local Main = New("Frame", {
+    -- Main = CanvasGroup supaya seluruh window bisa di-fade sekaligus saat animasi buka/tutup
+    local Main = New("CanvasGroup", {
         Name = "Main", BackgroundColor3 = T.BG, BorderSizePixel = 0,
+        GroupTransparency = 0,
         AnchorPoint = Vector2.new(0, 0),
         Position = UDim2.new(0, startX, 0, startY),
         Size = UDim2.new(0, startW, 0, startH),
     }, RCglob)
     Corner(Main, 20)
+    local MainScale = New("UIScale", { Scale = 1 }, Main)
 
     local GoldTweens = {}
 
@@ -1451,19 +1476,17 @@ function RcHub:Window(GuiConfig)
     local ClosePopup = nil
 
     -- ========================================================
-    -- Animasi buka/tutup (ringan) + LOCK anti-spam
+    -- Animasi buka/tutup (smooth) + LOCK anti-spam
+    --   Window menyusut / membesar dari titik tombol bulat memakai UIScale + fade
+    --   (tanpa mengubah Size, jadi tidak ada layout ulang tiap frame).
     --   * Saat animasi BUKA berjalan  -> tutup diabaikan sampai selesai
     --   * Saat animasi TUTUP berjalan -> buka diabaikan sampai selesai
-    -- Konten di-fade lalu dilepas dari layar, yang bergerak hanya
-    -- kotak kosong yang menyusut / membesar dari tombol bulat.
     -- ========================================================
     local ToggleBtn = nil
-    local animating = false   -- true selama animasi buka / tutup masih jalan
-    local Content = nil       -- dibuat setelah semua elemen dasar jadi
-    local Overlay = nil       -- penutup fade
+    local animating = false
 
     local LastPos, LastSize = Main.Position, Main.Size
-    local activeTween = nil
+    local activeTweens = {}
     local DesiredW, DesiredH = startW, startH -- ukuran pilihan user, dipakai lagi saat layar membesar
 
     -- Simpan posisi & ukuran HANYA kalau window terbuka penuh dan tidak sedang animasi
@@ -1481,112 +1504,102 @@ function RcHub:Window(GuiConfig)
         SaveConfig()
     end
 
-    -- Titik asal koordinat Main (dihitung dari Main sendiri saat terlihat) supaya
-    -- target animasi tepat di tombol walau ada GUI inset / nested ScreenGui.
-    local MainOrigin = RCglob.AbsolutePosition
-
-    local function UpdateOrigin()
-        MainOrigin = Main.AbsolutePosition - Vector2.new(Main.Position.X.Offset, Main.Position.Y.Offset)
+    local function RectCenter(pos, size)
+        return UDim2.new(0, pos.X.Offset + size.X.Offset / 2, 0, pos.Y.Offset + size.Y.Offset / 2)
     end
 
-    local function ButtonRect()
+    local function ButtonCenter()
         if ToggleBtn and ToggleBtn.Parent then
-            local p, sz = ToggleBtn.AbsolutePosition - MainOrigin, ToggleBtn.AbsoluteSize
-            return UDim2.new(0, p.X, 0, p.Y), UDim2.new(0, sz.X, 0, sz.Y)
+            local c = ToggleBtn.AbsolutePosition + ToggleBtn.AbsoluteSize / 2 - RCglob.AbsolutePosition
+            return UDim2.new(0, c.X, 0, c.Y)
         end
-        local cx = LastPos.X.Offset + LastSize.X.Offset / 2
-        local cy = LastPos.Y.Offset + LastSize.Y.Offset / 2
-        return UDim2.new(0, cx - 21, 0, cy - 21), UDim2.new(0, 42, 0, 42)
+        return RectCenter(LastPos, LastSize)
     end
 
     local function CloseModals()
-        for _, n in ipairs({ "CloseDialog", "ResetDialog", "GuideDialog", "ShareDialog" }) do
+        for _, n in ipairs({ "CloseDialog", "SettingsDialog", "GuideDialog" }) do
             local o = Main:FindFirstChild(n)
             if o then o:Destroy() end
         end
     end
 
-    -- Jalankan tween Main; onDone dipanggil SEKALI saat selesai (ada fallback timeout
+    local function CancelAnim()
+        for _, tw in ipairs(activeTweens) do
+            pcall(function() tw:Cancel() end)
+        end
+        activeTweens = {}
+    end
+
+    -- Jalankan animasi; onDone dipanggil SEKALI saat selesai (ada fallback timeout
     -- supaya lock `animating` tidak pernah nyangkut)
-    local function PlayMain(info, goal, onDone)
-        if activeTween then pcall(function() activeTween:Cancel() end) end
+    local function PlayMain(duration, style, direction, goalPos, goalScale, goalFade, onDone)
+        CancelAnim()
 
-        local tw = TweenService:Create(Main, info, goal)
-        activeTween = tw
+        local info = TweenInfo.new(duration, style, direction)
+        local fadeInfo = TweenInfo.new(duration * 0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local twMove = TweenService:Create(Main, info, { Position = goalPos })
+        local twScale = TweenService:Create(MainScale, info, { Scale = goalScale })
+        local twFade = TweenService:Create(Main, fadeInfo, { GroupTransparency = goalFade })
+        activeTweens = { twMove, twScale, twFade }
+
         local done = false
-
         local function Finish()
             if done then return end
             done = true
-            if activeTween == tw then activeTween = nil end
             onDone()
         end
 
-        tw.Completed:Connect(function(state)
+        twMove.Completed:Connect(function(state)
             if state == Enum.PlaybackState.Completed then Finish() end
         end)
-        task.delay(info.Time + 0.3, Finish)
-        tw:Play()
+        task.delay(duration + 0.3, Finish)
+
+        twMove:Play()
+        twScale:Play()
+        twFade:Play()
+    end
+
+    local function RestoreRest()
+        MainScale.Scale = 1
+        Main.AnchorPoint = Vector2.new(0, 0)
+        Main.Position = LastPos
+        Main.Size = LastSize
     end
 
     local function HideWindow()
-        if animating or not Main.Visible or not Content or not Overlay then return end
+        if animating or not Main.Visible then return end
         animating = true
+        CaptureRect(true)
+        CaptureRect(true)
         if ClosePopup then ClosePopup() end
         CloseModals()
+        CaptureCb = nil
 
-        CaptureRect(true)
-        UpdateOrigin()
-        local pos, size = ButtonRect()
+        Main.AnchorPoint = Vector2.new(0.5, 0.5)
+        Main.Position = RectCenter(LastPos, LastSize)
 
-        -- 1) fade konten (cepat)
-        Overlay.BackgroundTransparency = 1
-        Overlay.Visible = true
-        Tween(Overlay, { BackgroundTransparency = 0 }, 0.12)
-
-        task.delay(0.13, function()
-            -- 2) lepas konten supaya animasi tidak berat, lalu sedot ke tombol
-            Content.Parent = nil
-            Overlay.Visible = false
-
-            PlayMain(TweenInfo.new(0.42, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
-                Position = pos, Size = size,
-            }, function()
-                Main.Visible = false
-                Main.Position = LastPos
-                Main.Size = LastSize
-                animating = false -- baru boleh dibuka lagi
-            end)
+        PlayMain(0.36, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, ButtonCenter(), 0.1, 1, function()
+            Main.Visible = false
+            RestoreRest()
+            Main.GroupTransparency = 0
+            animating = false -- baru boleh dibuka lagi
         end)
     end
 
     local function ShowWindow()
-        if animating or Main.Visible or not Content or not Overlay then return end
+        if animating or Main.Visible then return end
         animating = true
 
-        local pos, size = ButtonRect()
-        Content.Parent = nil
-        Overlay.Visible = false
-        Main.Position = pos
-        Main.Size = size
+        Main.AnchorPoint = Vector2.new(0.5, 0.5)
+        Main.Position = ButtonCenter()
+        MainScale.Scale = 0.1
+        Main.GroupTransparency = 1
         Main.Visible = true
 
-        PlayMain(TweenInfo.new(0.45, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
-            Position = LastPos, Size = LastSize,
-        }, function()
-            Main.Position = LastPos
-            Main.Size = LastSize
-
-            -- 3) pasang konten kembali di balik penutup, lalu fade in
-            Overlay.BackgroundTransparency = 0
-            Overlay.Visible = true
-            Content.Parent = Main
-            Tween(Overlay, { BackgroundTransparency = 1 }, 0.2)
-
-            task.delay(0.22, function()
-                Overlay.Visible = false
-                animating = false -- baru boleh ditutup lagi
-            end)
+        PlayMain(0.46, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, RectCenter(LastPos, LastSize), 1, 0, function()
+            RestoreRest()
+            Main.GroupTransparency = 0
+            animating = false -- baru boleh ditutup lagi
         end)
     end
 
@@ -1695,6 +1708,7 @@ function RcHub:Window(GuiConfig)
         local function Close()
             if closed then return end
             closed = true
+            CaptureCb = nil
             Tween(Overlay, { BackgroundTransparency = 1 }, 0.15)
             Tween(CardScale, { Scale = 0.92 }, 0.15)
             task.delay(0.16, function()
@@ -1791,7 +1805,7 @@ function RcHub:Window(GuiConfig)
         Render()
     end
 
-    -- Reset semua element ke default dan hapus folder penyimpanan
+    -- Reset semua element + keybind ke default dan hapus folder penyimpanan
     local function ResetAll()
         _resettingConfig = true
         _saveGeneration = _saveGeneration + 1
@@ -1807,89 +1821,168 @@ function RcHub:Window(GuiConfig)
                 pcall(function() el:Set(el.DefaultValue) end)
             end
         end
+        ToggleKey = DefaultToggleKey
 
         DeleteFolder("GantengPremium")
         _resettingConfig = false
 
         RcHub:MakeNotify({
             Title = BRAND_NAME, Description = "Reset selesai",
-            Content = "Semua element kembali ke default dan folder GantengPremium dihapus.", Color = COLOR_RED, Delay = 4,
+            Content = "Semua setting dan element kembali ke default, folder GantengPremium dihapus.", Color = COLOR_RED, Delay = 4,
         })
     end
 
-    local function OpenResetDialog()
-        local _, Card, Close = OpenModal("ResetDialog", 340, 215)
+    -- Setting UI: library kecil dengan 3 tab (Setting UI / Reset Setting / Redeem & Copy Setting),
+    -- tombol close (x) dan tombol Save
+    local function OpenSettingsDialog()
+        if animating then return end
+        if ClosePopup then ClosePopup() end
 
-        MakeWarnIcon(Card, COLOR_RED, { Position = UDim2.new(0, 18, 0, 17), ZIndex = 88 })
-        Label(Card, {
-            Text = "Reset Settings", Font = FONT_BOLD, TextSize = 15, ZIndex = 88,
-            Position = UDim2.new(0, 44, 0, 14), Size = UDim2.new(1, -90, 0, 24),
-        })
-        Label(Card, {
-            Text = "Jika dilanjutkan, seluruh pengaturan UI akan di-reset dan semua element dikembalikan ke setting default. Tindakan ini tidak bisa dibatalkan.",
-            TextColor3 = Color3.fromRGB(215, 215, 215), TextSize = 12, TextWrapped = true,
-            TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 88,
-            Position = UDim2.new(0, 18, 0, 52), Size = UDim2.new(1, -36, 0, 80),
-        })
-
-        local Go = New("TextButton", {
-            Text = "Reset", Font = FONT_BOLD, TextSize = 13, TextColor3 = Color3.new(1, 1, 1),
-            BackgroundColor3 = Color3.fromRGB(205, 60, 60), BorderSizePixel = 0, AutoButtonColor = false,
-            ZIndex = 89, AnchorPoint = Vector2.new(0, 1),
-            Position = UDim2.new(0, 18, 1, -16), Size = UDim2.new(1, -36, 0, 36),
-        }, Card)
-        Corner(Go, 10)
-        Go.MouseEnter:Connect(function() Tween(Go, { BackgroundColor3 = Color3.fromRGB(225, 75, 75) }) end)
-        Go.MouseLeave:Connect(function() Tween(Go, { BackgroundColor3 = Color3.fromRGB(205, 60, 60) }) end)
-        Go.Activated:Connect(function()
-            Close()
-            task.defer(ResetAll)
-        end)
-    end
-
-    -- Dialog "Redeem / Copy Setting": input code + tombol Redeem & Copy Setting
-    local function OpenShareDialog()
-        local _, Card, CloseDlg = OpenModal("ShareDialog", 380, 240)
+        local _, Card = OpenModal("SettingsDialog", 560, 340)
         local GREEN = Color3.fromRGB(70, 220, 120)
-        local busy = false
+        local pendingKey = ToggleKey
+        CaptureCb = nil
 
-        Label(Card, {
-            Text = "Redeem / Copy Setting", Font = FONT_BOLD, TextSize = 15, ZIndex = 88,
-            Position = UDim2.new(0, 18, 0, 14), Size = UDim2.new(1, -62, 0, 24),
-        })
-        Label(Card, {
-            Text = "Redeem: tempel code setting dari orang lain lalu tekan Redeem. Copy Setting: salin code seluruh setting UI kamu.",
-            TextColor3 = Color3.fromRGB(215, 215, 215), TextSize = 12, TextWrapped = true,
-            TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 88,
-            Position = UDim2.new(0, 18, 0, 48), Size = UDim2.new(1, -36, 0, 48),
-        })
-
-        local Box = New("TextBox", {
-            BackgroundColor3 = T.Control, BorderSizePixel = 0, ClearTextOnFocus = false, ClipsDescendants = true,
-            Font = FONT, TextSize = 11, TextColor3 = T.Text, Text = "",
-            PlaceholderText = SHARE_PREFIX .. "...", PlaceholderColor3 = T.Muted,
-            TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 88,
-            Position = UDim2.new(0, 18, 0, 104), Size = UDim2.new(1, -36, 0, 30),
+        local Side = New("Frame", {
+            BackgroundColor3 = T.Row, BorderSizePixel = 0, ZIndex = 87,
+            Position = UDim2.new(0, 12, 0, 12), Size = UDim2.new(0, 140, 1, -24),
         }, Card)
-        Corner(Box, 8)
-        Pad(Box, 10, 0, 10, 0)
+        Corner(Side, 14)
+        Label(Side, {
+            Text = "Settings", Font = FONT_BOLD, TextSize = 14, ZIndex = 88,
+            Position = UDim2.new(0, 14, 0, 12), Size = UDim2.new(1, -28, 0, 20),
+        })
 
-        local function DlgButton(text, x, bg, fg, hover)
+        local PageTitle = Label(Card, {
+            Text = "", Font = FONT_BOLD, TextSize = 15, ZIndex = 88,
+            Position = UDim2.new(0, 168, 0, 14), Size = UDim2.new(1, -220, 0, 24),
+        })
+
+        local Pages = New("Frame", {
+            BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 87,
+            Position = UDim2.new(0, 164, 0, 50), Size = UDim2.new(1, -176, 1, -106),
+        }, Card)
+
+        local function MakePage()
+            return New("Frame", {
+                BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 88,
+                Size = UDim2.new(1, 0, 1, 0), Visible = false,
+            }, Pages)
+        end
+
+        local function DlgBtn(parent, text, bg, fg, hover, props)
             local b = New("TextButton", {
                 Text = text, Font = FONT_BOLD, TextSize = 12, TextColor3 = fg, BackgroundColor3 = bg,
-                BorderSizePixel = 0, AutoButtonColor = false, ZIndex = 89,
-                AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(x, x == 0 and 18 or 4, 1, -16),
-                Size = UDim2.new(0.5, -22, 0, 34),
-            }, Card)
+                BorderSizePixel = 0, AutoButtonColor = false, ZIndex = 90,
+            }, parent)
+            for k, v in pairs(props or {}) do b[k] = v end
             Corner(b, 10)
             b.MouseEnter:Connect(function() Tween(b, { BackgroundColor3 = hover }) end)
             b.MouseLeave:Connect(function() Tween(b, { BackgroundColor3 = bg }) end)
             return b
         end
 
-        local RedeemBtn = DlgButton("Redeem", 0, T.Text, T.Dark, Color3.fromRGB(255, 255, 255))
-        local CopyBtn = DlgButton("Copy Setting", 0.5, T.Control, T.Text, T.Track)
+        -- ===== Page 1 : Setting UI =====
+        local P1 = MakePage()
+        local KRow = New("Frame", {
+            BackgroundColor3 = T.Row, BorderSizePixel = 0, ZIndex = 89, Size = UDim2.new(1, 0, 0, 52),
+        }, P1)
+        Corner(KRow, 10)
+        Label(KRow, {
+            Text = "Toggle UI Keybind", TextSize = 12, ZIndex = 90,
+            Position = UDim2.new(0, 12, 0, 9), Size = UDim2.new(1, -120, 0, 16),
+        })
+        Label(KRow, {
+            Text = "Klik tombol, lalu tekan key baru", TextColor3 = T.Sub, TextSize = 11, ZIndex = 90,
+            Position = UDim2.new(0, 12, 0, 27), Size = UDim2.new(1, -120, 0, 16),
+        })
+        local KeyBtn = New("TextButton", {
+            Text = pendingKey.Name, Font = FONT_BOLD, TextSize = 12, TextColor3 = T.Text,
+            BackgroundColor3 = T.Control, BorderSizePixel = 0, AutoButtonColor = false, ZIndex = 90,
+            AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -10, 0.5, 0), Size = UDim2.new(0, 96, 0, 28),
+        }, KRow)
+        Corner(KeyBtn, 8)
 
+        local function ShowKey()
+            KeyBtn.Text = pendingKey.Name
+            KeyBtn.BackgroundColor3 = T.Control
+            KeyBtn.TextColor3 = T.Text
+        end
+
+        KeyBtn.Activated:Connect(function()
+            KZN_AssertThreadIdentity()
+            KeyBtn.Text = "Tekan key..."
+            KeyBtn.BackgroundColor3 = T.Text
+            KeyBtn.TextColor3 = T.Dark
+            CaptureCb = function(kc)
+                if not Card.Parent then return end
+                if kc ~= Enum.KeyCode.Escape then pendingKey = kc end
+                ShowKey()
+            end
+        end)
+
+        local DefaultKeyBtn = DlgBtn(P1, "Kembalikan keybind ke default (" .. DefaultToggleKey.Name .. ")",
+            T.Control, T.Text, T.Track, { Position = UDim2.new(0, 0, 0, 60), Size = UDim2.new(1, 0, 0, 30) })
+        DefaultKeyBtn.Activated:Connect(function()
+            CaptureCb = nil
+            pendingKey = DefaultToggleKey
+            ShowKey()
+        end)
+
+        Label(P1, {
+            Text = "Key ini dipakai untuk buka / tutup UI. Tekan Save supaya keybind baru aktif dan tersimpan. Escape membatalkan pemilihan key.",
+            TextColor3 = T.Muted, TextSize = 11, TextWrapped = true, TextTruncate = Enum.TextTruncate.None,
+            TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 89,
+            Position = UDim2.new(0, 2, 0, 100), Size = UDim2.new(1, -4, 0, 44),
+        })
+
+        -- ===== Page 2 : Reset Setting =====
+        local P2 = MakePage()
+        MakeWarnIcon(P2, COLOR_RED, { Position = UDim2.new(0, 0, 0, 3), ZIndex = 90 })
+        Label(P2, {
+            Text = "Jika dilanjutkan, seluruh setting dan semua element akan dikembalikan ke default (termasuk keybind UI). Tindakan ini tidak bisa dibatalkan.",
+            TextColor3 = Color3.fromRGB(215, 215, 215), TextSize = 12, TextWrapped = true,
+            TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 89,
+            Position = UDim2.new(0, 28, 0, 0), Size = UDim2.new(1, -28, 0, 80),
+        })
+        local ResetBtn = DlgBtn(P2, "Reset Setting", Color3.fromRGB(205, 60, 60), Color3.new(1, 1, 1),
+            Color3.fromRGB(225, 75, 75), {
+                AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 0, 1, 0), Size = UDim2.new(1, 0, 0, 36),
+            })
+        ResetBtn.Activated:Connect(function()
+            KZN_AssertThreadIdentity()
+            CaptureCb = nil
+            ResetAll()
+            pendingKey = ToggleKey
+            ShowKey()
+        end)
+
+        -- ===== Page 3 : Redeem / Copy Setting =====
+        local P3 = MakePage()
+        Label(P3, {
+            Text = "Redeem: tempel code setting dari orang lain lalu tekan Redeem. Copy Setting: salin code seluruh setting UI kamu.",
+            TextColor3 = Color3.fromRGB(215, 215, 215), TextSize = 12, TextWrapped = true,
+            TextTruncate = Enum.TextTruncate.None, TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 89,
+            Size = UDim2.new(1, 0, 0, 48),
+        })
+        local Box = New("TextBox", {
+            BackgroundColor3 = T.Control, BorderSizePixel = 0, ClearTextOnFocus = false, ClipsDescendants = true,
+            Font = FONT, TextSize = 11, TextColor3 = T.Text, Text = "",
+            PlaceholderText = SHARE_PREFIX .. "...", PlaceholderColor3 = T.Muted,
+            TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 89,
+            Position = UDim2.new(0, 0, 0, 54), Size = UDim2.new(1, 0, 0, 30),
+        }, P3)
+        Corner(Box, 8)
+        Pad(Box, 10, 0, 10, 0)
+
+        local RedeemBtn = DlgBtn(P3, "Redeem", T.Text, T.Dark, Color3.fromRGB(255, 255, 255), {
+            AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 0, 1, 0), Size = UDim2.new(0.5, -4, 0, 34),
+        })
+        local CopyBtn = DlgBtn(P3, "Copy Setting", T.Control, T.Text, T.Track, {
+            AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0.5, 4, 1, 0), Size = UDim2.new(0.5, -4, 0, 34),
+        })
+
+        local busy = false
         RedeemBtn.Activated:Connect(function()
             KZN_AssertThreadIdentity()
             if busy then return end
@@ -1902,7 +1995,6 @@ function RcHub:Window(GuiConfig)
                     Content = tostring(res) .. " element di-load dari code."
                         .. (mismatch and "\nCode dibuat di versi script yang beda, sebagian element mungkin tidak cocok." or ""),
                 })
-                CloseDlg()
             else
                 RcHub:MakeNotify({
                     Title = BRAND_NAME, Description = "Redeem gagal", Color = COLOR_RED, Delay = 4,
@@ -1933,9 +2025,7 @@ function RcHub:Window(GuiConfig)
                     Title = BRAND_NAME, Description = "Setting disalin", Color = GREEN, Delay = 4,
                     Content = "Code disalin ke clipboard (" .. #code .. " karakter).",
                 })
-                CloseDlg()
             else
-                -- executor tanpa clipboard: taruh di kotak, salin manual
                 Box.Text = code
                 RcHub:MakeNotify({
                     Title = BRAND_NAME, Description = "Salin manual", Color = COLOR_YELLOW, Delay = 5,
@@ -1943,6 +2033,67 @@ function RcHub:Window(GuiConfig)
                 })
             end
         end)
+
+        -- ===== Save =====
+        local SaveBtn = DlgBtn(Card, "Save", T.Text, T.Dark, Color3.fromRGB(255, 255, 255), {
+            AnchorPoint = Vector2.new(1, 1), Position = UDim2.new(1, -16, 1, -16), Size = UDim2.new(0, 110, 0, 32),
+        })
+        SaveBtn.Activated:Connect(function()
+            KZN_AssertThreadIdentity()
+            CaptureCb = nil
+            ShowKey()
+            ToggleKey = pendingKey
+            ConfigData.UIKeybind = ToggleKey.Name
+            SaveConfigNow()
+            RcHub:MakeNotify({
+                Title = BRAND_NAME, Description = "Setting UI disimpan", Color = GREEN, Delay = 3,
+                Content = "Keybind buka / tutup UI: " .. ToggleKey.Name,
+            })
+        end)
+
+        -- ===== Tab kiri =====
+        local entries = {
+            { Name = "Setting UI", Page = P1 },
+            { Name = "Reset Setting", Page = P2 },
+            { Name = "Redeem / Copy Setting", Page = P3 },
+        }
+
+        local function SelectPage(sel)
+            CaptureCb = nil
+            ShowKey()
+            PageTitle.Text = sel.Name
+            for _, e in ipairs(entries) do
+                local on = (e == sel)
+                e.Page.Visible = on
+                Tween(e.Btn, { BackgroundTransparency = on and 0 or 1 })
+                Tween(e.Text, { TextColor3 = on and T.Dark or T.Sub })
+            end
+        end
+
+        for i, e in ipairs(entries) do
+            e.Btn = New("TextButton", {
+                Text = "", AutoButtonColor = false, BackgroundColor3 = T.Text, BackgroundTransparency = 1,
+                BorderSizePixel = 0, ZIndex = 88,
+                Position = UDim2.new(0, 8, 0, 44 + (i - 1) * 38), Size = UDim2.new(1, -16, 0, 32),
+            }, Side)
+            Corner(e.Btn, 10)
+            e.Text = Label(e.Btn, {
+                Text = e.Name, TextColor3 = T.Sub, TextSize = 12, ZIndex = 89,
+                Position = UDim2.new(0, 10, 0, 0), Size = UDim2.new(1, -16, 1, 0),
+            })
+            e.Btn.MouseEnter:Connect(function()
+                if not e.Page.Visible then Tween(e.Text, { TextColor3 = T.Text }) end
+            end)
+            e.Btn.MouseLeave:Connect(function()
+                if not e.Page.Visible then Tween(e.Text, { TextColor3 = T.Sub }) end
+            end)
+            e.Btn.Activated:Connect(function()
+                KZN_AssertThreadIdentity()
+                SelectPage(e)
+            end)
+        end
+
+        SelectPage(entries[1])
     end
 
     -- --------------------------------------------------------
@@ -1977,20 +2128,26 @@ function RcHub:Window(GuiConfig)
     })
 
     if GuiConfig.Footer ~= "" then
+        -- lebar tag dihitung dari teks (bukan AutomaticSize) supaya tidak jadi 0 di mobile
+        local tagWidth = 46
+        pcall(function()
+            local sz = TextService:GetTextSize(GuiConfig.Footer, 11, FONT_BOLD, Vector2.new(1000, 20))
+            tagWidth = math.ceil(sz.X) + 22
+        end)
+
         local Tag = New("Frame", {
             BackgroundColor3 = Color3.fromRGB(14, 14, 14), BorderSizePixel = 0,
-            Size = UDim2.new(0, 0, 0, 20), AutomaticSize = Enum.AutomaticSize.X, LayoutOrder = 2,
+            Size = UDim2.new(0, tagWidth, 0, 20), LayoutOrder = 2,
         }, TitleHolder)
         Corner(Tag, 10)
-        Pad(Tag, 10, 0, 10, 0)
         New("UIStroke", {
             Color = Color3.fromRGB(150, 112, 30), Thickness = 1, Transparency = 0.35,
             ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
         }, Tag)
         local TagLabel = Label(Tag, {
-            Text = GuiConfig.Footer, Font = FONT_BOLD, TextSize = 11,
-            TextTruncate = Enum.TextTruncate.None,
-            Size = UDim2.new(0, 0, 1, 0), AutomaticSize = Enum.AutomaticSize.X,
+            Text = GuiConfig.Footer, Font = FONT_BOLD, TextSize = 11, ZIndex = 2,
+            TextXAlignment = Enum.TextXAlignment.Center, TextTruncate = Enum.TextTruncate.None,
+            Size = UDim2.new(1, 0, 1, 0),
         })
         table.insert(GoldTweens, GoldText(TagLabel))
     end
@@ -2045,7 +2202,7 @@ function RcHub:Window(GuiConfig)
     }, Main)
     Corner(Min, 15)
 
-    -- Tombol menu (3 garis) -> daftar: Reset Setting / Redeem + Copy Setting
+    -- Tombol menu (3 garis) -> buka Setting UI
     local MenuBtn = New("TextButton", {
         Name = "MenuButton", Text = "", AutoButtonColor = false,
         BackgroundColor3 = T.Panel, BorderSizePixel = 0,
@@ -2072,84 +2229,9 @@ function RcHub:Window(GuiConfig)
         for _, b in ipairs(MenuBars) do Tween(b, { BackgroundColor3 = T.Sub }) end
     end)
 
-    local MENU_W, MENU_H = 190, 76
-    local MenuPopup = nil
-    local MenuOpen = false
-    local MenuCloseFn
-
-    local function CloseMenu()
-        if not MenuOpen then return end
-        MenuOpen = false
-        if ClosePopup == MenuCloseFn then ClosePopup = nil end
-
-        local pop = MenuPopup
-        MenuPopup = nil
-        if pop and pop.Parent then
-            local tw = Tween(pop, { Size = UDim2.new(0, MENU_W, 0, 0) }, 0.12)
-            tw.Completed:Connect(function()
-                if pop.Parent then pop:Destroy() end
-            end)
-        end
-    end
-
-    -- klik di luar menu menutupnya (dipanggil lewat mekanisme ClosePopup yang sama dengan dropdown)
-    MenuCloseFn = function(pos)
-        if pos then
-            local function inside(gui)
-                local p, sz = gui.AbsolutePosition, gui.AbsoluteSize
-                return pos.X >= p.X and pos.X <= p.X + sz.X and pos.Y >= p.Y and pos.Y <= p.Y + sz.Y
-            end
-            if (MenuPopup and inside(MenuPopup)) or inside(MenuBtn) then return end
-        end
-        CloseMenu()
-    end
-
-    local function OpenMenu()
-        if animating then return end
-        if ClosePopup then ClosePopup() end
-
-        local old = Main:FindFirstChild("MenuPopup")
-        if old then old:Destroy() end
-
-        local Pop = New("Frame", {
-            Name = "MenuPopup", BackgroundColor3 = T.Popup, BorderSizePixel = 0,
-            ClipsDescendants = true, ZIndex = 60,
-            AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -82, 0, 50),
-            Size = UDim2.new(0, MENU_W, 0, 0),
-        }, Main)
-        Corner(Pop, 12)
-
-        local function Item(index, text, color, action)
-            local b = New("TextButton", {
-                Text = "", AutoButtonColor = false, BackgroundColor3 = T.Popup, BorderSizePixel = 0, ZIndex = 61,
-                Position = UDim2.new(0, 6, 0, 6 + (index - 1) * 34), Size = UDim2.new(1, -12, 0, 30),
-            }, Pop)
-            Corner(b, 8)
-            Label(b, {
-                Text = text, TextSize = 12, TextColor3 = color, ZIndex = 62,
-                Position = UDim2.new(0, 10, 0, 0), Size = UDim2.new(1, -20, 1, 0),
-            })
-            b.MouseEnter:Connect(function() Tween(b, { BackgroundColor3 = T.Control }) end)
-            b.MouseLeave:Connect(function() Tween(b, { BackgroundColor3 = T.Popup }) end)
-            b.Activated:Connect(function()
-                KZN_AssertThreadIdentity()
-                CloseMenu()
-                action()
-            end)
-        end
-
-        Item(1, "Reset Setting", COLOR_RED, OpenResetDialog)
-        Item(2, "Redeem / Copy Setting", T.Text, OpenShareDialog)
-
-        MenuPopup = Pop
-        MenuOpen = true
-        ClosePopup = MenuCloseFn
-        Tween(Pop, { Size = UDim2.new(0, MENU_W, 0, MENU_H) }, 0.15)
-    end
-
     MenuBtn.Activated:Connect(function()
         KZN_AssertThreadIdentity()
-        if MenuOpen then CloseMenu() else OpenMenu() end
+        OpenSettingsDialog()
     end)
 
     for _, b in ipairs({ Close, Min }) do
@@ -2310,11 +2392,12 @@ function RcHub:Window(GuiConfig)
         end
     end)
 
-    local UserTag = Label(UserCard, {
-        Text = BRAND_TAG, Font = FONT_BOLD, TextSize = 11,
+    -- "Premium" hanya ada di header; user card menampilkan nama player + sisa key
+    local UserName = Label(UserCard, {
+        Text = LocalPlayer and (LocalPlayer.DisplayName ~= "" and LocalPlayer.DisplayName or LocalPlayer.Name) or BRAND_NAME,
+        Font = FONT_BOLD, TextSize = 11,
         Position = UDim2.new(0, 46, 0, 9), Size = UDim2.new(1, -52, 0, 14),
     })
-    table.insert(GoldTweens, GoldText(UserTag))
     local KeyLabel = Label(UserCard, {
         Text = "", TextColor3 = T.Text, Font = FONT_BOLD, TextSize = 11,
         Position = UDim2.new(0, 46, 0, 25), Size = UDim2.new(1, -52, 0, 14),
@@ -2464,6 +2547,7 @@ function RcHub:Window(GuiConfig)
     -- --------------------------------------------------------
     function Tabs:DestroyGui()
         for _, tw in ipairs(GoldTweens) do pcall(function() tw:Cancel() end) end
+        CancelAnim()
         if RCglob then RCglob:Destroy() end
         if UIRoot and UIRoot:FindFirstChild("ToggleUIButton") then
             UIRoot.ToggleUIButton:Destroy()
@@ -2533,28 +2617,6 @@ function RcHub:Window(GuiConfig)
 
     Tabs:ToggleUI()
 
-    -- Bungkus semua konten ke satu Frame supaya bisa dilepas saat animasi
-    -- ambil daftar anak SEBELUM Content dibuat (hindari reparent ke diri sendiri)
-    local BaseChildren = {}
-    for _, c in ipairs(Main:GetChildren()) do
-        if c:IsA("GuiObject") then
-            table.insert(BaseChildren, c)
-        end
-    end
-
-    Content = New("Frame", {
-        Name = "Content", BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.new(1, 0, 1, 0),
-    }, Main)
-    for _, c in ipairs(BaseChildren) do
-        c.Parent = Content
-    end
-
-    Overlay = New("Frame", {
-        Name = "FadeCover", BackgroundColor3 = T.BG, BackgroundTransparency = 1, BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 1, 0), ZIndex = 100, Visible = false,
-    }, Main)
-    Corner(Overlay, 20)
-
     -- Muncul dari tombol bulat saat pertama kali load
     Main.Visible = false
     task.delay(0.15, ShowWindow)
@@ -2564,8 +2626,20 @@ function RcHub:Window(GuiConfig)
     end)
 
     UserInputService.InputBegan:Connect(function(input, gpe)
+        -- mode "pilih key baru" dari Setting UI
+        if CaptureCb then
+            if input.UserInputType == Enum.UserInputType.Keyboard
+                and input.KeyCode ~= Enum.KeyCode.Unknown
+                and UserInputService:GetFocusedTextBox() == nil then
+                local cb = CaptureCb
+                CaptureCb = nil
+                cb(input.KeyCode)
+            end
+            return
+        end
+
         if gpe then return end
-        if input.KeyCode == GuiConfig.ToggleKey then
+        if input.KeyCode == ToggleKey then
             ToggleWindow()
         end
     end)

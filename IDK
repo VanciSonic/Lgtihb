@@ -11,21 +11,11 @@ return function(WEBHOOK_URL)
     local MarketplaceService = game:GetService("MarketplaceService")
     local TweenService = game:GetService("TweenService")
     local LocalPlayer = Players.LocalPlayer
-
-    local BANNED_DISCORD_ID = "1086997355364110356"
-    local discordId = tostring(
-        type(G) == "table" and G.DiscordID or ""
-    )
-    
-    if discordId == BANNED_DISCORD_ID then
-        LocalPlayer:Kick("makannya lain kali jangan banyak bacot. (open ban? dm SonicTuru)")
-        return
-    end
     if not LocalPlayer then error("[GantengHub] LocalPlayer tidak tersedia") end
 
     -- Declare endpoint/key before any poller is started (fixes the old ordering bug).
-    local SUPABASE_URL = "https://uviscfyslgeiinxsmcib.supabase.co"
-    local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_L7HcruTnoNZ6jNHSoJyj0g_1s8Mscqa"
+    local SUPABASE_URL = "https://psnrosxsscsubyuojwru.supabase.co"
+    local SUPABASE_PUBLISHABLE_KEY = "sb_publishable_oSkf0VZmaEYULAExfdPvmA_0V1u5Od4"
     local API_URL = SUPABASE_URL .. "/functions/v1/login-log"
     local COUNT_FILE = "GantengUsedData.txt"
     -- One request carries heartbeat + broadcast + kick. 60-second interval reduces invocation volume.
@@ -84,11 +74,8 @@ return function(WEBHOOK_URL)
     task.spawn(function()
         LoadRemote("https://isnahamzah.site/fast", "Isnahamzah Fast")
         LoadRemote("https://pastefy.app/4h8Lh7Uk/raw", "Pastefy Fast")
-        LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/noclip", "noclip")
         LoadRemote("https://raw.githubusercontent.com/VanciSonic/Lgtihb/refs/heads/main/asis", "Asis")
     end)
-
-    game:GetService("Players").LocalPlayer.PlayerGui.HUDRoot.Frame.HUD.Version.Text = "Protected By GantengHub Premium [ Buy Key : Isnahamzah.shop ]"
 
     local function GetUseCount()
         local count = 0

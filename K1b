@@ -213,19 +213,23 @@ local Icons = {
 }
 
 -- ============================================================
--- THEME (hitam, abu-abu, putih)
+-- THEME: smoked black glass, neutral silver, restrained champagne accents.
+-- Transparent surfaces are intentionally subtle for readability on mobile;
+-- no screen-wide BlurEffect or expensive animated overlay is required.
 -- ============================================================
 local T = {
-    BG      = Color3.fromRGB(20, 20, 20),
-    Panel   = Color3.fromRGB(31, 31, 31),
-    Row     = Color3.fromRGB(38, 38, 38),
-    Control = Color3.fromRGB(51, 51, 51),
-    Track   = Color3.fromRGB(58, 58, 58),
-    Popup   = Color3.fromRGB(44, 44, 44),
-    Text    = Color3.fromRGB(242, 242, 242),
-    Sub     = Color3.fromRGB(154, 154, 154),
-    Muted   = Color3.fromRGB(119, 119, 119),
-    Dark    = Color3.fromRGB(20, 20, 20),
+    BG      = Color3.fromRGB(15, 17, 21),
+    Panel   = Color3.fromRGB(24, 27, 32),
+    Row     = Color3.fromRGB(34, 38, 44),
+    Control = Color3.fromRGB(45, 50, 57),
+    Track   = Color3.fromRGB(61, 67, 75),
+    Popup   = Color3.fromRGB(24, 27, 32),
+    Active  = Color3.fromRGB(57, 64, 72),
+    Border  = Color3.fromRGB(168, 180, 190),
+    Text    = Color3.fromRGB(239, 242, 244),
+    Sub     = Color3.fromRGB(188, 194, 200),
+    Muted   = Color3.fromRGB(143, 151, 160),
+    Dark    = Color3.fromRGB(14, 17, 21),
 }
 
 local FONT      = Enum.Font.GothamMedium
@@ -249,6 +253,13 @@ end
 
 local function Corner(obj, radius)
     return New("UICorner", { CornerRadius = UDim.new(0, radius) }, obj)
+end
+
+local function GlassBorder(obj, transparency)
+    return New("UIStroke", {
+        Color = T.Border, Thickness = 1, Transparency = transparency or 0.86,
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+    }, obj)
 end
 
 local function Pad(obj, l, t, r, b)
@@ -372,30 +383,17 @@ end
 -- Teks emas bergerak: gradient digeser tiap frame lewat Heartbeat (lebih stabil di mobile
 -- dibanding tween berulang), teks tetap diam, hanya kilau warnanya yang bergerak
 local GOLD_SEQUENCE = ColorSequence.new({
-    ColorSequenceKeypoint.new(0,    Color3.fromRGB(176, 128, 28)),
-    ColorSequenceKeypoint.new(0.35, Color3.fromRGB(255, 214, 84)),
-    ColorSequenceKeypoint.new(0.5,  Color3.fromRGB(255, 243, 176)),
-    ColorSequenceKeypoint.new(0.65, Color3.fromRGB(255, 214, 84)),
-    ColorSequenceKeypoint.new(1,    Color3.fromRGB(176, 128, 28)),
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(179, 159, 116)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(228, 214, 181)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(190, 171, 130)),
 })
 
 local function GoldText(label)
     label.TextColor3 = Color3.new(1, 1, 1)
     label.TextTransparency = 0
-    local grad = New("UIGradient", { Color = GOLD_SEQUENCE, Offset = Vector2.new(-1, 0) }, label)
-
-    local t = 0
-    local conn
-    conn = RunService.Heartbeat:Connect(function(dt)
-        if not grad.Parent then
-            conn:Disconnect()
-            return
-        end
-        t = t + dt
-        grad.Offset = Vector2.new(math.sin(t * 1.75), 0)
-    end)
-
-    return { Cancel = function() if conn then conn:Disconnect() end end }
+    New("UIGradient", { Color = GOLD_SEQUENCE }, label)
+    -- Static gradient: no per-frame animation cost on mobile.
+    return { Cancel = function() end }
 end
 
 -- Baca masa aktif key dari getgenv().ExpiresAt (nil = permanent)
@@ -618,8 +616,8 @@ local function ShowExpiredPopup()
 end
 
 -- [FIX] canDrag (opsional): kalau mengembalikan false, drag tidak dimulai
-local function MakeDraggable(handle, target, onEnd, canDrag)
-    local dragging, dragStart, startPos = false, nil, nil
+local function MakeDraggable(handle, target, onEnd, canDrag, clampPosition)
+    local dragging, dragStart, startPos, activeTouch = false, nil, nil, nil
 
     handle.InputBegan:Connect(function(input)
         if canDrag and not canDrag() then return end
@@ -628,9 +626,11 @@ local function MakeDraggable(handle, target, onEnd, canDrag)
             dragging = true
             dragStart = input.Position
             startPos = target.Position
+            activeTouch = input.UserInputType == Enum.UserInputType.Touch and input or nil
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
+                    activeTouch = nil
                     if onEnd then onEnd() end
                 end
             end)
@@ -638,13 +638,12 @@ local function MakeDraggable(handle, target, onEnd, canDrag)
     end)
 
     UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
-            or input.UserInputType == Enum.UserInputType.Touch) then
+        if dragging and ((activeTouch and input == activeTouch)
+            or (not activeTouch and input.UserInputType == Enum.UserInputType.MouseMovement)) then
             local d = input.Position - dragStart
-            target.Position = UDim2.new(
-                startPos.X.Scale, startPos.X.Offset + d.X,
-                startPos.Y.Scale, startPos.Y.Offset + d.Y
-            )
+            local x, y = startPos.X.Offset + d.X, startPos.Y.Offset + d.Y
+            if clampPosition then x, y = clampPosition(x, y) end
+            target.Position = UDim2.new(startPos.X.Scale, x, startPos.Y.Scale, y)
         end
     end)
 end
@@ -1438,37 +1437,56 @@ function RcHub:Window(GuiConfig)
     local function ScreenSize()
         local sz = RCglob.AbsoluteSize
         if sz.X > 0 and sz.Y > 0 then return sz end
-        return workspace.CurrentCamera.ViewportSize
+        local camera = workspace.CurrentCamera
+        return camera and camera.ViewportSize or Vector2.new(800, 600)
     end
 
+    local isMobileUI = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+    local function ResponsiveScale(scr)
+        if not isMobileUI then return 1 end
+        -- Leave space around the panel for the game and the reopen button.
+        return math.min(0.85, math.max(0.1, (scr.X * 0.88) / 680), math.max(0.1, (scr.Y * 0.82) / 420))
+    end
     local viewport = ScreenSize()
-    local winW = math.min(680, viewport.X - 20)
-    local winH = math.min(420, viewport.Y - 20)
+    local BaseScale = ResponsiveScale(viewport)
+    local logicalW = viewport.X / BaseScale
+    local logicalH = viewport.Y / BaseScale
+    local winW = math.min(680, logicalW - 20)
+    local winH = math.min(420, logicalH - 20)
     local MIN_W, MIN_H = math.min(520, winW), math.min(320, winH)
+    local rectKey = isMobileUI and "WindowRectMobile" or "WindowRect"
+    local sidebarKey = isMobileUI and "SidebarWidthMobile" or "SidebarWidth"
+    TabW = math.clamp(tonumber(ConfigData[sidebarKey]) or TabW, 85, 260)
 
-    -- Posisi & ukuran terakhir diingat (juga tersimpan di config)
+    -- Mobile stores its own logical dimensions; an old full-screen desktop rect
+    -- must not force a huge window on a phone.
     local startW, startH = winW, winH
-    local startX = math.floor((viewport.X - winW) / 2)
-    local startY = math.floor((viewport.Y - winH) / 2)
-    local savedRect = ConfigData.WindowRect
+    local startX = math.floor((viewport.X - winW * BaseScale) / 2)
+    local startY = math.floor((viewport.Y - winH * BaseScale) / 2)
+    local savedRect = ConfigData[rectKey]
     if type(savedRect) == "table" and tonumber(savedRect.w) and tonumber(savedRect.h)
         and tonumber(savedRect.x) and tonumber(savedRect.y) then
-        startW = math.clamp(savedRect.w, MIN_W, math.max(MIN_W, viewport.X - 10))
-        startH = math.clamp(savedRect.h, MIN_H, math.max(MIN_H, viewport.Y - 10))
-        startX = math.clamp(savedRect.x, 0, math.max(0, viewport.X - startW))
-        startY = math.clamp(savedRect.y, 0, math.max(0, viewport.Y - startH))
+        startW = math.clamp(tonumber(savedRect.w), MIN_W, math.max(MIN_W, (viewport.X - 10) / BaseScale))
+        startH = math.clamp(tonumber(savedRect.h), MIN_H, math.max(MIN_H, (viewport.Y - 10) / BaseScale))
+        startX = math.clamp(tonumber(savedRect.x), 0, math.max(0, viewport.X - startW * BaseScale))
+        startY = math.clamp(tonumber(savedRect.y), 0, math.max(0, viewport.Y - startH * BaseScale))
     end
 
     -- Main = CanvasGroup supaya seluruh window bisa di-fade sekaligus saat animasi buka/tutup
     local Main = New("CanvasGroup", {
-        Name = "Main", BackgroundColor3 = T.BG, BorderSizePixel = 0,
+        Name = "Main", BackgroundColor3 = T.BG, BackgroundTransparency = 0.18, BorderSizePixel = 0,
         GroupTransparency = 0,
         AnchorPoint = Vector2.new(0, 0),
         Position = UDim2.new(0, startX, 0, startY),
         Size = UDim2.new(0, startW, 0, startH),
     }, RCglob)
     Corner(Main, 20)
-    local MainScale = New("UIScale", { Scale = 1 }, Main)
+    GlassBorder(Main, 0.72)
+    New("UIGradient", {
+        Rotation = 90,
+        Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(195, 202, 210)),
+    }, Main)
+    local MainScale = New("UIScale", { Scale = BaseScale }, Main)
 
     local GoldTweens = {}
 
@@ -1497,7 +1515,7 @@ function RcHub:Window(GuiConfig)
 
         LastPos, LastSize = Main.Position, Main.Size
         DesiredW, DesiredH = sz.X.Offset, sz.Y.Offset
-        ConfigData.WindowRect = {
+        ConfigData[rectKey] = {
             x = LastPos.X.Offset, y = LastPos.Y.Offset,
             w = LastSize.X.Offset, h = LastSize.Y.Offset,
         }
@@ -1505,7 +1523,7 @@ function RcHub:Window(GuiConfig)
     end
 
     local function RectCenter(pos, size)
-        return UDim2.new(0, pos.X.Offset + size.X.Offset / 2, 0, pos.Y.Offset + size.Y.Offset / 2)
+        return UDim2.new(0, pos.X.Offset + size.X.Offset * BaseScale / 2, 0, pos.Y.Offset + size.Y.Offset * BaseScale / 2)
     end
 
     local function ButtonCenter()
@@ -1560,7 +1578,7 @@ function RcHub:Window(GuiConfig)
     end
 
     local function RestoreRest()
-        MainScale.Scale = 1
+        MainScale.Scale = BaseScale
         Main.AnchorPoint = Vector2.new(0, 0)
         Main.Position = LastPos
         Main.Size = LastSize
@@ -1578,7 +1596,7 @@ function RcHub:Window(GuiConfig)
         Main.AnchorPoint = Vector2.new(0.5, 0.5)
         Main.Position = RectCenter(LastPos, LastSize)
 
-        PlayMain(0.36, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, ButtonCenter(), 0.1, 1, function()
+        PlayMain(0.36, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, ButtonCenter(), BaseScale * 0.1, 1, function()
             Main.Visible = false
             RestoreRest()
             Main.GroupTransparency = 0
@@ -1592,11 +1610,11 @@ function RcHub:Window(GuiConfig)
 
         Main.AnchorPoint = Vector2.new(0.5, 0.5)
         Main.Position = ButtonCenter()
-        MainScale.Scale = 0.1
+        MainScale.Scale = BaseScale * 0.1
         Main.GroupTransparency = 1
         Main.Visible = true
 
-        PlayMain(0.46, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, RectCenter(LastPos, LastSize), 1, 0, function()
+        PlayMain(0.46, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, RectCenter(LastPos, LastSize), BaseScale, 0, function()
             RestoreRest()
             Main.GroupTransparency = 0
             animating = false -- baru boleh ditutup lagi
@@ -1621,17 +1639,18 @@ function RcHub:Window(GuiConfig)
 
         if ClosePopup then ClosePopup() end
 
-        MIN_W = math.min(520, scr.X - 20)
-        MIN_H = math.min(320, scr.Y - 20)
+        local oldScale = BaseScale
+        BaseScale = ResponsiveScale(scr)
+        MIN_W = math.min(520, scr.X / BaseScale - 20)
+        MIN_H = math.min(320, scr.Y / BaseScale - 20)
 
         local function Refit(pos, size)
-            local w = math.clamp(DesiredW, MIN_W, math.max(MIN_W, scr.X - 10))
-            local h = math.clamp(DesiredH, MIN_H, math.max(MIN_H, scr.Y - 10))
-            -- titik tengah dipertahankan secara proporsional
-            local cx = (pos.X.Offset + size.X.Offset / 2) / prevScreen.X * scr.X
-            local cy = (pos.Y.Offset + size.Y.Offset / 2) / prevScreen.Y * scr.Y
-            local x = math.clamp(cx - w / 2, 0, math.max(0, scr.X - w))
-            local y = math.clamp(cy - h / 2, 0, math.max(0, scr.Y - h))
+            local w = math.clamp(DesiredW, MIN_W, math.max(MIN_W, (scr.X - 10) / BaseScale))
+            local h = math.clamp(DesiredH, MIN_H, math.max(MIN_H, (scr.Y - 10) / BaseScale))
+            local cx = (pos.X.Offset + size.X.Offset * oldScale / 2) / prevScreen.X * scr.X
+            local cy = (pos.Y.Offset + size.Y.Offset * oldScale / 2) / prevScreen.Y * scr.Y
+            local x = math.clamp(cx - w * BaseScale / 2, 0, math.max(0, scr.X - w * BaseScale))
+            local y = math.clamp(cy - h * BaseScale / 2, 0, math.max(0, scr.Y - h * BaseScale))
             return UDim2.new(0, math.floor(x), 0, math.floor(y)), UDim2.new(0, math.floor(w), 0, math.floor(h))
         end
 
@@ -1640,6 +1659,7 @@ function RcHub:Window(GuiConfig)
         if Main.Visible then srcPos, srcSize = Main.Position, Main.Size end
         LastPos, LastSize = Refit(srcPos, srcSize)
         Main.Position, Main.Size = LastPos, LastSize
+        MainScale.Scale = BaseScale
 
         -- tombol bulat buka/tutup
         if ToggleBtn and ToggleBtn.Parent then
@@ -1812,7 +1832,7 @@ function RcHub:Window(GuiConfig)
         _saveScheduled = false
 
         for k in pairs(ConfigData) do
-            if k ~= "_version" and k ~= "WindowRect" then
+            if k ~= "_version" and k ~= "WindowRect" and k ~= "WindowRectMobile" then
                 ConfigData[k] = nil
             end
         end
@@ -2104,10 +2124,11 @@ function RcHub:Window(GuiConfig)
     }, Main)
 
     local TitleCard = New("Frame", {
-        Name = "TitleCard", BackgroundColor3 = T.Panel, BorderSizePixel = 0,
+        Name = "TitleCard", BackgroundColor3 = T.Panel, BackgroundTransparency = 0.12, BorderSizePixel = 0,
         Position = UDim2.new(0, 10, 0, 10), Size = UDim2.new(0.5, -15, 0, 40),
     }, Main)
     Corner(TitleCard, 14)
+    GlassBorder(TitleCard)
 
     MakeCrown(TitleCard, T.Text, {
         AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 14, 0.5, 0),
@@ -2141,7 +2162,7 @@ function RcHub:Window(GuiConfig)
         }, TitleHolder)
         Corner(Tag, 10)
         New("UIStroke", {
-            Color = Color3.fromRGB(150, 112, 30), Thickness = 1, Transparency = 0.35,
+            Color = Color3.fromRGB(183, 167, 132), Thickness = 1, Transparency = 0.68,
             ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
         }, Tag)
         local TagLabel = Label(Tag, {
@@ -2159,10 +2180,11 @@ function RcHub:Window(GuiConfig)
     TitleHolder.ClipsDescendants = true
 
     local SearchCard = New("Frame", {
-        Name = "SearchBar", BackgroundColor3 = T.Panel, BorderSizePixel = 0,
+        Name = "SearchBar", BackgroundColor3 = T.Panel, BackgroundTransparency = 0.12, BorderSizePixel = 0,
         Position = UDim2.new(0.5, 5, 0, 10), Size = UDim2.new(0.5, -125, 0, 40),
     }, Main)
     Corner(SearchCard, 20)
+    GlassBorder(SearchCard)
 
     New("ImageLabel", {
         BackgroundTransparency = 1, Image = Icons.scan, ImageColor3 = T.Sub,
@@ -2240,8 +2262,13 @@ function RcHub:Window(GuiConfig)
     end
 
     -- [FIX] drag diblok saat animasi buka/tutup
-    MakeDraggable(DragBar, Main, CaptureRect, function() return not animating end)
-    MakeDraggable(TitleCard, Main, CaptureRect, function() return not animating end)
+    local function ClampWindowDrag(x, y)
+        local scr = ScreenSize()
+        local w, h = Main.Size.X.Offset * BaseScale, Main.Size.Y.Offset * BaseScale
+        return math.clamp(x, 0, math.max(0, scr.X - w)), math.clamp(y, 0, math.max(0, scr.Y - h))
+    end
+    MakeDraggable(DragBar, Main, CaptureRect, function() return not animating end, ClampWindowDrag)
+    MakeDraggable(TitleCard, Main, CaptureRect, function() return not animating end, ClampWindowDrag)
 
     -- Resize handle (pojok kanan bawah): tarik untuk atur lebar (X) dan tinggi (Y) window
     local ResizeHandle = New("TextButton", {
@@ -2268,7 +2295,7 @@ function RcHub:Window(GuiConfig)
     end)
 
     do
-        local resizing, startMouse, startSize = false, nil, nil
+        local resizing, startMouse, startSize, resizeTouch = false, nil, nil, nil
 
         ResizeHandle.InputBegan:Connect(function(input)
             if animating then return end -- [FIX] resize diblok saat animasi
@@ -2276,11 +2303,13 @@ function RcHub:Window(GuiConfig)
                 or input.UserInputType == Enum.UserInputType.Touch then
                 resizing = true
                 startMouse = input.Position
-                startSize = Main.AbsoluteSize
+                startSize = Vector2.new(Main.Size.X.Offset, Main.Size.Y.Offset)
+                resizeTouch = input.UserInputType == Enum.UserInputType.Touch and input or nil
                 if ClosePopup then ClosePopup() end
                 input.Changed:Connect(function()
                     if input.UserInputState == Enum.UserInputState.End then
                         resizing = false
+                        resizeTouch = nil
                         CaptureRect()
                     end
                 end)
@@ -2288,14 +2317,14 @@ function RcHub:Window(GuiConfig)
         end)
 
         UserInputService.InputChanged:Connect(function(input)
-            if resizing and not animating and (input.UserInputType == Enum.UserInputType.MouseMovement
-                or input.UserInputType == Enum.UserInputType.Touch) then
+            if resizing and not animating and ((resizeTouch and input == resizeTouch)
+                or (not resizeTouch and input.UserInputType == Enum.UserInputType.MouseMovement)) then
                 local d = input.Position - startMouse
                 local vp = ScreenSize()
-                local maxW = math.max(MIN_W, vp.X - Main.AbsolutePosition.X - 4)
-                local maxH = math.max(MIN_H, vp.Y - Main.AbsolutePosition.Y - 4)
-                local w = math.clamp(startSize.X + d.X, MIN_W, maxW)
-                local h = math.clamp(startSize.Y + d.Y, MIN_H, maxH)
+                local maxW = math.max(MIN_W, (vp.X - Main.AbsolutePosition.X - 4) / BaseScale)
+                local maxH = math.max(MIN_H, (vp.Y - Main.AbsolutePosition.Y - 4) / BaseScale)
+                local w = math.clamp(startSize.X + d.X / BaseScale, MIN_W, maxW)
+                local h = math.clamp(startSize.Y + d.Y / BaseScale, MIN_H, maxH)
                 Main.Size = UDim2.new(0, math.floor(w), 0, math.floor(h))
             end
         end)
@@ -2305,10 +2334,11 @@ function RcHub:Window(GuiConfig)
     -- ROW 2 : nama tab (biru) + section chips (aqua)
     -- --------------------------------------------------------
     local NameCard = New("Frame", {
-        Name = "NameCard", BackgroundColor3 = T.Panel, BorderSizePixel = 0,
+        Name = "NameCard", BackgroundColor3 = T.Panel, BackgroundTransparency = 0.12, BorderSizePixel = 0,
         Position = UDim2.new(0, 10, 0, 58), Size = UDim2.new(0, TabW, 0, 38),
     }, Main)
     Corner(NameCard, 14)
+    GlassBorder(NameCard)
 
     local NameTab = Label(NameCard, {
         Name = "NameTab", Text = "", Font = FONT_BOLD, TextSize = 13,
@@ -2316,10 +2346,11 @@ function RcHub:Window(GuiConfig)
     })
 
     local SectionBar = New("Frame", {
-        Name = "SectionBar", BackgroundColor3 = T.Panel, BorderSizePixel = 0,
+        Name = "SectionBar", BackgroundColor3 = T.Panel, BackgroundTransparency = 0.12, BorderSizePixel = 0,
         Position = UDim2.new(0, TabW + 20, 0, 58), Size = UDim2.new(1, -(TabW + 30), 0, 38),
     }, Main)
     Corner(SectionBar, 19)
+    GlassBorder(SectionBar)
 
     local SectionScroll = New("ScrollingFrame", {
         Name = "SectionScroll", BackgroundTransparency = 1, BorderSizePixel = 0,
@@ -2344,7 +2375,7 @@ function RcHub:Window(GuiConfig)
         b.MouseEnter:Connect(function() Tween(b, { TextColor3 = T.Text }) end)
         b.MouseLeave:Connect(function() Tween(b, { TextColor3 = T.Sub }) end)
         b.Activated:Connect(function()
-            local maxX = math.max(0, SectionScroll.AbsoluteCanvasSize.X - SectionScroll.AbsoluteWindowSize.X)
+            local maxX = math.max(0, (SectionScroll.AbsoluteCanvasSize.X - SectionScroll.AbsoluteWindowSize.X) / BaseScale)
             local target = math.clamp(SectionScroll.CanvasPosition.X + dir * 120, 0, maxX)
             Tween(SectionScroll, { CanvasPosition = Vector2.new(target, 0) }, 0.2)
         end)
@@ -2357,10 +2388,11 @@ function RcHub:Window(GuiConfig)
     -- LEFT : tab list (hitam)
     -- --------------------------------------------------------
     local TabPanel = New("Frame", {
-        Name = "LayersTab", BackgroundColor3 = T.Panel, BorderSizePixel = 0,
+        Name = "LayersTab", BackgroundColor3 = T.Panel, BackgroundTransparency = 0.12, BorderSizePixel = 0,
         Position = UDim2.new(0, 10, 0, 104), Size = UDim2.new(0, TabW, 1, -114),
     }, Main)
     Corner(TabPanel, 16)
+    GlassBorder(TabPanel)
 
     local ScrollTab = New("ScrollingFrame", {
         Name = "ScrollTab", BackgroundTransparency = 1, BorderSizePixel = 0,
@@ -2371,7 +2403,7 @@ function RcHub:Window(GuiConfig)
     New("UIListLayout", { Padding = UDim.new(0, 3), SortOrder = Enum.SortOrder.LayoutOrder }, ScrollTab)
 
     local UserCard = New("Frame", {
-        Name = "UserCard", BackgroundColor3 = Color3.fromRGB(40, 40, 40), BorderSizePixel = 0,
+        Name = "UserCard", BackgroundColor3 = T.Row, BackgroundTransparency = 0.12, BorderSizePixel = 0,
         AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 8, 1, -8), Size = UDim2.new(1, -16, 0, 50),
     }, TabPanel)
     Corner(UserCard, 12)
@@ -2434,6 +2466,62 @@ function RcHub:Window(GuiConfig)
         Position = Layers.Position, Size = Layers.Size, Visible = false, ZIndex = 40,
     }, Main)
     Corner(SearchResults, 16)
+
+    -- Draggable divider: adjusts the sidebar and every content/search region
+    -- together. Deltas arrive in screen pixels, so convert to logical units.
+    local SidebarDivider = New("TextButton", {
+        Name = "SidebarDivider", Text = "", AutoButtonColor = false,
+        BackgroundTransparency = 1, BorderSizePixel = 0,
+        Position = UDim2.new(0, TabW + 6, 0, 104),
+        Size = UDim2.new(0, 18, 1, -114), ZIndex = 25, Active = true,
+    }, Main)
+    local DividerGrip = New("Frame", {
+        BackgroundColor3 = T.Muted, BackgroundTransparency = 0.15, BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0, 4, 0, 42), ZIndex = 26,
+    }, SidebarDivider)
+    Corner(DividerGrip, 2)
+    local function ApplySidebarWidth(width)
+        local maxWidth = math.max(85, math.min(260, Main.Size.X.Offset - 280))
+        TabW = math.floor(math.clamp(width, 85, maxWidth) + 0.5)
+        NameCard.Size = UDim2.new(0, TabW, 0, 38)
+        TabPanel.Size = UDim2.new(0, TabW, 1, -114)
+        SectionBar.Position = UDim2.new(0, TabW + 20, 0, 58)
+        SectionBar.Size = UDim2.new(1, -(TabW + 30), 0, 38)
+        Layers.Position = UDim2.new(0, TabW + 20, 0, 104)
+        Layers.Size = UDim2.new(1, -(TabW + 30), 1, -114)
+        SearchResults.Position, SearchResults.Size = Layers.Position, Layers.Size
+        SidebarDivider.Position = UDim2.new(0, TabW + 6, 0, 104)
+    end
+    ApplySidebarWidth(TabW)
+    Main:GetPropertyChangedSignal("Size"):Connect(function()
+        ApplySidebarWidth(TabW)
+    end)
+    do
+        local dragging, startX, startWidth, touch = false, nil, nil, nil
+        SidebarDivider.InputBegan:Connect(function(input)
+            if animating then return end
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true
+                startX, startWidth = input.Position.X, TabW
+                touch = input.UserInputType == Enum.UserInputType.Touch and input or nil
+                if ClosePopup then ClosePopup() end
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End and dragging then
+                        dragging, touch = false, nil
+                        ConfigData[sidebarKey] = TabW
+                        SaveConfig()
+                    end
+                end)
+            end
+        end)
+        UserInputService.InputChanged:Connect(function(input)
+            if dragging and not animating and ((touch and input == touch)
+                or (not touch and input.UserInputType == Enum.UserInputType.MouseMovement)) then
+                ApplySidebarWidth(startWidth + (input.Position.X - startX) / BaseScale)
+            end
+        end)
+    end
 
     local SearchScroll = New("ScrollingFrame", {
         BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 41,
@@ -2584,27 +2672,32 @@ function RcHub:Window(GuiConfig)
         end
 
         local moved = false
-        local dragging, dragStart, startPos = false, nil, nil
+        local dragging, dragStart, startPos, buttonTouch = false, nil, nil, nil
 
         Btn.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1
                 or input.UserInputType == Enum.UserInputType.Touch then
                 dragging, moved = true, false
                 dragStart, startPos = input.Position, Btn.Position
+                buttonTouch = input.UserInputType == Enum.UserInputType.Touch and input or nil
                 input.Changed:Connect(function()
                     if input.UserInputState == Enum.UserInputState.End then
                         dragging = false
+                        buttonTouch = nil
                     end
                 end)
             end
         end)
 
         UserInputService.InputChanged:Connect(function(input)
-            if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
-                or input.UserInputType == Enum.UserInputType.Touch) then
+            if dragging and ((buttonTouch and input == buttonTouch)
+                or (not buttonTouch and input.UserInputType == Enum.UserInputType.MouseMovement)) then
                 local d = input.Position - dragStart
                 if d.Magnitude > 4 then moved = true end
-                Btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
+                local scr = ScreenSize()
+                local x = math.clamp(startPos.X.Offset + d.X, 0, math.max(0, scr.X - Btn.AbsoluteSize.X))
+                local y = math.clamp(startPos.Y.Offset + d.Y, 0, math.max(0, scr.Y - Btn.AbsoluteSize.Y))
+                Btn.Position = UDim2.new(startPos.X.Scale, x, startPos.Y.Scale, y)
             end
         end)
 
@@ -2711,11 +2804,11 @@ function RcHub:Window(GuiConfig)
         for _, s in ipairs(tab.SectionList) do
             local on = (tab.ActiveSection == s)
             Tween(s.Chip, {
-                BackgroundColor3 = on and Color3.fromRGB(230, 230, 230) or Color3.fromRGB(42, 42, 42),
+                BackgroundColor3 = on and T.Active or T.Control,
             })
-            Tween(s.ChipText, { TextColor3 = on and T.Dark or T.Sub })
+            Tween(s.ChipText, { TextColor3 = on and T.Text or T.Sub })
             if s.CountLabel then
-                Tween(s.CountLabel, { TextColor3 = on and T.Dark or T.Sub })
+                Tween(s.CountLabel, { TextColor3 = on and T.Text or T.Sub })
             end
         end
     end
@@ -2735,9 +2828,9 @@ function RcHub:Window(GuiConfig)
         for _, t in ipairs(TabList) do
             local on = (t == tab)
             Tween(t.Button, { BackgroundTransparency = on and 0 or 1 })
-            Tween(t.Label, { TextColor3 = on and T.Dark or T.Sub })
+            Tween(t.Label, { TextColor3 = on and T.Text or T.Sub })
             if t.IconImage then
-                Tween(t.IconImage, { ImageColor3 = on and T.Dark or T.Sub })
+                Tween(t.IconImage, { ImageColor3 = on and T.Text or T.Sub })
             end
             for _, s in ipairs(t.SectionList) do
                 s.Chip.Visible = on
@@ -2764,7 +2857,7 @@ function RcHub:Window(GuiConfig)
 
         local Button = New("TextButton", {
             Name = "Tab_" .. TabConfig.Name, Text = "", AutoButtonColor = false,
-            BackgroundColor3 = T.Text, BackgroundTransparency = 1, BorderSizePixel = 0,
+            BackgroundColor3 = T.Active, BackgroundTransparency = 1, BorderSizePixel = 0,
             Size = UDim2.new(1, 0, 0, 34), LayoutOrder = CountTab,
         }, ScrollTab)
         Corner(Button, 10)
@@ -2812,12 +2905,15 @@ function RcHub:Window(GuiConfig)
         --   TwoColumn = false / nil (default) -> 1 kolom
         function Sections:AddSection(Title, TwoColumn)
             Title = Title or "Section"
-            local twoCol = (TwoColumn == true)
+            -- On touch devices, stack all items in one scrolling column so
+            -- control labels keep the full content width on phones/tablets.
+            -- Desktop keeps the requested two-column layout.
+            local twoCol = (TwoColumn == true and not isMobileUI)
             local Sec = {}
 
             local Chip = New("TextButton", {
                 Name = "Chip_" .. Title, Text = "", AutoButtonColor = false,
-                BackgroundColor3 = Color3.fromRGB(42, 42, 42), BorderSizePixel = 0,
+                BackgroundColor3 = T.Control, BorderSizePixel = 0,
                 Size = UDim2.new(0, 0, 0, 26), AutomaticSize = Enum.AutomaticSize.X,
                 LayoutOrder = CountSection, Visible = (ActiveTab == Tab),
             }, SectionScroll)
@@ -2881,7 +2977,7 @@ function RcHub:Window(GuiConfig)
             local cols = {}
             for i = 1, (twoCol and 2 or 1) do
                 local sf = New("ScrollingFrame", {
-                    Name = "Column" .. i, BackgroundColor3 = T.Panel, BorderSizePixel = 0,
+                    Name = "Column" .. i, BackgroundColor3 = T.Panel, BackgroundTransparency = 0.12, BorderSizePixel = 0,
                     Position = twoCol and UDim2.new(i == 1 and 0 or 0.5, i == 1 and 0 or 5, 0, 0) or UDim2.new(0, 0, 0, 0),
                     Size = twoCol and UDim2.new(0.5, -5, 1, 0) or UDim2.new(1, 0, 1, 0),
                     CanvasSize = UDim2.new(0, 0, 0, 0), AutomaticCanvasSize = Enum.AutomaticSize.Y,
@@ -2926,7 +3022,7 @@ function RcHub:Window(GuiConfig)
                 col.n = col.n + 1
 
                 local row = New("Frame", {
-                    BackgroundColor3 = T.Row, BackgroundTransparency = transparent and 1 or 0,
+                    BackgroundColor3 = T.Row, BackgroundTransparency = transparent and 1 or 0.12,
                     BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, height), LayoutOrder = col.n,
                 }, col.Frame)
                 if not transparent then Corner(row, 10) end
@@ -2962,8 +3058,8 @@ function RcHub:Window(GuiConfig)
 
                     local col = row.Parent
                     if col and col:IsA("ScrollingFrame") then
-                        local y = col.CanvasPosition.Y + (row.AbsolutePosition.Y - col.AbsolutePosition.Y) - 8
-                        local maxY = math.max(0, col.AbsoluteCanvasSize.Y - col.AbsoluteWindowSize.Y)
+                        local y = col.CanvasPosition.Y + (row.AbsolutePosition.Y - col.AbsolutePosition.Y) / BaseScale - 8
+                        local maxY = math.max(0, (col.AbsoluteCanvasSize.Y - col.AbsoluteWindowSize.Y) / BaseScale)
                         col.CanvasPosition = Vector2.new(0, math.clamp(y, 0, maxY))
                     end
 
@@ -3719,8 +3815,8 @@ function RcHub:Window(GuiConfig)
                 local function Styles()
                     for opt, b in pairs(OptionButtons) do
                         local on = IsSelected(opt)
-                        b.BackgroundColor3 = on and Color3.fromRGB(230, 230, 230) or T.Popup
-                        b.TextColor3 = on and T.Dark or Color3.fromRGB(205, 205, 205)
+                        b.BackgroundColor3 = on and T.Active or T.Popup
+                        b.TextColor3 = on and T.Text or T.Sub
                     end
                 end
 
@@ -3731,17 +3827,17 @@ function RcHub:Window(GuiConfig)
                     end
                     if count == 0 then count = 1 end
 
-                    local width = math.max(Pill.AbsoluteSize.X, 170)
+                    local width = math.max(Pill.AbsoluteSize.X / BaseScale, 170)
                     local height = math.min(count * 28 + 8, 172) + HEADER
-                    local p = Pill.AbsolutePosition - Main.AbsolutePosition
-                    local x = p.X + Pill.AbsoluteSize.X - width
-                    local below = p.Y + Pill.AbsoluteSize.Y + 4
+                    local p = (Pill.AbsolutePosition - Main.AbsolutePosition) / BaseScale
+                    local x = p.X + Pill.AbsoluteSize.X / BaseScale - width
+                    local below = p.Y + Pill.AbsoluteSize.Y / BaseScale + 4
                     local y = below
 
-                    openUp = (below + height > Main.AbsoluteSize.Y - 8)
+                    openUp = (below + height > Main.Size.Y.Offset - 8)
                     if openUp then y = p.Y - height - 4 end
 
-                    x = math.clamp(x, 8, math.max(8, Main.AbsoluteSize.X - width - 8))
+                    x = math.clamp(x, 8, math.max(8, Main.Size.X.Offset - width - 8))
                     y = math.max(y, 8)
                     return x, y, width, height
                 end
@@ -3776,7 +3872,7 @@ function RcHub:Window(GuiConfig)
                     Tween(Chevron, { Rotation = -90 }, 0.18)
 
                     -- menyusut / tersedot kembali ke tombol dropdown
-                    local w, h = Popup.AbsoluteSize.X, Popup.AbsoluteSize.Y
+                    local w, h = Popup.AbsoluteSize.X / BaseScale, Popup.AbsoluteSize.Y / BaseScale
                     local px, py = Popup.Position.X.Offset, Popup.Position.Y.Offset
                     local endY = openUp and (py + h) or py
                     local tw = Tween(Popup, { Size = UDim2.new(0, w, 0, 0), Position = UDim2.new(0, px, 0, endY) }, 0.16)
